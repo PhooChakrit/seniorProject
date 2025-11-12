@@ -1,0 +1,5 @@
+{
+  "name": "jbrowse2-app",
+  "displayName": "JBrowse 2 Application",
+  "description": "Full-stack genomic data visualization with React, TypeScript, and JBrowse 2"
+}
