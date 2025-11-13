@@ -4,7 +4,6 @@ dist
 .env.local
 .git
 .gitignore
-README.md
 *.log
 npm-debug.log*
 .DS_Store

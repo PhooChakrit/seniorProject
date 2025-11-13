@@ -23,12 +23,15 @@
 
 ### 5. NPM Scripts Added
 ```json
-"docker:up": "docker-compose up -d"       // Start database
-"docker:down": "docker-compose down"       // Stop database
-"docker:logs": "docker-compose logs -f"    // View logs
+"docker:up": "docker-compose up -d"                    // Start database
+"docker:down": "docker-compose down"                    // Stop database
+"docker:logs": "docker-compose logs -f"                 // View logs
 "docker:reset": "docker-compose down -v && docker-compose up -d"  // Reset
-"db:setup": "npm run docker:up && sleep 5 && npm run prisma:migrate"  // Full setup
+"wait-for-db": "node scripts/wait-for-db.js"           // Wait for DB (cross-platform)
+"db:setup": "npm run docker:up && npm run wait-for-db && npm run prisma:migrate"  // Full setup
 ```
+
+**Note:** The `db:setup` script now uses a cross-platform Node.js script (`wait-for-db.js`) instead of the Unix-only `sleep` command, making it work on Windows, macOS, and Linux.
 
 ### 6. Documentation
 - **`DOCKER_README.md`**: Complete guide for using Docker database
