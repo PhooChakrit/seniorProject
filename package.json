@@ -14,7 +14,11 @@
     "prisma:studio": "prisma studio"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@jbrowse/react-linear-genome-view": "^2.10.3",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/material": "^7.3.5",
     "@prisma/client": "^5.7.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
