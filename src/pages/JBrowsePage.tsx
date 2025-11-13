@@ -248,7 +248,7 @@ export const JBrowsePage: React.FC = () => {
               <div className="flex justify-between">
                 <span className="font-medium">Default Region:</span>
                 <span className="text-muted-foreground">
-                  {useOryza ? '1:2,000-20,000' : 'chr1:1-100,000'}
+                  {useOryza ? '1:2000-20000' : 'chr1:1-100,000'}
                 </span>
               </div>
             </div>

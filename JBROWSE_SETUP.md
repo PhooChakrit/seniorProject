@@ -38,8 +38,8 @@ This creates two files:
 
 ```bash
 # Copy both files to the public/genomes/oryza directory
-cp Oryza_DNA.sorted.gff3.gz /Users/phoo/Documents/JECTINUNIVERZITY/senior3/seniorProject/public/genomes/oryza/
-cp Oryza_DNA.sorted.gff3.gz.tbi /Users/phoo/Documents/JECTINUNIVERZITY/senior3/seniorProject/public/genomes/oryza/
+cp Oryza_DNA.sorted.gff3.gz public/genomes/oryza/
+cp Oryza_DNA.sorted.gff3.gz.tbi public/genomes/oryza/
 ```
 
 ### 3. (Optional) Add Reference Genome
@@ -48,10 +48,10 @@ If you have a FASTA reference genome file:
 
 ```bash
 # Copy your reference FASTA
-cp reference.fa /Users/phoo/Documents/JECTINUNIVERZITY/senior3/seniorProject/public/genomes/oryza/
+cp reference.fa public/genomes/oryza/
 
 # Create FASTA index
-samtools faidx /Users/phoo/Documents/JECTINUNIVERZITY/senior3/seniorProject/public/genomes/oryza/reference.fa
+samtools faidx public/genomes/oryza/reference.fa
 ```
 
 ### 4. View in JBrowse
