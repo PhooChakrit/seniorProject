@@ -15,6 +15,14 @@ export default defineConfig({
       '@/api': path.resolve(__dirname, './src/api'),
     },
   },
+  optimizeDeps: {
+    include: [
+      '@mui/material',
+      '@mui/material/SvgIcon',
+      '@mui/material/utils',
+      '@mui/icons-material',
+    ],
+  },
   server: {
     port: 5173,
     proxy: {
