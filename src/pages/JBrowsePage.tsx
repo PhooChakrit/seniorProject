@@ -12,15 +12,15 @@ const oryzaAssembly = {
     type: 'ReferenceSequenceTrack',
     trackId: 'Oryza-ReferenceSequenceTrack',
     adapter: {
-      type: 'FromConfigSequenceAdapter',
-      features: [
-        {
-          refName: '1',
-          uniqueId: 'chr1',
-          start: 0,
-          end: 43270923,
-        },
-      ],
+      type: 'IndexedFastaAdapter',
+      fastaLocation: {
+        uri: '/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa',
+        locationType: 'UriLocation',
+      },
+      faiLocation: {
+        uri: '/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa.fai',
+        locationType: 'UriLocation',
+      },
     },
   },
 };
@@ -49,6 +49,16 @@ const oryzaDefaultSession = {
     id: 'linearGenomeView',
     type: 'LinearGenomeView',
     tracks: [
+      {
+        type: 'ReferenceSequenceTrack',
+        configuration: 'Oryza-ReferenceSequenceTrack',
+        displays: [
+          {
+            type: 'LinearReferenceSequenceDisplay',
+            configuration: 'Oryza-ReferenceSequenceTrack-LinearReferenceSequenceDisplay',
+          },
+        ],
+      },
       {
         type: 'FeatureTrack',
         configuration: 'oryza_gff3_track',
@@ -242,7 +252,7 @@ export const JBrowsePage: React.FC = () => {
               <div className="flex justify-between">
                 <span className="font-medium">Tracks Loaded:</span>
                 <span className="text-muted-foreground">
-                  {useOryza ? 'Oryza DNA Annotations (GFF3)' : 'NCBI RefSeq Genes'}
+                  {useOryza ? 'Reference Sequence + Oryza DNA Annotations (GFF3)' : 'NCBI RefSeq Genes'}
                 </span>
               </div>
               <div className="flex justify-between">
