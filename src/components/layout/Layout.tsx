@@ -30,7 +30,10 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8">
-              <h1 className="text-2xl font-bold">JBrowse 2 App</h1>
+              <div>
+                <h1 className="text-2xl font-bold">Thai Rice Genome</h1>
+                <p className="text-xs text-muted-foreground">Faculty of Science, Chulalongkorn University </p>
+              </div>
               <nav className="flex space-x-4">
                 {navItems.map((item) => {
                   const Icon = item.icon;

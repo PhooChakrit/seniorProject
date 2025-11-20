@@ -36,7 +36,7 @@ export const TargetInput: React.FC<TargetInputProps> = ({
           onChange={(e) => onTargetChange(e.target.value)}
         />
       </div>
-      <div className="flex gap-2">
+      {/* <div className="flex gap-2">
         <Button
           variant="outline"
           size="sm"
@@ -65,7 +65,7 @@ export const TargetInput: React.FC<TargetInputProps> = ({
       </div>
       <p className="text-xs text-muted-foreground">
         Accepts: Gene ID / Genomic Coordinates / DNA Sequence / FASTA File
-      </p>
+      </p> */}
     </div>
   );
 };
