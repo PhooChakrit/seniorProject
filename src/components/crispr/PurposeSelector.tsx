@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Info } from 'lucide-react';
 
-type PurposeType = 'knock-out' | 'knock-in';
+type PurposeType = 'knock-out' | 'knock-in' | 'prime-edit';
 
 interface PurposeSelectorProps {
   purpose: PurposeType;
@@ -21,7 +21,7 @@ export const PurposeSelector: React.FC<PurposeSelectorProps> = ({
         <div className="group relative">
           <Info className="h-4 w-4 text-muted-foreground cursor-help" />
           <div className="absolute left-0 bottom-full mb-2 hidden group-hover:block w-64 p-2 bg-popover border rounded-md shadow-lg text-xs z-10">
-            Affects gRNA ranking preferences. Knock-out prioritizes early stop codons, 
+            Affects gRNA ranking preferences. Knock-out prioritizes early stop codons,
             while knock-in focuses on specific insertion sites.
           </div>
         </div>
@@ -40,6 +40,13 @@ export const PurposeSelector: React.FC<PurposeSelectorProps> = ({
           className="px-8"
         >
           Knock-in
+        </Button>
+        <Button
+          variant={purpose === 'prime-edit' ? 'default' : 'outline'}
+          onClick={() => onPurposeChange('prime-edit')}
+          className="px-8"
+        >
+          Prime-edit
         </Button>
       </div>
     </div>
