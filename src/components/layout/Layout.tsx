@@ -21,7 +21,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navItems = [
     { to: '/dashboard', icon: Home, label: 'Dashboard' },
     { to: '/jbrowse', icon: Dna, label: 'JBrowse' },
-    { to: '/data', icon: Database, label: 'Data' },
+    { to: '/data', icon: Database, label: 'Crispr' },
   ];
 
   return (
