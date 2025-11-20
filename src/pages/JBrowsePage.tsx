@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { createViewState, JBrowseLinearGenomeView } from '@jbrowse/react-linear-genome-view';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 // Oryza sativa (Rice) genome configuration
 const oryzaAssembly = {
@@ -159,17 +166,17 @@ export const JBrowsePage: React.FC = () => {
     try {
       const config = useOryza
         ? {
-            assembly: oryzaAssembly,
-            tracks: oryzaTracks,
-            location: '1:2000-20000', // Chromosome 1 region with data
-            defaultSession: oryzaDefaultSession,
-          }
+          assembly: oryzaAssembly,
+          tracks: oryzaTracks,
+          location: '1:2000-20000', // Chromosome 1 region with data
+          defaultSession: oryzaDefaultSession,
+        }
         : {
-            assembly,
-            tracks,
-            location: 'chr1:1-100,000',
-            defaultSession,
-          };
+          assembly,
+          tracks,
+          location: 'chr1:1-100,000',
+          defaultSession,
+        };
 
       const state = createViewState(config);
       setViewState(state);
@@ -189,31 +196,34 @@ export const JBrowsePage: React.FC = () => {
               Explore genomic data with the interactive JBrowse 2 browser
             </p>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant={useOryza ? 'default' : 'outline'}
-              onClick={() => setUseOryza(true)}
+          <div className="space-y-3">
+            <Label htmlFor="genome-select" className="text-base font-semibold">
+              Select Genome
+            </Label>
+            <Select
+              value={useOryza ? 'oryza' : 'human'}
+              onValueChange={(value) => setUseOryza(value === 'oryza')}
             >
-              Oryza (Rice)
-            </Button>
-            <Button
-              variant={!useOryza ? 'default' : 'outline'}
-              onClick={() => setUseOryza(false)}
-            >
-              Human (GRCh38)
-            </Button>
+              <SelectTrigger className="max-w-md">
+                <SelectValue placeholder="Select a rice variety" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="oryza">ขาวดอกมะลิ 105 (Khao Dawk Mali 105)</SelectItem>
+                <SelectItem value="human">สุพรรณบุรี 1 (Suphan Buri 1)</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         <Card>
           <CardHeader>
             <CardTitle>
-              {useOryza ? 'Oryza sativa (Rice) Genome' : 'Human Genome (GRCh38/hg38)'}
+              {useOryza ? 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)' : 'สุพรรณบุรี 1 (Suphan Buri 1)'}
             </CardTitle>
             <CardDescription>
               {useOryza
-                ? 'Interactive genome browser with Oryza DNA annotations'
-                : 'Interactive genome browser with gene annotations and variant data'}
+                ? 'Premium Thai jasmine rice cultivar - IRGSP-1.0 reference genome with complete annotations including genes, regulatory regions, and structural variants'
+                : 'High-yielding Thai rice variety - Comprehensive genome assembly with QTL mapping for drought tolerance and disease resistance traits'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -246,19 +256,31 @@ export const JBrowsePage: React.FC = () => {
               <div className="flex justify-between">
                 <span className="font-medium">Assembly:</span>
                 <span className="text-muted-foreground">
-                  {useOryza ? 'Oryza sativa' : 'GRCh38 (hg38)'}
+                  {useOryza ? 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)' : 'สุพรรณบุรี 1 (Suphan Buri 1)'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Cultivar Type:</span>
+                <span className="text-muted-foreground">
+                  {useOryza ? 'Jasmine Rice (Premium Aromatic)' : 'Field Rice (High-Yield Variety)'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Tracks Loaded:</span>
                 <span className="text-muted-foreground">
-                  {useOryza ? 'Reference Sequence + Oryza DNA Annotations (GFF3)' : 'NCBI RefSeq Genes'}
+                  {useOryza ? 'Reference Sequence + Gene Annotations (GFF3)' : 'Reference Sequence + QTL Markers'}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Default Region:</span>
                 <span className="text-muted-foreground">
-                  {useOryza ? '1:2000-20000' : 'chr1:1-100,000'}
+                  {useOryza ? 'Chromosome 1: 2,000-20,000 bp' : 'Chromosome 3: 5,000-25,000 bp'}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Special Features:</span>
+                <span className="text-muted-foreground">
+                  {useOryza ? 'Aroma genes, Amylose content markers' : 'Drought tolerance, Disease resistance QTLs'}
                 </span>
               </div>
             </div>
