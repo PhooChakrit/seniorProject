@@ -11,7 +11,7 @@ import {
 } from '@/components/crispr';
 
 type NucleaseType = 'cas9' | 'cas12a';
-type PurposeType = 'knock-out' | 'knock-in';
+type PurposeType = 'knock-out' | 'knock-in' | 'prime-edit';
 
 export const DataPage: React.FC = () => {
   const [target, setTarget] = useState('');
@@ -20,7 +20,7 @@ export const DataPage: React.FC = () => {
   const [purpose, setPurpose] = useState<PurposeType>('knock-out');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   // Advanced options
   const [pamOverride, setPamOverride] = useState('NGG');
   const [guideLength, setGuideLength] = useState('20');
@@ -63,9 +63,9 @@ export const DataPage: React.FC = () => {
       <div className="max-w-5xl mx-auto space-y-8 py-8">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">CRISPR Guide RNA Design</h1>
+          <h1 className="text-4xl font-bold tracking-tight">CRISPR-Cas9 Guide RNA Design</h1>
           <p className="text-lg text-muted-foreground">
-            Design highly specific guide RNAs for your CRISPR experiments
+            Design highly specific guide RNAs for your CRISPR-Cas9 experiments
           </p>
         </div>
 
@@ -74,11 +74,17 @@ export const DataPage: React.FC = () => {
           <CardHeader className="space-y-1 pb-8">
             <CardTitle className="text-2xl">Target Selection</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Enter your target gene or sequence to find optimal CRISPR sites
+              Enter your target gene or sequence to find optimal CRISPR-Cas9 sites
             </p>
           </CardHeader>
-          
+
           <CardContent className="space-y-8">
+            {/* 2. Species Selector */}
+            <SpeciesSelector
+              species={species}
+              onSpeciesChange={setSpecies}
+            />
+
             {/* 1. Target Input Section */}
             <TargetInput
               target={target}
@@ -87,23 +93,18 @@ export const DataPage: React.FC = () => {
               onFileChange={handleFileChange}
             />
 
-            {/* 2. Species Selector */}
-            <SpeciesSelector
-              species={species}
-              onSpeciesChange={setSpecies}
-            />
-
-            {/* 3. Nuclease Selector */}
-            <NucleaseSelector
-              nuclease={nuclease}
-              onNucleaseChange={setNuclease}
-            />
-
             {/* 4. Purpose Selector */}
             <PurposeSelector
               purpose={purpose}
               onPurposeChange={setPurpose}
             />
+
+            {/* 3. Nuclease Selector */}
+            {/* <NucleaseSelector
+              nuclease={nuclease}
+              onNucleaseChange={setNuclease}
+            /> */}
+
 
             {/* 5. Advanced Options */}
             <AdvancedOptions

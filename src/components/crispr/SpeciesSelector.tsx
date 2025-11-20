@@ -1,6 +1,12 @@
 import React from 'react';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface SpeciesSelectorProps {
   species: string;
@@ -16,16 +22,14 @@ export const SpeciesSelector: React.FC<SpeciesSelectorProps> = ({
       <Label htmlFor="species" className="text-base font-semibold">
         Species
       </Label>
-      <Select
-        id="species"
-        value={species}
-        onChange={(e) => onSpeciesChange(e.target.value)}
-        className="max-w-md"
-      >
-        <option value="Oryza sativa (IRGSP-1.0)">Oryza sativa (IRGSP-1.0)</option>
-        <option value="Homo sapiens (hg38/GRCh38)">Homo sapiens (hg38/GRCh38)</option>
-        <option value="Mus musculus (mm10/GRCm38)">Mus musculus (mm10/GRCm38)</option>
-        <option value="Arabidopsis thaliana (TAIR10)">Arabidopsis thaliana (TAIR10)</option>
+      <Select value={species} onValueChange={onSpeciesChange}>
+        <SelectTrigger className="max-w-md">
+          <SelectValue placeholder="Select a rice variety" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Oryza sativa (IRGSP-1.0)">ขาวดอกมะลิ 105 (Khao Dawk Mali 105)</SelectItem>
+          <SelectItem value="Homo sapiens (hg38/GRCh38)">สุพรรณบุรี 1 (Suphan Buri 1)</SelectItem>
+        </SelectContent>
       </Select>
     </div>
   );
