@@ -11,10 +11,21 @@
     "preview": "vite preview",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "prisma:push": "prisma db push",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:reset": "docker-compose down -v && docker-compose up -d",
+    "wait-for-db": "node scripts/wait-for-db.js",
+    "db:setup": "npm run docker:up && npm run wait-for-db && npm run prisma:migrate"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@jbrowse/react-linear-genome-view": "^2.10.3",
+    "@mui/icons-material": "^7.3.5",
+    "@mui/material": "^7.3.5",
     "@prisma/client": "^5.7.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",

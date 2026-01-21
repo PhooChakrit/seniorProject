@@ -1,92 +1,144 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Layout } from '@/components/layout/Layout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Pagination } from '@/components/common/Pagination';
-import { genomeApi } from '@/api/genome';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  TargetInput,
+  SpeciesSelector,
+  NucleaseSelector,
+  PurposeSelector,
+  AdvancedOptions,
+  FindTargetButton
+} from '@/components/crispr';
+
+type NucleaseType = 'cas9' | 'cas12a';
+type PurposeType = 'knock-out' | 'knock-in' | 'prime-edit';
 
 export const DataPage: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [target, setTarget] = useState('');
+  const [species, setSpecies] = useState('Oryza sativa (IRGSP-1.0)');
+  const [nuclease, setNuclease] = useState<NucleaseType>('cas9');
+  const [purpose, setPurpose] = useState<PurposeType>('knock-out');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['genomeData', currentPage, pageSize],
-    queryFn: () => genomeApi.getGenomeData(currentPage, pageSize),
-  });
+  // Advanced options
+  const [pamOverride, setPamOverride] = useState('NGG');
+  const [guideLength, setGuideLength] = useState('20');
+  const [maxMismatch, setMaxMismatch] = useState('3');
+  const [offTargetSensitivity, setOffTargetSensitivity] = useState('medium');
+
+  const handleFindTargets = async () => {
+    if (!target.trim()) return;
+    setLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+      // TODO: Implement actual CRISPR target finding logic
+    }, 1500);
+  };
+
+  const handlePasteSequence = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setTarget(text);
+    } catch (err) {
+      console.error('Failed to read clipboard:', err);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const content = event.target?.result as string;
+        setTarget(content);
+      };
+      reader.readAsText(file);
+    }
+  };
 
   return (
     <Layout>
-      <div className="space-y-6">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Genome Data</h2>
-          <p className="text-muted-foreground">
-            Browse and manage your genome datasets
+      <div className="max-w-5xl mx-auto space-y-8 py-8">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight">CRISPR-Cas9 Guide RNA Design</h1>
+          <p className="text-lg text-muted-foreground">
+            Design highly specific guide RNAs for your CRISPR-Cas9 experiments
           </p>
         </div>
 
-        {isLoading ? (
-          <div className="flex items-center justify-center p-8">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-              <p className="mt-4 text-muted-foreground">Loading data...</p>
-            </div>
-          </div>
-        ) : error ? (
+        {/* Main Card */}
+        <Card className="shadow-lg">
+          <CardHeader className="space-y-1 pb-8">
+            <CardTitle className="text-2xl">Target Selection</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Enter your target gene or sequence to find optimal CRISPR-Cas9 sites
+            </p>
+          </CardHeader>
+
+          <CardContent className="space-y-8">
+            {/* 2. Species Selector */}
+            <SpeciesSelector
+              species={species}
+              onSpeciesChange={setSpecies}
+            />
+
+            {/* 1. Target Input Section */}
+            <TargetInput
+              target={target}
+              onTargetChange={setTarget}
+              onPasteSequence={handlePasteSequence}
+              onFileChange={handleFileChange}
+            />
+
+            {/* 4. Purpose Selector */}
+            <PurposeSelector
+              purpose={purpose}
+              onPurposeChange={setPurpose}
+            />
+
+            {/* 3. Nuclease Selector */}
+            {/* <NucleaseSelector
+              nuclease={nuclease}
+              onNucleaseChange={setNuclease}
+            /> */}
+
+
+            {/* 5. Advanced Options */}
+            <AdvancedOptions
+              showAdvanced={showAdvanced}
+              onToggleAdvanced={() => setShowAdvanced(!showAdvanced)}
+              pamOverride={pamOverride}
+              onPamOverrideChange={setPamOverride}
+              guideLength={guideLength}
+              onGuideLengthChange={setGuideLength}
+              maxMismatch={maxMismatch}
+              onMaxMismatchChange={setMaxMismatch}
+              offTargetSensitivity={offTargetSensitivity}
+              onOffTargetSensitivityChange={setOffTargetSensitivity}
+            />
+
+            {/* 6. Primary Action Button */}
+            <FindTargetButton
+              loading={loading}
+              disabled={!target.trim()}
+              onClick={handleFindTargets}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Results Section - Placeholder */}
+        {loading && (
           <Card>
-            <CardContent className="pt-6">
-              <div className="text-red-500">
-                Error loading data: {(error as Error).message}
+            <CardContent className="py-12">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <p className="text-muted-foreground">Analyzing sequences and finding optimal CRISPR sites...</p>
               </div>
             </CardContent>
           </Card>
-        ) : (
-          <>
-            <div className="grid gap-4">
-              {data?.data.length === 0 ? (
-                <Card>
-                  <CardContent className="pt-6">
-                    <p className="text-center text-muted-foreground">
-                      No genome data available. Add your first dataset to get started!
-                    </p>
-                  </CardContent>
-                </Card>
-              ) : (
-                data?.data.map((genome) => (
-                  <Card key={genome.id}>
-                    <CardHeader>
-                      <CardTitle>{genome.name}</CardTitle>
-                      <CardDescription>
-                        Assembly: {genome.assembly}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      {genome.description && (
-                        <p className="text-sm text-muted-foreground mb-2">
-                          {genome.description}
-                        </p>
-                      )}
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>
-                          Created: {new Date(genome.createdAt).toLocaleDateString()}
-                        </span>
-                        <span>ID: {genome.id}</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
-
-            {data && data.pagination.totalPages > 1 && (
-              <div className="mt-6">
-                <Pagination
-                  currentPage={currentPage}
-                  totalPages={data.pagination.totalPages}
-                  onPageChange={setCurrentPage}
-                />
-              </div>
-            )}
-          </>
         )}
       </div>
     </Layout>
