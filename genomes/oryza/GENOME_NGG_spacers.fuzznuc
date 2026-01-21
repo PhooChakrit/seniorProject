@@ -1,0 +1,28 @@
+########################################
+# Program: fuzznuc
+# Rundate: Wed 21 Jan 2026 21:19:05
+# Commandline: fuzznuc
+#    -sequence /data/genomes/oryza/GENOME_NGG_spacers_unique.fa
+#    -pattern N(20)NGG
+#    -outfile GENOME_NGG_spacers.fuzznuc
+# Report_format: seqtable
+# Report_file: GENOME_NGG_spacers.fuzznuc
+########################################
+
+#=======================================
+#
+#
+# Pattern_name Mismatch Pattern
+# pattern             0 N(20)NGG
+# 
+# Complement: No
+#
+#=======================================
+
+
+#---------------------------------------
+# Total_sequences: 1961158
+# Total_length: 39223160
+# Reported_sequences: 0
+# Reported_hitcount: 0
+#---------------------------------------

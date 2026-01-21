@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Upload } from 'lucide-react';
+import React from "react";
+// import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+// import { Upload } from "lucide-react";
 
 interface TargetInputProps {
   target: string;
@@ -13,14 +13,14 @@ interface TargetInputProps {
 export const TargetInput: React.FC<TargetInputProps> = ({
   target,
   onTargetChange,
-  onPasteSequence,
-  onFileChange,
+  // onPasteSequence,
+  // onFileChange,
 }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
+  // const handleUploadClick = () => {
+  //   fileInputRef.current?.click();
+  // };
 
   return (
     <div className="space-y-3">
