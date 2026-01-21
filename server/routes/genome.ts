@@ -77,4 +77,36 @@ router.post('/', authenticateToken, async (req: AuthRequest, res) => {
   }
 });
 
+// Run pipeline for a genome
+router.post('/run', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    // Expect body to contain: 
+    // - genomeFile: filename mapped in the worker volume
+    // - options: optional configuration
+    const { genomeFile, options } = req.body;
+
+    if (!genomeFile) {
+        return res.status(400).json({ error: 'genomeFile is required' });
+    }
+
+    // Import lazily or ensure connected
+    const { rabbitMQ } = await import('../lib/rabbitmq');
+    
+    // Construct job payload
+    const jobData = {
+        genome_file: genomeFile,
+        options: options || {},
+        triggeredBy: req.userId,
+        timestamp: new Date().toISOString()
+    };
+
+    await rabbitMQ.publishJob(jobData);
+
+    res.json({ message: 'Pipeline job submitted successfully', job: jobData });
+  } catch (error) {
+    console.error('Error submitting pipeline job:', error);
+    res.status(500).json({ error: 'Failed to submit job' });
+  }
+});
+
 export default router;
