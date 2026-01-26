@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
-  email       String       @unique
-  password    String
-  name        String?
-  genomeData  GenomeData[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  password   String
+  name       String?
+  genomeData GenomeData[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  searchJobs SearchJob[]
 }
 
 model GenomeData {
@@ -29,4 +30,30 @@ model GenomeData {
   user        User     @relation(fields: [userId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model SearchJob {
+  id     String @id @default(uuid())
+  jobId  String @unique
+  type   String // 'region_search' or 'gene_search'
+  status String @default("pending") // 'pending', 'processing', 'completed', 'failed'
+
+  // Search parameters (stored as JSON string)
+  species      String
+  chromosome   String?
+  fromPosition Int?
+  toPosition   Int?
+  geneId       String?
+
+  // Result (stored as JSON string)
+  result String?
+  error  String?
+
+  // Timestamps
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  updatedAt   DateTime  @updatedAt
 }

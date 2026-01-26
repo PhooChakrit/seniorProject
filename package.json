@@ -53,7 +53,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@rollup/rollup-linux-arm64-musl": "^4.55.3",
+    "@rollup/rollup-linux-arm64-musl": "^4.56.0",
     "@types/amqplib": "^0.10.8",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.6",

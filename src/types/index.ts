@@ -39,3 +39,59 @@ export interface PaginatedResponse<T> {
     totalPages: number;
   };
 }
+
+// Species and Chromosome types
+export interface Chromosome {
+  id: string;
+  label: string;
+}
+
+export interface Species {
+  name: string;
+  label: string;
+  genomeFile: string;
+  chromosomes: Chromosome[];
+}
+
+export interface SpeciesData {
+  [key: string]: Species;
+}
+
+// Search types
+export interface RegionSearchParams {
+  species: string;
+  chromosome: string;
+  fromPosition: number;
+  toPosition: number;
+}
+
+export interface GeneSearchParams {
+  species: string;
+  geneId: string;
+}
+
+export interface SearchResult {
+  jobId: string;
+  status: "pending" | "processing" | "completed" | "failed";
+  type: "region_search" | "gene_search";
+  params: RegionSearchParams | GeneSearchParams;
+  result?: {
+    sequences?: string[];
+    genes?: string[];
+    crisprTargets?: Array<{
+      sequence: string;
+      position: number;
+      strand: "+" | "-";
+      pamSequence: string;
+    }>;
+  };
+  error?: string;
+  createdAt: string;
+  completedAt?: string;
+}
+
+export interface SearchJobResponse {
+  jobId: string;
+  status: "pending" | "processing" | "completed" | "failed";
+  message: string;
+}

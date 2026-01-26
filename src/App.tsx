@@ -1,13 +1,14 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { AuthProvider } from './contexts/AuthContext';
-import { ProtectedRoute } from './components/common/ProtectedRoute';
-import { LoginPage } from './pages/LoginPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { JBrowsePage } from './pages/JBrowsePage';
-import { DataPage } from './pages/DataPage';
-import './index.css';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import { LoginPage } from "./pages/LoginPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import { JBrowsePage } from "./pages/JBrowsePage";
+import { DataPage } from "./pages/DataPage";
+import { SearchPage } from "./pages/SearchPage";
+import "./index.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +47,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DataPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <ProtectedRoute>
+                  <SearchPage />
                 </ProtectedRoute>
               }
             />
