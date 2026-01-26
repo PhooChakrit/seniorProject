@@ -94,4 +94,15 @@ export interface SearchJobResponse {
   jobId: string;
   status: "pending" | "processing" | "completed" | "failed";
   message: string;
+  // For direct responses (Gene Search)
+  gene?: {
+    id: string;
+    symbol?: string;
+    chromosome: string;
+    start: number;
+    end: number;
+    strand: string;
+    description?: string;
+  };
+  spacers?: any[]; // Keep any for flexibility, or define Spacer type
 }

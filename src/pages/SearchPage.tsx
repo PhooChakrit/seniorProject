@@ -2,14 +2,39 @@ import React, { useState } from "react";
 import { Layout } from "@/components/layout/Layout";
 import { SearchForm } from "@/components/crispr";
 import { JobStatusList } from "@/components/crispr/JobStatusList";
+import { JobResultModal } from "@/components/crispr/JobResultModal";
 
 export const SearchPage: React.FC = () => {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const handleSearchSubmit = (jobId: string, mode: "region" | "gene") => {
-    console.log("Search job submitted:", jobId, "Mode:", mode);
+  const handleSearchSubmit = (
+    jobId: string,
+    mode: "region" | "gene",
+    status?: string,
+  ) => {
+    console.log(
+      "Search job submitted:",
+      jobId,
+      "Mode:",
+      mode,
+      "Status:",
+      status,
+    );
     // Trigger refresh of job list
     setRefreshKey((prev) => prev + 1);
+
+    // If instant complete (Gene Search found in DB), open modal immediately
+    if (status === "completed") {
+      setSelectedJobId(jobId);
+      setModalOpen(true);
+    }
+  };
+
+  const handleViewResult = (jobId: string) => {
+    setSelectedJobId(jobId);
+    setModalOpen(true);
   };
 
   return (
@@ -27,10 +52,11 @@ export const SearchPage: React.FC = () => {
         <SearchForm onSearchSubmit={handleSearchSubmit} />
 
         {/* Job Status List */}
-        <JobStatusList
+        {/* <JobStatusList
           key={refreshKey}
           onRefresh={() => setRefreshKey((prev) => prev + 1)}
-        />
+          onViewResult={handleViewResult}
+        /> */}
 
         {/* Instructions */}
         <div className="p-4 bg-muted rounded-lg">
@@ -54,6 +80,12 @@ export const SearchPage: React.FC = () => {
           </ul>
         </div>
       </div>
+
+      <JobResultModal
+        jobId={selectedJobId}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+      />
     </Layout>
   );
 };
