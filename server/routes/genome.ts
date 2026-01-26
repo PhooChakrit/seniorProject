@@ -265,11 +265,10 @@ router.post('/search/region', authenticateToken, async (req: AuthRequest, res) =
   }
 });
 
-// Search by gene ID
+// Search by gene ID (Direct Query)
 router.post('/search/gene', authenticateToken, async (req: AuthRequest, res) => {
   try {
     const { species, geneId } = req.body;
-    const userId = req.userId!;
 
     if (!species || !geneId) {
       return res.status(400).json({ 
@@ -282,40 +281,48 @@ router.post('/search/gene', authenticateToken, async (req: AuthRequest, res) => 
       return res.status(400).json({ error: 'geneId cannot be empty' });
     }
 
-    const jobId = generateJobId();
-
-    await prisma.searchJob.create({
-      data: {
-        jobId,
-        type: 'gene_search',
-        status: 'pending',
-        species,
-        geneId: trimmedGeneId,
-        userId,
-      }
+    // 1. Look up Gene in Database
+    const gene = await prisma.gene.findFirst({
+        where: {
+            species,
+            geneId: trimmedGeneId // Exact match for now
+        }
     });
 
-    const { rabbitMQ } = await import('../lib/rabbitmq');
-    
-    const jobData = {
-      type: 'gene_search',
-      jobId,
-      species,
-      geneId: trimmedGeneId,
-      triggeredBy: userId,
-      timestamp: new Date().toISOString()
-    };
+    if (!gene) {
+        return res.status(404).json({ 
+            error: `Gene ID '${trimmedGeneId}' not found in database. Please verify the ID or try Region Search.` 
+        });
+    }
 
-    await rabbitMQ.publishJob(jobData);
-
-    res.json({ 
-      jobId, 
-      status: 'pending',
-      message: 'Gene search job submitted successfully' 
+    // 2. Query Spacers in that region
+    const spacers = await prisma.spacer.findMany({
+        where: {
+            species,
+            chromosome: gene.chromosome,
+            startPos: { gte: gene.startPos },
+            endPos: { lte: gene.endPos }
+        },
+        take: 500 // Limit for safety
     });
+
+    // 3. Return result directly (No Job created)
+    res.json({
+        gene: {
+            id: gene.geneId,
+            symbol: gene.symbol,
+            chromosome: gene.chromosome,
+            start: gene.startPos,
+            end: gene.endPos,
+            strand: gene.strand,
+            description: gene.description
+        },
+        spacers
+    });
+
   } catch (error) {
-    console.error('Error submitting gene search job:', error);
-    res.status(500).json({ error: 'Failed to submit search job' });
+    console.error('Error in gene search:', error);
+    res.status(500).json({ error: 'Failed to perform gene search' });
   }
 });
 

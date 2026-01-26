@@ -22,7 +22,7 @@ import { MapPin, Search, Dna, Table } from "lucide-react";
 type SearchMode = "region" | "gene";
 
 interface SearchFormProps {
-  onSearchSubmit?: (jobId: string, mode: SearchMode) => void;
+  onSearchSubmit?: (jobId: string, mode: SearchMode, status?: string) => void;
 }
 
 export const SearchForm: React.FC<SearchFormProps> = ({ onSearchSubmit }) => {
@@ -126,18 +126,29 @@ export const SearchForm: React.FC<SearchFormProps> = ({ onSearchSubmit }) => {
     setSuccessMessage(null);
 
     try {
+      // Direct query now (no job creation)
       const response = await searchApi.searchByGene({
         species: selectedSpecies,
         geneId: geneId.trim(),
       });
 
-      setSuccessMessage(
-        `Job submitted successfully! Job ID: ${response.jobId}`,
-      );
-      onSearchSubmit?.(response.jobId, "gene");
+      // Response contains { gene, spacers } directly
+      // Map to Search Params format and open modal
+      if (response && response.gene) {
+        setSearchParams({
+          species: selectedSpecies,
+          chromosome: response.gene.chromosome,
+          from: response.gene.start,
+          to: response.gene.end,
+        });
+        setShowSpacersModal(true);
+        setSuccessMessage(
+          `Found gene ${response.gene.symbol || response.gene.id} at ${response.gene.chromosome}:${response.gene.start}-${response.gene.end}`,
+        );
+      }
     } catch (err: unknown) {
       const errorMessage =
-        err instanceof Error ? err.message : "Failed to submit search";
+        err instanceof Error ? err.message : "Failed to perform search";
       setError(errorMessage);
     } finally {
       setLoading(false);

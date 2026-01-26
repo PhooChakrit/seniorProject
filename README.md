@@ -45,19 +45,18 @@ CRISPR-PLANT Genome Browser is a senior project application that provides:
 - Zoom, pan, and navigate genomic regions
 - Track customization and configuration
 
-### 🔍 Genome Search (NEW!)
+### 🔍 Genome Search (Fast & Hybrid)
 
-- **Search by Region**: ค้นหาด้วย species + chromosome + start/stop position
-- **Search by Gene ID**: ค้นหาด้วย species + gene ID หรือ gene symbol
-- รองรับ species: Oryza sativa, Arabidopsis thaliana
-- Async job processing ผ่าน RabbitMQ
+- **Instant Search**: ค้นหา Spacers จากฐานข้อมูล Pre-computed (PostgreSQL) ได้ทันที
+- **Search by Region**: ระบุ Species, Chromosome และช่วงตำแหน่ง (Start-End)
+- **Search by Gene**: ค้นหาด้วย Gene ID (รองรับ Oryza sativa)
+- **Job Result Viewer**: ดูผลลัพธ์ผ่าน Modal, Copy JSON หรือ Download ไฟล์ได้ทันที
 
-### 🎯 CRISPR Target Design
+### ⚡ Async Pipeline (Legacy & Custom)
 
-- PAM sequence detection (NGG pattern)
-- Spacer extraction and filtering
-- VSEARCH-based clustering and deduplication
-- Asynchronous job processing
+- ระบบสำรองสำหรับงานที่ไม่มีใน Database
+- ส่งงานเข้า RabbitMQ เพื่อประมวลผลด้วย Python Worker
+- PAM detection & Spacer extraction แบบ Real-time
 
 ### 👤 User Management
 
@@ -580,8 +579,44 @@ model User {
   password    String
   name        String?
   genomeData  GenomeData[]
+  searchJobs  SearchJob[]  // Linked jobs
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
+}
+
+model SearchJob {
+  id           String    @id @default(uuid())
+  jobId        String    @unique
+  type         String    // 'region_search' or 'gene_search'
+  status       String    @default("pending")
+  species      String
+  chromosome   String?
+  fromPosition Int?
+  toPosition   Int?
+  geneId       String?
+  result       String?   // JSON Result
+  error        String?
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Spacer {
+  id          Int      @id @default(autoincrement())
+  species     String
+  chromosome  String
+  startPos    Int
+  endPos      Int
+  strand      String
+  spacerSeq   String
+  pam         String
+  location    String?
+  minMM_GG    String?
+  spacerClass String?
+  createdAt   DateTime @default(now())
+
+  @@index([species, chromosome, startPos])
 }
 
 model GenomeData {
@@ -725,6 +760,73 @@ docker compose restart frontend
 
 ---
 
+---
+
+## 💾 Data Management Scripts
+
+To populate the database with pre-computed spacers (for instant search), use the included `scripts/import_spacers.ts`.
+
+### 1. **Generate Sample Data** (For Testing)
+
+Generates random spacers for testing without needing real data files.
+
+```bash
+# Generate 1000 sample spacers for Oryza sativa
+npx ts-node scripts/import_spacers.ts sample 1000 oryza_sativa
+```
+
+### 2. **Import from TSV** (Production)
+
+Import real CRISPR-PLANT output files (TSV format).
+
+```bash
+# Import spacers from a TSV file
+npx ts-node scripts/import_spacers.ts import ./path/to/spacers.tsv oryza_sativa
+```
+
+**TSV Format Requirements:**
+
+- Must have headers
+- Required columns: `SeqID` (e.g. Chr1:100-120), `Spacer Seq`, `PAM`
+
+### 3. **Manage Data**
+
+```bash
+# Check total spacer count
+npx ts-node scripts/import_spacers.ts count
+
+# Clear all spacers
+npx ts-node scripts/import_spacers.ts clear
+
+# Clear spacers for specific species
+npx ts-node scripts/import_spacers.ts clear oryza_sativa
+```
+
+---
+
+## 🧬 Gene Data Management
+
+To support **Search by Gene ID**, you need to populate the `Gene` table.
+
+### 1. **Generate Sample Genes** (For Testing)
+
+```bash
+# Generate 100 sample genes (IDs like Os01g00100)
+npx tsx scripts/import_genes.ts sample 100
+```
+
+### 2. **Manage Genes**
+
+```bash
+# List sample genes
+npx tsx scripts/import_genes.ts list
+
+# Clear all genes
+npx tsx scripts/import_genes.ts clear
+```
+
+---
+
 ## 📄 License
 
 This project is part of a senior project at [University Name].
@@ -734,3 +836,8 @@ This project is part of a senior project at [University Name].
 ## 👨‍💻 Author
 
 - **Phoo Chakrit** - Senior Project 2026
+
+
+Os04g00100
+Os09g00200
+Os09g00300

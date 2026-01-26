@@ -77,3 +77,20 @@ model Spacer {
   @@index([species, chromosome, startPos])
   @@index([species, chromosome, endPos])
 }
+
+// Gene annotations for Search by Gene ID
+model Gene {
+  id          Int      @id @default(autoincrement())
+  species     String
+  geneId      String // e.g., "Os01g01010"
+  symbol      String? // e.g., "Actin1"
+  chromosome  String
+  startPos    Int
+  endPos      Int
+  strand      String
+  description String?
+  createdAt   DateTime @default(now())
+
+  @@unique([species, geneId])
+  @@index([species, symbol])
+}

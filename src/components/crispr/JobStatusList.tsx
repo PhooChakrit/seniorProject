@@ -10,10 +10,10 @@ import {
   Loader2,
   Eye,
 } from "lucide-react";
-import { JobResultModal } from "./JobResultModal";
 
 interface JobStatusListProps {
   onRefresh?: () => void;
+  onViewResult?: (jobId: string) => void;
 }
 
 const StatusIcon: React.FC<{ status: string }> = ({ status }) => {
@@ -49,13 +49,14 @@ const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   );
 };
 
-export const JobStatusList: React.FC<JobStatusListProps> = ({ onRefresh }) => {
+export const JobStatusList: React.FC<JobStatusListProps> = ({
+  onRefresh,
+  onViewResult,
+}) => {
   const [jobs, setJobs] = useState<JobListItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchJobs = async () => {
     try {
@@ -92,11 +93,6 @@ export const JobStatusList: React.FC<JobStatusListProps> = ({ onRefresh }) => {
     setLoading(true);
     fetchJobs();
     onRefresh?.();
-  };
-
-  const handleViewResult = (jobId: string) => {
-    setSelectedJobId(jobId);
-    setModalOpen(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -173,7 +169,7 @@ export const JobStatusList: React.FC<JobStatusListProps> = ({ onRefresh }) => {
               <div
                 key={job.id}
                 className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors cursor-pointer"
-                onClick={() => handleViewResult(job.jobId)}
+                onClick={() => onViewResult?.(job.jobId)}
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -204,7 +200,7 @@ export const JobStatusList: React.FC<JobStatusListProps> = ({ onRefresh }) => {
                     size="sm"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleViewResult(job.jobId);
+                      onViewResult?.(job.jobId);
                     }}
                     title="View Result"
                   >
@@ -216,12 +212,6 @@ export const JobStatusList: React.FC<JobStatusListProps> = ({ onRefresh }) => {
           </div>
         )}
       </CardContent>
-
-      <JobResultModal
-        jobId={selectedJobId}
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-      />
     </Card>
   );
 };
