@@ -9,4 +9,5 @@ export { ChromosomeSelector } from './ChromosomeSelector';
 export { PositionInput } from './PositionInput';
 export { GeneIdInput } from './GeneIdInput';
 export { JobStatusList } from './JobStatusList';
+export { SpacersTableModal } from './SpacersTableModal';
 
