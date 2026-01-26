@@ -57,3 +57,23 @@ model SearchJob {
   completedAt DateTime?
   updatedAt   DateTime  @updatedAt
 }
+
+// Pre-computed spacers from CRISPR-PLANT v2 pipeline
+model Spacer {
+  id          Int      @id @default(autoincrement())
+  species     String // e.g., "oryza_sativa"
+  chromosome  String // e.g., "1", "2", etc.
+  startPos    Int // Start position in genome
+  endPos      Int // End position in genome
+  strand      String // "+" or "-"
+  spacerSeq   String // 20nt gRNA spacer sequence
+  pam         String // PAM + flanking sequence
+  location    String? // "exon", "intron", "5'utr", "3'utr", etc.
+  minMM_GG    String? // Minimal mismatch to NGG off-targets
+  minMM_AG    String? // Minimal mismatch to NAG off-targets
+  spacerClass String? // "A0", "B0", "B1", "B2", "A1", "A2", etc.
+  createdAt   DateTime @default(now())
+
+  @@index([species, chromosome, startPos])
+  @@index([species, chromosome, endPos])
+}

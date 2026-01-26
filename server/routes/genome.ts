@@ -14,6 +14,99 @@ function generateJobId(): string {
 // SEARCH JOB ENDPOINTS (MUST BE BEFORE /:id)
 // ============================================
 
+// Query pre-computed spacers by region
+router.get('/spacers', async (req, res) => {
+  try {
+    const species = (req.query.species as string) || 'oryza_sativa';
+    const chromosome = req.query.chromosome as string;
+    const from = parseInt(req.query.from as string) || 0;
+    const to = parseInt(req.query.to as string) || 0;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 500);
+    const skip = (page - 1) * limit;
+
+    if (!chromosome) {
+      return res.status(400).json({ error: 'chromosome is required' });
+    }
+
+    if (from >= to) {
+      return res.status(400).json({ error: 'from must be less than to' });
+    }
+
+    // Query spacers within the region
+    const whereClause = {
+      species,
+      chromosome: String(chromosome),
+      startPos: { gte: from },
+      endPos: { lte: to },
+    };
+
+    const [spacers, total] = await Promise.all([
+      prisma.spacer.findMany({
+        where: whereClause,
+        skip,
+        take: limit,
+        orderBy: { startPos: 'asc' },
+      }),
+      prisma.spacer.count({ where: whereClause }),
+    ]);
+
+    res.json({
+      spacers,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+      query: {
+        species,
+        chromosome,
+        from,
+        to,
+      },
+    });
+  } catch (error) {
+    console.error('Error fetching spacers:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get available species and chromosomes
+router.get('/spacers/metadata', async (req, res) => {
+  try {
+    // Get distinct species
+    const speciesResult = await prisma.spacer.findMany({
+      select: { species: true },
+      distinct: ['species'],
+    });
+
+    // Get distinct chromosomes per species
+    const chromosomesResult = await prisma.spacer.findMany({
+      select: { species: true, chromosome: true },
+      distinct: ['species', 'chromosome'],
+      orderBy: { chromosome: 'asc' },
+    });
+
+    // Group chromosomes by species
+    const metadata: Record<string, string[]> = {};
+    chromosomesResult.forEach((row) => {
+      if (!metadata[row.species]) {
+        metadata[row.species] = [];
+      }
+      metadata[row.species].push(row.chromosome);
+    });
+
+    res.json({
+      species: speciesResult.map((s) => s.species),
+      chromosomesBySpecies: metadata,
+    });
+  } catch (error) {
+    console.error('Error fetching spacer metadata:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get user's job list
 router.get('/jobs', authenticateToken, async (req: AuthRequest, res) => {
   try {

@@ -41,13 +41,13 @@ export const PurposeSelector: React.FC<PurposeSelectorProps> = ({
         >
           Knock-in
         </Button>
-        <Button
+        {/* <Button
           variant={purpose === 'prime-edit' ? 'default' : 'outline'}
           onClick={() => onPurposeChange('prime-edit')}
           className="px-8"
         >
           Prime-edit
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

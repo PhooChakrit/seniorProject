@@ -13,10 +13,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChromosomeSelector } from "./ChromosomeSelector";
 import { PositionInput } from "./PositionInput";
 import { GeneIdInput } from "./GeneIdInput";
+import { SpacersTableModal } from "./SpacersTableModal";
 import { searchApi } from "@/api/search";
 import { SpeciesData } from "@/types";
 import speciesData from "@/data/species.json";
-import { MapPin, Search, Dna } from "lucide-react";
+import { MapPin, Search, Dna, Table } from "lucide-react";
 
 type SearchMode = "region" | "gene";
 
@@ -43,6 +44,15 @@ export const SearchForm: React.FC<SearchFormProps> = ({ onSearchSubmit }) => {
   // Gene search state
   const [geneId, setGeneId] = useState("");
   const [geneError, setGeneError] = useState<string | undefined>();
+
+  // Modal state for spacers table
+  const [showSpacersModal, setShowSpacersModal] = useState(false);
+  const [searchParams, setSearchParams] = useState({
+    species: "",
+    chromosome: "",
+    from: 0,
+    to: 0,
+  });
 
   // Get chromosomes for selected species
   const chromosomes = useMemo(() => {
@@ -90,33 +100,21 @@ export const SearchForm: React.FC<SearchFormProps> = ({ onSearchSubmit }) => {
     return true;
   };
 
-  // Handle region search
-  const handleRegionSearch = async () => {
+  // Handle instant region search (query from pre-computed DB)
+  const handleInstantRegionSearch = () => {
     if (!validateRegionSearch()) return;
 
-    setLoading(true);
     setError(null);
     setSuccessMessage(null);
 
-    try {
-      const response = await searchApi.searchByRegion({
-        species: selectedSpecies,
-        chromosome,
-        fromPosition: parseInt(fromPosition),
-        toPosition: parseInt(toPosition),
-      });
-
-      setSuccessMessage(
-        `Job submitted successfully! Job ID: ${response.jobId}`,
-      );
-      onSearchSubmit?.(response.jobId, "region");
-    } catch (err: unknown) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to submit search";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+    // Open modal with search params
+    setSearchParams({
+      species: selectedSpecies,
+      chromosome,
+      from: parseInt(fromPosition),
+      to: parseInt(toPosition),
+    });
+    setShowSpacersModal(true);
   };
 
   // Handle gene search
@@ -147,126 +145,132 @@ export const SearchForm: React.FC<SearchFormProps> = ({ onSearchSubmit }) => {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-lg">
-      <CardHeader className="space-y-1 pb-4">
-        <CardTitle className="text-xl flex items-center gap-2">
-          <Search className="h-5 w-5" />
-          Genome Search
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Search by genomic region or gene ID
-        </p>
-      </CardHeader>
+    <>
+      <Card className="w-full max-w-2xl mx-auto shadow-lg">
+        <CardHeader className="space-y-1 pb-4">
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Search className="h-5 w-5" />
+            CRISPR Spacer Search
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Search pre-computed gRNA spacers by genomic region
+          </p>
+        </CardHeader>
 
-      <CardContent className="space-y-6">
-        {/* Species Selector - Common for both modes */}
-        <div className="space-y-2">
-          <Label htmlFor="species" className="text-sm font-medium">
-            Species
-          </Label>
-          <Select value={selectedSpecies} onValueChange={handleSpeciesChange}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select species" />
-            </SelectTrigger>
-            <SelectContent>
-              {speciesKeys.map((key) => (
-                <SelectItem key={key} value={key}>
-                  {species[key].label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* Tabs for search modes */}
-        <Tabs defaultValue="region" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="region" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              Search by Region
-            </TabsTrigger>
-            <TabsTrigger value="gene" className="flex items-center gap-2">
-              <Dna className="h-4 w-4" />
-              Search by Gene ID
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Region Search Tab */}
-          <TabsContent value="region" className="space-y-4 pt-4">
-            <ChromosomeSelector
-              chromosome={chromosome}
-              chromosomes={chromosomes}
-              onChromosomeChange={setChromosome}
-              disabled={!selectedSpecies}
-            />
-
-            <PositionInput
-              fromPosition={fromPosition}
-              toPosition={toPosition}
-              onFromChange={setFromPosition}
-              onToChange={setToPosition}
-              error={positionError}
-            />
-
-            <Button
-              onClick={handleRegionSearch}
-              disabled={loading || !selectedSpecies}
-              className="w-full"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Searching...
-                </>
-              ) : (
-                <>
-                  <Search className="h-4 w-4 mr-2" />
-                  Search by region
-                </>
-              )}
-            </Button>
-          </TabsContent>
-
-          {/* Gene Search Tab */}
-          <TabsContent value="gene" className="space-y-4 pt-4">
-            <GeneIdInput
-              geneId={geneId}
-              onGeneIdChange={setGeneId}
-              error={geneError}
-            />
-
-            <Button
-              onClick={handleGeneSearch}
-              disabled={loading || !selectedSpecies}
-              className="w-full"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
-                  Searching...
-                </>
-              ) : (
-                <>
-                  <Search className="h-4 w-4 mr-2" />
-                  Search by gene ID
-                </>
-              )}
-            </Button>
-          </TabsContent>
-        </Tabs>
-
-        {/* Error/Success Messages */}
-        {error && (
-          <div className="p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
-            {error}
+        <CardContent className="space-y-6">
+          {/* Species Selector - Common for both modes */}
+          <div className="space-y-2">
+            <Label htmlFor="species" className="text-sm font-medium">
+              Species
+            </Label>
+            <Select value={selectedSpecies} onValueChange={handleSpeciesChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select species" />
+              </SelectTrigger>
+              <SelectContent>
+                {speciesKeys.map((key) => (
+                  <SelectItem key={key} value={key}>
+                    {species[key].label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
-        )}
-        {successMessage && (
-          <div className="p-3 rounded-md bg-green-50 border border-green-200 text-green-700 text-sm">
-            {successMessage}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+
+          {/* Tabs for search modes */}
+          <Tabs defaultValue="region" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="region" className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                Search by Region
+              </TabsTrigger>
+              <TabsTrigger value="gene" className="flex items-center gap-2">
+                <Dna className="h-4 w-4" />
+                Search by Gene ID
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Region Search Tab */}
+            <TabsContent value="region" className="space-y-4 pt-4">
+              <ChromosomeSelector
+                chromosome={chromosome}
+                chromosomes={chromosomes}
+                onChromosomeChange={setChromosome}
+                disabled={!selectedSpecies}
+              />
+
+              <PositionInput
+                fromPosition={fromPosition}
+                toPosition={toPosition}
+                onFromChange={setFromPosition}
+                onToChange={setToPosition}
+                error={positionError}
+              />
+
+              <div className="flex gap-2">
+                {/* Primary: Instant search from DB */}
+                <Button
+                  onClick={handleInstantRegionSearch}
+                  disabled={loading || !selectedSpecies}
+                  className="w-full"
+                >
+                  <Table className="h-4 w-4 mr-2" />
+                  Search Spacers
+                </Button>
+              </div>
+            </TabsContent>
+
+            {/* Gene Search Tab */}
+            <TabsContent value="gene" className="space-y-4 pt-4">
+              <GeneIdInput
+                geneId={geneId}
+                onGeneIdChange={setGeneId}
+                error={geneError}
+              />
+
+              <Button
+                onClick={handleGeneSearch}
+                disabled={loading || !selectedSpecies}
+                className="w-full"
+              >
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                    Searching...
+                  </>
+                ) : (
+                  <>
+                    <Search className="h-4 w-4 mr-2" />
+                    Search by gene ID
+                  </>
+                )}
+              </Button>
+            </TabsContent>
+          </Tabs>
+
+          {/* Error/Success Messages */}
+          {error && (
+            <div className="p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
+              {error}
+            </div>
+          )}
+          {successMessage && (
+            <div className="p-3 rounded-md bg-green-50 border border-green-200 text-green-700 text-sm">
+              {successMessage}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Spacers Table Modal */}
+      <SpacersTableModal
+        open={showSpacersModal}
+        onOpenChange={setShowSpacersModal}
+        species={searchParams.species}
+        chromosome={searchParams.chromosome}
+        fromPosition={searchParams.from}
+        toPosition={searchParams.to}
+      />
+    </>
   );
 };

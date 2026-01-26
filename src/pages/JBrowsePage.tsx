@@ -208,8 +208,8 @@ export const JBrowsePage: React.FC = () => {
                 <SelectValue placeholder="Select a rice variety" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="oryza">ขาวดอกมะลิ 105 (Khao Dawk Mali 105)</SelectItem>
-                <SelectItem value="human">สุพรรณบุรี 1 (Suphan Buri 1)</SelectItem>
+                <SelectItem value="oryza">oryza</SelectItem>
+                <SelectItem value="human">human</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -218,7 +218,7 @@ export const JBrowsePage: React.FC = () => {
         <Card>
           <CardHeader>
             <CardTitle>
-              {useOryza ? 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)' : 'สุพรรณบุรี 1 (Suphan Buri 1)'}
+              {useOryza ? 'oryza' : 'human'}
             </CardTitle>
             <CardDescription>
               {useOryza
