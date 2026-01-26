@@ -45,6 +45,13 @@ CRISPR-PLANT Genome Browser is a senior project application that provides:
 - Zoom, pan, and navigate genomic regions
 - Track customization and configuration
 
+### 🔍 Genome Search (NEW!)
+
+- **Search by Region**: ค้นหาด้วย species + chromosome + start/stop position
+- **Search by Gene ID**: ค้นหาด้วย species + gene ID หรือ gene symbol
+- รองรับ species: Oryza sativa, Arabidopsis thaliana
+- Async job processing ผ่าน RabbitMQ
+
 ### 🎯 CRISPR Target Design
 
 - PAM sequence detection (NGG pattern)
@@ -192,45 +199,175 @@ For local development without Docker:
 
 ## 🚀 Quick Start
 
-### Option 1: Docker (Recommended)
+### วิธีที่ 1: Docker (แนะนำ)
+
+ใช้วิธีนี้หากต้องการรันทุก services พร้อมกัน:
 
 ```bash
-# 1. Clone the repository
+# 1. Clone repository
 git clone <repository-url>
 cd seniorProject
 
-# 2. Start all services
+# 2. สร้าง .env file (ถ้ายังไม่มี)
+cat > .env << EOF
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=seniorproject
+JWT_SECRET=your-secret-key-change-in-production
+EOF
+
+# 3. Start ทุก services ด้วย Docker Compose
 docker compose up -d
 
-# 3. Wait for services to be ready (about 1-2 minutes first time)
+# 4. ดู logs เพื่อเช็คสถานะ (รอประมาณ 1-2 นาทีครั้งแรก)
 docker compose logs -f
 
-# 4. Access the application
-# Frontend: http://localhost:5173
-# API:      http://localhost:3000
-# RabbitMQ: http://localhost:15672 (guest/guest)
+# 5. เข้าใช้งาน
+# 🌐 Frontend: http://localhost:5173
+# 🔌 API:      http://localhost:3000/api
+# 🐰 RabbitMQ: http://localhost:15672 (guest/guest)
 ```
 
-### Option 2: Local Development
+#### Docker Commands ที่ใช้บ่อย
 
 ```bash
-# 1. Install dependencies
-npm install
+# ดู status ของ containers
+docker compose ps
 
-# 2. Set up environment
-cp .env.example .env
-# Edit .env with your database credentials
+# ดู logs ของ service ใดๆ
+docker compose logs -f api      # API logs
+docker compose logs -f frontend # Frontend logs
+docker compose logs -f worker   # Worker logs
 
-# 3. Start PostgreSQL and RabbitMQ (via Docker)
+# Restart service
+docker compose restart api
+
+# Stop ทั้งหมด
+docker compose down
+
+# Stop พร้อมลบ data (database จะถูก reset)
+docker compose down -v
+
+# Rebuild และ start ใหม่
+docker compose up -d --build
+```
+
+---
+
+### วิธีที่ 2: Local Development (ไม่ใช้ Docker สำหรับ app)
+
+ใช้วิธีนี้หากต้องการ develop โดยใช้ hot-reload:
+
+```bash
+# 1. ติดตั้ง dependencies
+npm install --legacy-peer-deps --force
+
+# 2. สร้าง .env file
+cat > .env << EOF
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/seniorproject
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=seniorproject
+JWT_SECRET=your-secret-key-change-in-production
+RABBITMQ_URL=amqp://guest:guest@localhost:5672/%2F
+EOF
+
+# 3. Start PostgreSQL และ RabbitMQ ด้วย Docker
 docker compose up -d postgres rabbitmq
 
-# 4. Run database migrations
+# 4. รอให้ database พร้อม แล้ว run migrations
+npm run wait-for-db
 npx prisma migrate dev
 
-# 5. Start development servers
+# 5. Start development servers (frontend + backend)
 npm run dev
-# This runs both frontend (port 5173) and backend (port 3000)
+
+# 📍 Frontend จะรันที่: http://localhost:5173
+# 📍 API จะรันที่: http://localhost:3000
 ```
+
+#### แยก run frontend และ backend
+
+```bash
+# Terminal 1: Run backend only
+npm run dev:server
+
+# Terminal 2: Run frontend only
+npm run dev:client
+```
+
+---
+
+### วิธีที่ 3: Production Deployment (Docker ทั้งหมด)
+
+ใช้วิธีนี้สำหรับ deploy บน server (ทุกอย่างอยู่ใน Docker):
+
+#### Step 1: Build Images (บนเครื่อง dev)
+
+```bash
+# Build ทุก images
+docker compose -f docker-compose.prod.yml build
+
+# หรือ build แยก
+docker build -f Dockerfile.api -t seniorproject-api:latest .
+docker build -f Dockerfile.frontend -t seniorproject-frontend:latest .
+docker build -f worker/Dockerfile -t seniorproject-worker:latest ./worker
+```
+
+#### Step 2: Push to Docker Hub (Optional)
+
+```bash
+# Tag และ push
+docker tag seniorproject-api:latest yourusername/seniorproject-api:latest
+docker push yourusername/seniorproject-api:latest
+
+docker tag seniorproject-frontend:latest yourusername/seniorproject-frontend:latest
+docker push yourusername/seniorproject-frontend:latest
+```
+
+#### Step 3: Deploy บน Server
+
+```bash
+# Option A: ถ้า push ไป Docker Hub แล้ว
+docker compose -f docker-compose.prod.yml pull
+docker compose -f docker-compose.prod.yml up -d
+
+# Option B: Copy images เป็น tar file
+# บนเครื่อง dev:
+docker save seniorproject-api seniorproject-frontend seniorproject-worker | gzip > images.tar.gz
+scp images.tar.gz user@server:/path/
+
+# บน server:
+docker load < images.tar.gz
+docker compose -f docker-compose.prod.yml up -d
+```
+
+#### Resource Usage (Production)
+
+| Service  | CPU          | RAM         |
+| -------- | ------------ | ----------- |
+| postgres | 0.3 cores    | 256 MB      |
+| rabbitmq | 0.3 cores    | 384 MB      |
+| api      | 0.5 cores    | 512 MB      |
+| frontend | 0.5 cores    | 512 MB      |
+| worker   | 0.4 cores    | 512 MB      |
+| **รวม**  | **~2 cores** | **~2.2 GB** |
+
+✅ ใช้งานได้บน server 2 cores / 4GB RAM
+
+#### Production Commands Cheatsheet
+
+| ทำอะไร               | Command                                                   |
+| -------------------- | --------------------------------------------------------- |
+| Build (ครั้งแรก)     | `docker compose -f docker-compose.prod.yml build`         |
+| Start                | `docker compose -f docker-compose.prod.yml up -d`         |
+| Stop                 | `docker compose -f docker-compose.prod.yml down`          |
+| Restart              | `docker compose -f docker-compose.prod.yml restart`       |
+| ดู Logs              | `docker compose -f docker-compose.prod.yml logs -f`       |
+| ดู Status            | `docker compose -f docker-compose.prod.yml ps`            |
+| Rebuild หลังแก้ code | `docker compose -f docker-compose.prod.yml up -d --build` |
+
+> **หมายเหตุ:** ถ้าแก้ไข code แล้วต้อง rebuild ด้วย `--build` ไม่ใช่แค่ restart เพราะ code อยู่ใน image
 
 ---
 
@@ -380,6 +517,50 @@ curl -X POST http://localhost:3000/api/auth/login \
 | `POST`   | `/api/genome`     | Create new genome record |
 | `GET`    | `/api/genome/:id` | Get genome by ID         |
 | `DELETE` | `/api/genome/:id` | Delete genome record     |
+
+### Genome Search (NEW!)
+
+| Method | Endpoint                        | Description              |
+| ------ | ------------------------------- | ------------------------ |
+| `POST` | `/api/genome/search/region`     | Search by genomic region |
+| `POST` | `/api/genome/search/gene`       | Search by gene ID/symbol |
+| `GET`  | `/api/genome/search/status/:id` | Get job status           |
+
+#### Search by Region
+
+```bash
+curl -X POST http://localhost:3000/api/genome/search/region \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-token>" \
+  -d '{
+    "species": "oryza_sativa",
+    "chromosome": "Chr01",
+    "fromPosition": 10000,
+    "toPosition": 20000
+  }'
+```
+
+**Response:**
+
+```json
+{
+  "jobId": "job_1706234567890_abc123",
+  "status": "pending",
+  "message": "Region search job submitted successfully"
+}
+```
+
+#### Search by Gene ID
+
+```bash
+curl -X POST http://localhost:3000/api/genome/search/gene \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-token>" \
+  -d '{
+    "species": "arabidopsis_thaliana",
+    "geneId": "AT1G01010"
+  }'
+```
 
 ### Health Check
 

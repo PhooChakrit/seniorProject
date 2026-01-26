@@ -1,0 +1,55 @@
+# ===========================================
+# Dockerfile for Frontend (Production)
+# ===========================================
+# Multi-stage build for smaller image size
+
+# Stage 1: Build
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install --legacy-peer-deps
+
+# Copy source code
+COPY src ./src/
+COPY public ./public/
+COPY index.html ./
+COPY tsconfig*.json ./
+COPY vite.config.ts ./
+COPY postcss.config.js ./
+COPY tailwind.config.js ./
+COPY components.json ./
+
+# Build for production (optional - for static serving)
+# RUN npm run build
+
+# Stage 2: Development Server
+FROM node:20-alpine AS development
+
+WORKDIR /app
+
+# Copy from builder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/src ./src
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/index.html ./
+COPY --from=builder /app/tsconfig*.json ./
+COPY --from=builder /app/vite.config.ts ./
+COPY --from=builder /app/postcss.config.js ./
+COPY --from=builder /app/tailwind.config.js ./
+COPY --from=builder /app/components.json ./
+
+# Expose port
+EXPOSE 5173
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD wget --no-verbose --tries=1 --spider http://localhost:5173 || exit 1
+
+# Start development server
+CMD ["npm", "run", "dev:client"]

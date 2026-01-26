@@ -39,5 +39,7 @@ RUN chmod +x worker.py run_pipeline.sh
 RUN mkdir -p /data/genomes
 
 ENV RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
+ENV PYTHONUNBUFFERED=1
 
-CMD ["python", "worker.py"]
+CMD ["python", "-u", "worker.py"]
+
