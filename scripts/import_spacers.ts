@@ -169,12 +169,18 @@ async function importSpacersFromFASTA(filePath: string, species: string): Promis
             if (!currentId) continue;
 
             // Parse ID
-            const seqIdMatch = currentId.match(/^(?:Chr)?(\d+):(\d+)-(\d+):?(rc)?$/i);
+            // Parse ID - allows matching >Chr1:123-456 and >Chr1:123-456;size=123
+            // format: Chr1:16790515-16790534;size=262
+            const seqIdMatch = currentId.match(/^(?:Chr)?(\d+):(\d+)-(\d+)(?:[:;].*)?$/i);
+            
+            // Also handle strand if it was part of the ID before ;size or at end
+            const isRc = currentId.includes(':rc') || currentId.includes(';rc');
+            
             if (seqIdMatch) {
                  const chromosome = `Chr${seqIdMatch[1].padStart(2, '0')}`; // Normalize Chr01
                  const startPos = parseInt(seqIdMatch[2], 10);
                  const endPos = parseInt(seqIdMatch[3], 10);
-                 const strand = seqIdMatch[4] === 'rc' ? '-' : '+';
+                 const strand = isRc ? '-' : '+';
                  const spacerSeq = trimmed.toUpperCase();
 
                  // Check length (CRISPR spacers usually 20bp)

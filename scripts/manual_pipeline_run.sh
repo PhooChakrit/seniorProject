@@ -36,12 +36,16 @@ if [ ! -f "$OUTPUT_FASTA" ]; then
     exit 1
 fi
 
-# Run import script
+# Import script
 echo "Importing $OUTPUT_FASTA..."
-# Access DB via localhost since we assume this script runs on host
-# Ensure DATABASE_URL in .env points to localhost for this to work
-# Or execute this inside the 'api' container if network issues arise.
-export DATABASE_URL="postgresql://user:password@localhost:5432/seniorproject?schema=public"
+
+# Load .env if exists
+if [ -f .env ]; then
+  export $(cat .env | xargs)
+fi
+
+# Fallback to default if not set
+export DATABASE_URL="${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/seniorproject?schema=public}"
 
 npx tsx scripts/import_spacers.ts import "$OUTPUT_FASTA" "$SPECIES"
 
