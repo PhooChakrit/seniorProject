@@ -22,10 +22,10 @@ fi
 
 echo "[1/2] Running Computation (Worker Container)..."
 # Run the existing worker logic but manually via Docker
-# We mount the genomes folder to /app/genomes so the worker can access files
+# We mount the genomes folder to /data/genomes so the worker can access files
 docker-compose run --rm worker /bin/bash -c "
-    cd /app/genomes/oryza && \
-    /app/worker/run_pipeline.sh Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa
+    cd /data/genomes/oryza && \
+    /app/run_pipeline.sh Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa
 "
 
 echo "[2/2] Importing Results to Database..."
