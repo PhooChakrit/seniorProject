@@ -146,3 +146,6 @@ dist
 *.db-journal
 .DS_Store
 >>>>>>> 335d887 (init)
+
+#genomes
+.genomes/
