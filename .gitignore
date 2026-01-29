@@ -148,4 +148,7 @@ dist
 >>>>>>> 335d887 (init)
 
 #genomes
-.genomes/
+genomes/
+*.fa
+*.fai
+*.fuzznuc
