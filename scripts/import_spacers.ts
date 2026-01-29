@@ -143,6 +143,71 @@ async function generateSampleData(species: string, count: number = 100): Promise
   console.log(`Generated ${count} sample spacers!`);
 }
 
+
+
+async function importSpacersFromFASTA(filePath: string, species: string): Promise<void> {
+    console.log(`Importing spacers from FASTA ${filePath} for species ${species}...`);
+    
+    const fileStream = fs.createReadStream(filePath);
+    const rl = readline.createInterface({
+        input: fileStream,
+        crlfDelay: Infinity,
+    });
+
+    const spacers: SpacerRecord[] = [];
+    let currentId = '';
+    
+    for await (const line of rl) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+
+        if (trimmed.startsWith('>')) {
+            // Header line: >Chr01:10000-10020
+            currentId = trimmed.substring(1);
+        } else {
+            // Sequence line: ATCG...
+            if (!currentId) continue;
+
+            // Parse ID
+            const seqIdMatch = currentId.match(/^(?:Chr)?(\d+):(\d+)-(\d+):?(rc)?$/i);
+            if (seqIdMatch) {
+                 const chromosome = `Chr${seqIdMatch[1].padStart(2, '0')}`; // Normalize Chr01
+                 const startPos = parseInt(seqIdMatch[2], 10);
+                 const endPos = parseInt(seqIdMatch[3], 10);
+                 const strand = seqIdMatch[4] === 'rc' ? '-' : '+';
+                 const spacerSeq = trimmed.toUpperCase();
+
+                 // Check length (CRISPR spacers usually 20bp)
+                 if (spacerSeq.length >= 20) {
+                     spacers.push({
+                         species,
+                         chromosome,
+                         startPos,
+                         endPos,
+                         strand,
+                         spacerSeq: spacerSeq.substring(0, 20), // spacer
+                         pam: spacerSeq.length > 20 ? spacerSeq.substring(20) : 'NGG', // Mock PAM if not separate
+                         // Defaults for pipeline output (which might strictly be Sequence)
+                         spacerClass: 'Computed',
+                     });
+                 }
+            }
+            currentId = ''; // Reset
+        }
+
+        if (spacers.length >= 1000) {
+            await prisma.spacer.createMany({ data: spacers });
+            console.log(`Inserted batch...`);
+            spacers.length = 0;
+        }
+    }
+
+    if (spacers.length > 0) {
+        await prisma.spacer.createMany({ data: spacers });
+    }
+    console.log('FASTA Import complete!');
+}
+
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const command = args[0];
@@ -152,7 +217,7 @@ async function main(): Promise<void> {
     const species = args[2] || 'oryza_sativa';
 
     if (!filePath) {
-      console.error('Usage: npx ts-node scripts/import_spacers.ts import <file.tsv> [species]');
+      console.error('Usage: npx tsx scripts/import_spacers.ts import <file.tsv|file.fa> [species]');
       process.exit(1);
     }
 
@@ -161,7 +226,12 @@ async function main(): Promise<void> {
       process.exit(1);
     }
 
-    await importSpacersFromTSV(filePath, species);
+    if (filePath.endsWith('.fa') || filePath.endsWith('.fasta')) {
+        await importSpacersFromFASTA(filePath, species);
+    } else {
+        await importSpacersFromTSV(filePath, species);
+    }
+
   } else if (command === 'sample') {
     const count = parseInt(args[1], 10) || 100;
     const species = args[2] || 'oryza_sativa';
@@ -178,18 +248,19 @@ async function main(): Promise<void> {
   } else if (command === 'count') {
     const count = await prisma.spacer.count();
     console.log(`Total spacers in database: ${count}`);
-  } else {
-    console.log('Usage:');
-    console.log('  npx ts-node scripts/import_spacers.ts import <file.tsv> [species]');
-    console.log('  npx ts-node scripts/import_spacers.ts sample [count] [species]');
-    console.log('  npx ts-node scripts/import_spacers.ts clear [species]');
-    console.log('  npx ts-node scripts/import_spacers.ts count');
+
+    } else {
+      console.log('Usage:');
+      console.log('  npx tsx scripts/import_spacers.ts import <file.tsv|file.fa> [species]');
+      console.log('  npx tsx scripts/import_spacers.ts sample [count] [species]');
+      console.log('  npx tsx scripts/import_spacers.ts clear [species]');
+      console.log('  npx tsx scripts/import_spacers.ts count');
+    }
+  
+    await prisma.$disconnect();
   }
-
-  await prisma.$disconnect();
-}
-
-main().catch((error) => {
-  console.error('Error:', error);
-  process.exit(1);
-});
+  
+  main().catch((error) => {
+    console.error('Error:', error);
+    process.exit(1);
+  });

@@ -19,13 +19,10 @@ import { SpeciesData } from "@/types";
 import speciesData from "@/data/species.json";
 import { MapPin, Search, Dna, Table } from "lucide-react";
 
-type SearchMode = "region" | "gene";
+interface SearchFormProps {}
 
-interface SearchFormProps {
-  onSearchSubmit?: (jobId: string, mode: SearchMode, status?: string) => void;
-}
-
-export const SearchForm: React.FC<SearchFormProps> = ({ onSearchSubmit }) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const SearchForm: React.FC<SearchFormProps> = () => {
   const species = speciesData as SpeciesData;
   const speciesKeys = Object.keys(species);
 
