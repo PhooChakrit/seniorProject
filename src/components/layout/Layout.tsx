@@ -1,8 +1,8 @@
-import React from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { LogOut, Home, Database, Dna } from 'lucide-react';
+import React from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { LogOut, Home, Dna, FlaskConical } from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,13 +15,13 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate("/login");
   };
 
   const navItems = [
-    { to: '/dashboard', icon: Home, label: 'Dashboard' },
-    { to: '/jbrowse', icon: Dna, label: 'JBrowse' },
-    { to: '/search', icon: Database, label: 'Crispr' },
+    { to: "/dashboard", icon: Home, label: "Dashboard" },
+    { to: "/jbrowse", icon: Dna, label: "JBrowse" },
+    { to: "/analysis", icon: FlaskConical, label: "Analysis" },
   ];
 
   return (
@@ -32,7 +32,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex items-center space-x-8">
               <div>
                 <h1 className="text-2xl font-bold">Thai Rice Genome</h1>
-                <p className="text-xs text-muted-foreground">Faculty of Science, Chulalongkorn University </p>
+                <p className="text-xs text-muted-foreground">
+                  Faculty of Science, Chulalongkorn University{" "}
+                </p>
               </div>
               <nav className="flex space-x-4">
                 {navItems.map((item) => {
@@ -41,7 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                   return (
                     <Link key={item.to} to={item.to}>
                       <Button
-                        variant={isActive ? 'default' : 'ghost'}
+                        variant={isActive ? "default" : "ghost"}
                         className="flex items-center space-x-2"
                       >
                         <Icon className="h-4 w-4" />

@@ -16,6 +16,7 @@ interface SpacerRecord {
   minMM_GG?: string;
   minMM_AG?: string;
   spacerClass?: string;
+  geneId?: string;
 }
 
 async function importSpacersFromTSV(filePath: string, species: string): Promise<void> {
@@ -81,6 +82,7 @@ async function importSpacersFromTSV(filePath: string, species: string): Promise<
         minMM_AG: getField('minmm_ag', 2) || undefined,
         location: getField('location', 6) || undefined,
         spacerClass: getField('class', 7) || undefined,
+        geneId: getField('gene_id', 8) || undefined,
       };
 
       spacers.push(spacer);

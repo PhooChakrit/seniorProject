@@ -50,6 +50,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./genomes:/data/genomes
+      - ./scripts:/app/scripts
     environment:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
       - API_URL=http://host.docker.internal:3000
@@ -59,8 +60,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1.0'
-          memory: 2G
+          cpus: '6.0'
+          memory: 12G
 
 volumes:
   postgres_data:

@@ -7,7 +7,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { JBrowsePage } from "./pages/JBrowsePage";
 import { DataPage } from "./pages/DataPage";
-import { SearchPage } from "./pages/SearchPage";
+import { AnalysisPage } from "./pages/AnalysisPage";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -26,35 +26,14 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/jbrowse" element={<JBrowsePage />} />
+            <Route path="/data" element={<DataPage />} />
             <Route
-              path="/dashboard"
+              path="/analysis"
               element={
                 <ProtectedRoute>
-                  <DashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/jbrowse"
-              element={
-                <ProtectedRoute>
-                  <JBrowsePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/data"
-              element={
-                <ProtectedRoute>
-                  <DataPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/search"
-              element={
-                <ProtectedRoute>
-                  <SearchPage />
+                  <AnalysisPage />
                 </ProtectedRoute>
               }
             />

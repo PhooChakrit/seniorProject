@@ -9,6 +9,8 @@ RUN echo "deb http://archive.debian.org/debian buster main" > /etc/apt/sources.l
     wget \
     gcc \
     python-dev \
+    python3 \
+    python3-pip \
     tar \
     emboss \
     && rm -rf /var/lib/apt/lists/*
@@ -24,7 +26,10 @@ RUN wget https://github.com/torognes/vsearch/releases/download/v2.15.2/vsearch-2
 RUN pip install --no-cache-dir \
     pandas==0.24.2 \
     biopython==1.76 \
-    "pika<1.2.0"
+    "pika<1.2.0" && \
+    pip3 install --no-cache-dir \
+    biopython \
+    pandas
 
 # Clone CRISPR-PLANTv2
 WORKDIR /app
@@ -34,6 +39,11 @@ RUN git clone https://github.com/bminkenberg/CRISPR-PLANTv2.git
 COPY worker.py .
 COPY run_pipeline.sh .
 RUN chmod +x worker.py run_pipeline.sh
+
+# Copy complete pipeline script
+RUN mkdir -p /app/scripts
+COPY complete_pipeline_run.sh /app/scripts/
+RUN chmod +x /app/scripts/complete_pipeline_run.sh
 
 # Expected volume mount point
 RUN mkdir -p /data/genomes

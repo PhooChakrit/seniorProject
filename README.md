@@ -660,10 +660,53 @@ The worker service processes CRISPR target design tasks asynchronously:
   "genome_file": "oryza/genome.fasta",
   "options": {
     "PAM_PATTERN": "N(20)NGG",
-    "MIN_SEQ_LENGTH": "20"
+    "MIN_SEQ_LENGTH": "20",
+    "email": "user@example.com"
   }
 }
 ```
+
+### 📧 Email Notification System
+
+The system can automatically notify users via email when their analysis job completes.
+
+**1. Configuration (.env)**
+To enable email notifications, configure the SMTP settings:
+
+```env
+# Email Notification
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+# Leave User/Pass empty to disable
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+FROM_EMAIL=noreply@crispr-plant.local
+FROM_NAME=CRISPR-PLANT v2
+```
+
+**2. How it works**
+
+- User includes `email` in the job submission.
+- When the worker finishes processing, it triggers the API endpoint `/api/analysis/notify/:jobId`.
+- The API server sends an HTML email report with the job status and download link.
+
+---
+
+## ⚡ Performance Note (Why is it slow?)
+
+The **Full Analysis Pipeline** performs extensive specificity checks across the entire genome to prevent off-target effects. This involves:
+
+1.  **Global Alignment (vsearch):** Comparing every spacer candidate against the entire genome database.
+    - Complexity: ~ $O(N^2)$
+    - Example: 4.5M spacers vs 4.5M targets
+2.  **Mismatch Calculation:** Checking for 0, 1, 2, and 3 mismatches for every potential hit.
+
+**Expected Runtime:**
+
+- **Small Genome / Region:** Minutes
+- **Whole Genome (Rice/Arabidopsis):** Hours (depends on CPU cores)
+
+> **Recommendation:** For production use, deploy the worker on a high-CPU instance (16+ cores) as `vsearch` scales well with multi-threading.
 
 ---
 
@@ -836,7 +879,6 @@ This project is part of a senior project at [University Name].
 ## 👨‍💻 Author
 
 - **Phoo Chakrit** - Senior Project 2026
-
 
 Os04g00100
 Os09g00200

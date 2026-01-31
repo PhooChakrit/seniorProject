@@ -1,54 +1,40 @@
 #!/bin/bash
 set -e
 
-# Default values
-GENOME_FILE="genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa"
-SPECIES="oryza_sativa"
-OUTPUT_DIR="genomes/oryza"
-OUTPUT_FASTA="genomes/oryza/GENOME_NGG_spacers_unique.fa"
+# Configuration
+GENOME_FILE="/data/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa"
+GFF_FILE="/data/genomes/oryza/Oryza_DNA.gff3"
+OUTPUT_DIR="/data/genomes/oryza/output"
+HOST_OUTPUT_DIR="genomes/oryza/output"
 
-echo "============================================="
-echo "   CRISPR-PLANT v2 Manual Pipeline Runner"
-echo "============================================="
-echo "Genome File: $GENOME_FILE"
-echo "Species: $SPECIES"
-echo "============================================="
+echo "=========================================================="
+echo "   CRISPR-PLANT v2 Manual Pipeline Run (Full Annotation)  "
+echo "=========================================================="
 
-# Check if genome file exists
-if [ ! -f "$GENOME_FILE" ]; then
-    echo "Error: Genome file not found at $GENOME_FILE"
+echo "[1/3] Running 'complete_pipeline_run.sh' inside Worker Container..."
+echo "      (This may take several minutes for vsearch alignment)"
+docker compose run --rm worker bash /app/scripts/complete_pipeline_run.sh "$GENOME_FILE" "oryza_sativa"
+
+echo "[2/3] Running 'annotate_spacers.py' inside Worker Container..."
+docker compose run --rm worker python /app/scripts/annotate_spacers.py "$OUTPUT_DIR/spacers_classified.tsv" "$GFF_FILE" > "$HOST_OUTPUT_DIR/spacers_annotated.tsv"
+
+echo "[3/3] Importing to Database (Host)..."
+# Using tsx to run typescript directly
+# Ensure DATABASE_URL is set (from .env)
+if [ ! -f .env ]; then
+    echo "Error: .env file not found!"
     exit 1
 fi
 
-echo "[1/2] Running Computation (Worker Container)..."
-# Run the existing worker logic but manually via Docker
-# We mount the genomes folder to /data/genomes so the worker can access files
-docker-compose run --rm worker /bin/bash -c "
-    cd /data/genomes/oryza && \
-    /app/run_pipeline.sh Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa
-"
+echo "      Clearing existing spacers for 'oryza_sativa'..."
+npx tsx scripts/import_spacers.ts clear oryza_sativa
 
-echo "[2/2] Importing Results to Database..."
-# Check if output exists
-if [ ! -f "$OUTPUT_FASTA" ]; then
-    echo "Error: Output FASTA not found at $OUTPUT_FASTA"
-    echo "Pipeline might have failed."
-    exit 1
-fi
+# Load env in a way that exports to the command?
+# Or just assume tsx picks it up (dotenv is usually used in code)
+# In import_spacers.ts, we usually use dotenv.
 
-# Import script
-echo "Importing $OUTPUT_FASTA..."
+npx tsx scripts/import_spacers.ts "$HOST_OUTPUT_DIR/spacers_annotated.tsv"
 
-# Load .env if exists
-if [ -f .env ]; then
-  export $(cat .env | xargs)
-fi
-
-# Fallback to default if not set
-export DATABASE_URL="${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/seniorproject?schema=public}"
-
-npx tsx scripts/import_spacers.ts import "$OUTPUT_FASTA" "$SPECIES"
-
-echo "============================================="
-echo "          Manul Run Completed! 🚀"
-echo "============================================="
+echo "=========================================================="
+echo "   Pipeline Completed Successfully!   "
+echo "=========================================================="

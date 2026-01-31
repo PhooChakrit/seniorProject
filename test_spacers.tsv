@@ -1,0 +1,4 @@
+seqID	minMM_GG	minMM_AG	seq	Chr	cut_start	cut_end	strand
+Sp1	4	NA	AAAA	Chr1	150	170	+
+Sp2	4	NA	AAAA	Chr1	250	270	+
+Sp3	4	NA	AAAA	Chr1	600	620	+
