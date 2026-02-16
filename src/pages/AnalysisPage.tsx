@@ -9,7 +9,17 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import {
   Calculator,
@@ -18,6 +28,7 @@ import {
   Loader2,
   XCircle,
   Eye,
+  Trash2,
 } from "lucide-react";
 import apiClient from "@/lib/axios";
 import { Button } from "@/components/ui/button";
@@ -50,6 +61,7 @@ export const AnalysisPage: React.FC = () => {
   const [showResultsModal, setShowResultsModal] = useState(false);
   const [results, setResults] = useState<SpacerResult[]>([]);
   const [loadingResults, setLoadingResults] = useState(false);
+  const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchJobs();
@@ -122,6 +134,18 @@ export const AnalysisPage: React.FC = () => {
     }
   };
 
+  const handleDeleteJob = async (jobId: string) => {
+    try {
+      setDeletingJobId(jobId);
+      await apiClient.delete(`/analysis/${jobId}`);
+      setJobs((prev) => prev.filter((j) => j.jobId !== jobId));
+    } catch (err) {
+      console.error("Failed to delete job:", err);
+    } finally {
+      setDeletingJobId(null);
+    }
+  };
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "pending":
@@ -180,88 +204,126 @@ export const AnalysisPage: React.FC = () => {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calculator className="h-5 w-5" />
-                  Run New Analysis
-                </CardTitle>
-                <CardDescription>
-                  Configure parameters for off-target search and annotation.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <AnalysisForm onSubmit={handleJobSubmitted} />
-              </CardContent>
-            </Card>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calculator className="h-5 w-5" />
+                Run New Analysis
+              </CardTitle>
+              <CardDescription>
+                Configure parameters for off-target search and annotation.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AnalysisForm onSubmit={handleJobSubmitted} />
+            </CardContent>
+          </Card>
 
-          <div className="space-y-6">
-            <Card className="h-full">
+          {/* Use a wrapper div that is relative only on desktop to serve as anchor for absolute card */}
+          <div className="md:relative">
+            <Card className="flex flex-col md:absolute md:inset-0 max-h-[600px] md:max-h-none">
               <CardHeader>
                 <CardTitle>Job History</CardTitle>
                 <CardDescription>
                   {jobs.length} job{jobs.length !== 1 ? "s" : ""} found
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="flex-1 overflow-auto">
                 {jobs.length > 0 ? (
-                  <ScrollArea className="h-[400px] pr-4">
-                    <div className="space-y-3">
-                      {jobs.map((job) => (
-                        <div
-                          key={job.jobId}
-                          className={`p-3 border rounded-lg transition-colors ${
-                            job.status === "completed"
-                              ? "hover:bg-green-50 cursor-pointer border-green-200"
-                              : "hover:bg-muted/50"
-                          }`}
-                          onClick={() =>
-                            job.status === "completed" &&
-                            handleViewResults(job.jobId)
-                          }
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            {getStatusBadge(job.status)}
-                            <span className="text-xs text-muted-foreground">
-                              {formatDate(job.createdAt)}
-                            </span>
+                  <div className="space-y-3 pr-2">
+                    {jobs.map((job) => (
+                      <div
+                        key={job.jobId}
+                        className={`p-3 border rounded-lg transition-colors ${
+                          job.status === "completed"
+                            ? "hover:bg-green-50 cursor-pointer border-green-200"
+                            : "hover:bg-muted/50"
+                        }`}
+                        onClick={() =>
+                          job.status === "completed" &&
+                          handleViewResults(job.jobId)
+                        }
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          {getStatusBadge(job.status)}
+                          <span className="text-xs text-muted-foreground">
+                            {formatDate(job.createdAt)}
+                          </span>
+                        </div>
+                        <div className="text-sm">
+                          <span className="font-mono text-xs text-muted-foreground">
+                            {job.jobId.slice(0, 20)}...
+                          </span>
+                        </div>
+                        {job.fromPosition && job.toPosition && (
+                          <div className="text-xs text-muted-foreground mt-1">
+                            Region: {job.fromPosition.toLocaleString()} -{" "}
+                            {job.toPosition.toLocaleString()}
                           </div>
-                          <div className="text-sm">
-                            <span className="font-mono text-xs text-muted-foreground">
-                              {job.jobId.slice(0, 20)}...
-                            </span>
-                          </div>
-                          {job.fromPosition && job.toPosition && (
-                            <div className="text-xs text-muted-foreground mt-1">
-                              Region: {job.fromPosition.toLocaleString()} -{" "}
-                              {job.toPosition.toLocaleString()}
-                            </div>
-                          )}
-                          {job.status === "completed" && (
+                        )}
+                        {job.status === "completed" && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="mt-2 w-full text-green-600 hover:text-green-700 hover:bg-green-50"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleViewResults(job.jobId);
+                            }}
+                            disabled={
+                              loadingResults && selectedJobId === job.jobId
+                            }
+                          >
+                            <Eye className="h-3 w-3 mr-1" />
+                            {loadingResults && selectedJobId === job.jobId
+                              ? "Loading..."
+                              : "View Results"}
+                          </Button>
+                        )}
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="mt-2 w-full text-green-600 hover:text-green-700 hover:bg-green-50"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleViewResults(job.jobId);
-                              }}
-                              disabled={
-                                loadingResults && selectedJobId === job.jobId
-                              }
+                              className="mt-2 w-full text-red-500 hover:text-red-700 hover:bg-red-50"
+                              onClick={(e) => e.stopPropagation()}
+                              disabled={deletingJobId === job.jobId}
                             >
-                              <Eye className="h-3 w-3 mr-1" />
-                              {loadingResults && selectedJobId === job.jobId
-                                ? "Loading..."
-                                : "View Results"}
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              {deletingJobId === job.jobId
+                                ? "Deleting..."
+                                : "Delete"}
                             </Button>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Job?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete this job? This
+                                action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                Cancel
+                              </AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteJob(job.jobId);
+                                }}
+                                className="bg-red-500 hover:bg-red-600"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    ))}
+                  </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-48 text-muted-foreground">
                     <Calculator className="h-12 w-12 mb-4 opacity-20" />

@@ -60,8 +60,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '6.0'
-          memory: 12G
+          cpus: '2.0'
+          memory: 4G
 
 volumes:
   postgres_data:

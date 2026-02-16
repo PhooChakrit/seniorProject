@@ -100,6 +100,44 @@ router.post('/submit', authenticateToken, async (req: AuthRequest, res) => {
   }
 });
 
+// Delete a job
+router.delete('/:jobId', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const { jobId } = req.params;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    const job = await prisma.searchJob.findUnique({
+      where: { jobId },
+    });
+
+    if (!job) {
+      return res.status(404).json({ error: 'Job not found' });
+    }
+
+    // Check ownership
+    if (job.userId !== userId) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+
+    // Delete the job
+    await prisma.searchJob.delete({
+      where: { jobId },
+    });
+
+    res.json({
+      success: true,
+      message: 'Job deleted successfully',
+    });
+  } catch (error) {
+    console.error('Error deleting job:', error);
+    res.status(500).json({ error: 'Failed to delete job' });
+  }
+});
+
 // Get job status
 router.get('/status/:jobId', authenticateToken, async (req: AuthRequest, res) => {
   try {

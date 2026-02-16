@@ -63,10 +63,11 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">Position</TableHead>
-                <TableHead className="w-[80px]">minMM</TableHead>
+                <TableHead className="w-[70px] text-center">minMM_GG</TableHead>
+                <TableHead className="w-[70px] text-center">minMM_AG</TableHead>
                 <TableHead>Spacer Seq (5'→3')</TableHead>
-                <TableHead>PAM</TableHead>
-                <TableHead className="w-[60px]">Strand</TableHead>
+                <TableHead className="w-[50px]">PAM</TableHead>
+                <TableHead className="w-[50px] text-center">Strand</TableHead>
                 <TableHead className="w-[80px]">Location</TableHead>
                 <TableHead className="w-[100px]">Class</TableHead>
               </TableRow>
@@ -77,7 +78,28 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
                   <TableCell className="font-mono text-xs">
                     {row.start}-{row.end}
                   </TableCell>
-                  <TableCell>{row.minMM_GG}</TableCell>
+                  <TableCell className="text-center font-mono text-xs">
+                    <span
+                      className={
+                        row.minMM_GG.endsWith("+")
+                          ? "text-green-600 font-semibold"
+                          : "text-orange-600"
+                      }
+                    >
+                      {row.minMM_GG}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-center font-mono text-xs">
+                    <span
+                      className={
+                        row.minMM_AG.endsWith("+")
+                          ? "text-green-600 font-semibold"
+                          : "text-orange-600"
+                      }
+                    >
+                      {row.minMM_AG}
+                    </span>
+                  </TableCell>
                   <TableCell className="font-mono text-xs">{row.seq}</TableCell>
                   <TableCell className="font-mono text-xs">{row.pam}</TableCell>
                   <TableCell className="text-center">{row.strand}</TableCell>

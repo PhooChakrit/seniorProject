@@ -175,7 +175,7 @@ def process_region_analysis(task_data):
     print("     Spacer Length: %s" % spacer_length)
     print("     Mismatches: %s" % mismatches)
     
-    # Build command with all parameters
+    # Build command with all parameters (including jobId for unique output)
     cmd = [
         "/bin/bash", 
         "/app/scripts/complete_pipeline_run.sh", 
@@ -185,7 +185,8 @@ def process_region_analysis(task_data):
         str(end_pos),
         pam,
         str(spacer_length),
-        str(mismatches)
+        str(mismatches),
+        job_id  # Add jobId for unique output filename
     ]
     
     print(" [x] Executing: %s" % " ".join(cmd))
@@ -200,9 +201,9 @@ def process_region_analysis(task_data):
         print(" [x] Execution Duration: %.2f seconds" % duration)
         
         if return_code == 0:
-            # Read output file path
+            # Read output file path (unique per job)
             output_dir = os.path.dirname(genome_file)
-            output_file = os.path.join(output_dir, 'output', 'spacers_classified.tsv')
+            output_file = os.path.join(output_dir, 'output', '%s.tsv' % job_id)
             
             result = {
                 'status': 'completed',
