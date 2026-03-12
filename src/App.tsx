@@ -8,6 +8,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { JBrowsePage } from "./pages/JBrowsePage";
 import { DataPage } from "./pages/DataPage";
 import { AnalysisPage } from "./pages/AnalysisPage";
+import { AnalysisResultsPage } from "./pages/AnalysisResultsPage";
 import "./index.css";
 
 const queryClient = new QueryClient({
@@ -34,6 +35,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AnalysisPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analysis/results/:jobId"
+              element={
+                <ProtectedRoute>
+                  <AnalysisResultsPage />
                 </ProtectedRoute>
               }
             />

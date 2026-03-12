@@ -85,9 +85,7 @@ run_pam_analysis() {
     
     # Extract spacers
     cat <<EOF > extract_${PREFIX}.py
-import sys
 from Bio import SeqIO
-from Bio.Seq import Seq
 
 genome_file = "GENOME.fna"
 fuzznuc_file = "${PREFIX}_spacers.fuzznuc"
@@ -95,10 +93,23 @@ output_file = "${PREFIX}_candidates.fa"
 
 record = next(SeqIO.parse(genome_file, "fasta"))
 genome_seq = record.seq
+record_id = record.id
+base_chr = record_id.split(":", 1)[0]
+
+# If GENOME.fna is an extracted region (e.g., ptg000001l:10000-60000),
+# convert fuzznuc's region-relative coordinates back to genome coordinates.
+region_offset = 0
+if ":" in record_id:
+    coord_part = record_id.split(":", 1)[1]
+    if "-" in coord_part:
+        try:
+            region_start = int(coord_part.split("-", 1)[0])
+            region_offset = region_start - 1
+        except ValueError:
+            region_offset = 0
 
 with open(fuzznuc_file) as f, open(output_file, 'w') as out:
     count = 0
-    base_chr = record.id.split(":")[0]
     for line in f:
         line = line.strip()
         if not line or line.startswith("#") or line.startswith("Start"): continue
@@ -112,8 +123,10 @@ with open(fuzznuc_file) as f, open(output_file, 'w') as out:
             final_seq = str(seq_slice)
             if strand == "-":
                 final_seq = str(seq_slice.reverse_complement())
+            genome_start = start + region_offset
+            genome_end = end + region_offset
             strand_label = ":rc" if strand == "-" else ""
-            header = f">{base_chr}:{start}-{end}{strand_label}"
+            header = f">{base_chr}:{genome_start}-{genome_end}{strand_label}"
             out.write(f"{header}\n{final_seq}\n")
             count += 1
         except ValueError:
@@ -126,8 +139,41 @@ EOF
     VSEARCH_ID=$(python3 -c "print(1.0 - float($MISMATCHES) / float($SPACER_LENGTH))")
     VSEARCH_ID_MINUS_1=$(python3 -c "print(1.0 - float($MISMATCHES - 1) / float($SPACER_LENGTH))")
     
-    grep -v ">" ${PREFIX}_candidates.fa 2>/dev/null | sort | uniq > ${PREFIX}_unique.seq || touch ${PREFIX}_unique.seq
-    awk '{print ">" NR "\n" $0}' ${PREFIX}_unique.seq > ${PREFIX}_unique.fa
+    cat <<EOF > build_unique_${PREFIX}.py
+from collections import OrderedDict
+
+input_fasta = "${PREFIX}_candidates.fa"
+output_fasta = "${PREFIX}_unique.fa"
+
+seq_to_first_id = OrderedDict()
+current_id = ""
+seq_chunks = []
+
+def flush_record():
+    if not current_id:
+        return
+    seq = "".join(seq_chunks).strip()
+    if seq and seq not in seq_to_first_id:
+        seq_to_first_id[seq] = current_id
+
+with open(input_fasta) as f:
+    for raw_line in f:
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith(">"):
+            flush_record()
+            current_id = line[1:]
+            seq_chunks = []
+        else:
+            seq_chunks.append(line)
+    flush_record()
+
+with open(output_fasta, "w") as out:
+    for seq, seq_id in seq_to_first_id.items():
+        out.write(f">{seq_id}\n{seq}\n")
+EOF
+    python3 build_unique_${PREFIX}.py
     
     echo "[PAM:$PAM_TYPE] Running vsearch alignments..."
     vsearch --usearch_global ${PREFIX}_unique.fa --db ${PREFIX}_unique.fa \
@@ -175,28 +221,68 @@ import sys
 
 # Use NGG candidates as primary (since user selected NGG typically)
 candidates_file = "NGG_candidates.fa"
+unique_file = "NGG_unique.fa"
 pam_used = "$PAM"
 mismatches = $MISMATCHES
 
-# Load NGG off-targets
-ngg_off_minus1 = set()
-ngg_off_full = set()
-try:
-    ngg_off_minus1 = set(line.strip().split()[0] for line in open(f"NGG_off_{mismatches}MM_minus1.ids"))
-except: pass
-try:
-    ngg_off_full = set(line.strip().split()[0] for line in open(f"NGG_off_{mismatches}MM.ids"))
-except: pass
+def load_ids(path):
+    ids = set()
+    try:
+        with open(path) as f:
+            for line in f:
+                value = line.strip().split()
+                if value:
+                    ids.add(value[0])
+    except:
+        pass
+    return ids
 
-# Load NAG off-targets
-nag_off_minus1 = set()
-nag_off_full = set()
-try:
-    nag_off_minus1 = set(line.strip().split()[0] for line in open(f"NAG_off_{mismatches}MM_minus1.ids"))
-except: pass
-try:
-    nag_off_full = set(line.strip().split()[0] for line in open(f"NAG_off_{mismatches}MM.ids"))
-except: pass
+def load_repr_map(path):
+    repr_to_seq = {}
+    current_id = ""
+    seq_chunks = []
+
+    def flush_record():
+        if not current_id:
+            return
+        seq = "".join(seq_chunks).strip()
+        if seq:
+            repr_to_seq[current_id] = seq
+
+    try:
+        with open(path) as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line:
+                    continue
+                if line.startswith(">"):
+                    flush_record()
+                    current_id = line[1:]
+                    seq_chunks = []
+                else:
+                    seq_chunks.append(line)
+            flush_record()
+    except:
+        pass
+    return repr_to_seq
+
+def ids_to_sequences(ids, repr_to_seq):
+    return set(repr_to_seq[seq_id] for seq_id in ids if seq_id in repr_to_seq)
+
+# Load representative sequence map from NGG_unique.fa.
+repr_to_seq = load_repr_map(unique_file)
+
+# Load NGG off-target IDs and convert to sequences.
+ngg_off_minus1_ids = load_ids(f"NGG_off_{mismatches}MM_minus1.ids")
+ngg_off_full_ids = load_ids(f"NGG_off_{mismatches}MM.ids")
+ngg_off_minus1_seqs = ids_to_sequences(ngg_off_minus1_ids, repr_to_seq)
+ngg_off_full_seqs = ids_to_sequences(ngg_off_full_ids, repr_to_seq)
+
+# Load NAG off-target IDs and convert to sequences.
+nag_off_minus1_ids = load_ids(f"NAG_off_{mismatches}MM_minus1.ids")
+nag_off_full_ids = load_ids(f"NAG_off_{mismatches}MM.ids")
+nag_off_minus1_seqs = ids_to_sequences(nag_off_minus1_ids, repr_to_seq)
+nag_off_full_seqs = ids_to_sequences(nag_off_full_ids, repr_to_seq)
 
 print("seqID\tminMM_GG\tminMM_AG\tseq\tChr\tcut_start\tcut_end\tstrand\tlocation\tPAM\tclass")
 
@@ -221,16 +307,16 @@ with open(candidates_file) as f:
             
             # Calculate minMM_GG
             min_mm_gg = str(mismatches + 1) + "+"
-            if current_id in ngg_off_minus1:
+            if seq in ngg_off_minus1_seqs:
                 min_mm_gg = str(mismatches - 1)
-            elif current_id in ngg_off_full:
+            elif seq in ngg_off_full_seqs:
                 min_mm_gg = str(mismatches)
             
             # Calculate minMM_AG
             min_mm_ag = str(mismatches + 1) + "+"
-            if current_id in nag_off_minus1:
+            if seq in nag_off_minus1_seqs:
                 min_mm_ag = str(mismatches - 1)
-            elif current_id in nag_off_full:
+            elif seq in nag_off_full_seqs:
                 min_mm_ag = str(mismatches)
             
             # Determine class based on both

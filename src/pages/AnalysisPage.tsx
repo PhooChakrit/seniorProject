@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AnalysisForm } from "@/components/crispr/AnalysisForm";
-import { ResultsModal } from "@/components/crispr/ResultsModal";
 import { Layout } from "@/components/layout/Layout";
 import {
   Card,
@@ -27,7 +27,7 @@ import {
   Clock,
   Loader2,
   XCircle,
-  Eye,
+  ExternalLink,
   Trash2,
 } from "lucide-react";
 import apiClient from "@/lib/axios";
@@ -42,25 +42,9 @@ interface Job {
   toPosition?: number;
 }
 
-interface SpacerResult {
-  seqId: string;
-  start: string;
-  end: string;
-  minMM_GG: string;
-  minMM_AG: string;
-  seq: string;
-  pam: string;
-  strand: string;
-  location: string;
-  spacerClass: string;
-}
-
 export const AnalysisPage: React.FC = () => {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
-  const [showResultsModal, setShowResultsModal] = useState(false);
-  const [results, setResults] = useState<SpacerResult[]>([]);
-  const [loadingResults, setLoadingResults] = useState(false);
   const [deletingJobId, setDeletingJobId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -118,20 +102,8 @@ export const AnalysisPage: React.FC = () => {
     startPolling();
   };
 
-  const handleViewResults = async (jobId: string) => {
-    setSelectedJobId(jobId);
-    setLoadingResults(true);
-    try {
-      const res = await apiClient.get(`/analysis/results-data/${jobId}`);
-      if (res.data && res.data.results) {
-        setResults(res.data.results);
-        setShowResultsModal(true);
-      }
-    } catch (err) {
-      console.error("Failed to fetch results:", err);
-    } finally {
-      setLoadingResults(false);
-    }
+  const handleViewResults = (jobId: string) => {
+    navigate(`/analysis/results/${jobId}`);
   };
 
   const handleDeleteJob = async (jobId: string) => {
@@ -270,14 +242,9 @@ export const AnalysisPage: React.FC = () => {
                               e.stopPropagation();
                               handleViewResults(job.jobId);
                             }}
-                            disabled={
-                              loadingResults && selectedJobId === job.jobId
-                            }
                           >
-                            <Eye className="h-3 w-3 mr-1" />
-                            {loadingResults && selectedJobId === job.jobId
-                              ? "Loading..."
-                              : "View Results"}
+                            <ExternalLink className="h-3 w-3 mr-1" />
+                            View Results
                           </Button>
                         )}
                         <AlertDialog>
@@ -337,12 +304,6 @@ export const AnalysisPage: React.FC = () => {
         </div>
       </div>
 
-      <ResultsModal
-        open={showResultsModal}
-        onClose={() => setShowResultsModal(false)}
-        results={results}
-        jobId={selectedJobId || ""}
-      />
     </Layout>
   );
 };

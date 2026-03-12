@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -45,7 +45,13 @@ const formSchema = z
       .regex(/^\d+$/, "ต้องเป็นตัวเลข"),
     mismatches: z.string(),
     pam: z.string().min(1),
-    spacerLength: z.string().regex(/^\d+$/, "ต้องเป็นตัวเลข").default("20"),
+    spacerLength: z
+      .string()
+      .regex(/^\d+$/, "ต้องเป็นตัวเลข")
+      .refine((v) => parseInt(v) >= 17 && parseInt(v) <= 24, {
+        message: "Spacer Length ต้องอยู่ระหว่าง 17–24 bp",
+      })
+      .default("20"),
     email: z
       .string()
       .email("รูปแบบ email ไม่ถูกต้อง")
@@ -60,6 +66,17 @@ const formSchema = z
     },
     {
       message: "ตำแหน่งสิ้นสุดต้องมากกว่าตำแหน่งเริ่มต้น",
+      path: ["endPos"],
+    },
+  )
+  .refine(
+    (data) => {
+      const start = parseInt(data.startPos);
+      const end = parseInt(data.endPos);
+      return end - start <= 100000;
+    },
+    {
+      message: "ช่วง Region ต้องไม่เกิน 100,000 bp",
       path: ["endPos"],
     },
   );
@@ -83,6 +100,43 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
       email: "",
     },
   });
+
+  const regionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const spacerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleRegionChange = useCallback(
+    (field: "startPos" | "endPos", value: string) => {
+      form.setValue(field, value);
+      if (regionTimerRef.current) clearTimeout(regionTimerRef.current);
+      regionTimerRef.current = setTimeout(() => {
+        const start = parseInt(form.getValues("startPos"));
+        const end = parseInt(form.getValues("endPos"));
+        if (!isNaN(start) && !isNaN(end)) {
+          if (end <= start) {
+            form.setValue("endPos", String(start + 1));
+          } else if (end - start > 100000) {
+            form.setValue("endPos", String(start + 100000));
+          }
+        }
+      }, 600);
+    },
+    [form],
+  );
+
+  const handleSpacerLengthChange = useCallback(
+    (value: string) => {
+      form.setValue("spacerLength", value);
+      if (spacerTimerRef.current) clearTimeout(spacerTimerRef.current);
+      spacerTimerRef.current = setTimeout(() => {
+        const num = parseInt(value);
+        if (!isNaN(num)) {
+          if (num < 17) form.setValue("spacerLength", "17");
+          else if (num > 24) form.setValue("spacerLength", "24");
+        }
+      }, 600);
+    },
+    [form],
+  );
 
   const handleSubmit = async (values: FormValues) => {
     try {
@@ -154,7 +208,14 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
                 <FormItem>
                   <FormLabel>Start Position (bp)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="เช่น 10000" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="เช่น 10000"
+                      {...field}
+                      onChange={(e) =>
+                        handleRegionChange("startPos", e.target.value)
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -167,7 +228,14 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
                 <FormItem>
                   <FormLabel>End Position (bp)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="เช่น 50000" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="เช่น 50000"
+                      {...field}
+                      onChange={(e) =>
+                        handleRegionChange("endPos", e.target.value)
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -175,7 +243,7 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
             />
           </div>
           <FormDescription className="text-xs">
-            ระบุ region ที่ต้องการค้นหา CRISPR spacers (ตำแหน่ง bp ใน genome)
+            ระบุ region ที่ต้องการค้นหา CRISPR spacers (ตำแหน่ง bp ใน genome) — ขนาด region สูงสุด 100,000 bp
           </FormDescription>
         </div>
 
@@ -197,9 +265,11 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="NGG">NGG (SpCas9)</SelectItem>
-                    <SelectItem value="NAG">NAG</SelectItem>
-                    <SelectItem value="TTTV">TTTV (Cas12a)</SelectItem>
+                    <SelectItem value="NGG">SpCas9</SelectItem>
+                    <SelectItem disabled={true} value="TTTV">Cas12</SelectItem>
+                    <SelectItem disabled={true} value="TTTV">Cas12a</SelectItem>
+                    <SelectItem disabled={true} value="TTTV">Cas13</SelectItem>
+                    <SelectItem disabled={true} value="TTTV">Cas13a</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -214,8 +284,15 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
               <FormItem>
                 <FormLabel>Spacer Length (bp)</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} />
+                  <Input
+                    type="number"
+                    min={17}
+                    max={24}
+                    {...field}
+                    onChange={(e) => handleSpacerLengthChange(e.target.value)}
+                  />
                 </FormControl>
+                <FormDescription>ช่วง: 17–24 bp</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
