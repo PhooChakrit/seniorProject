@@ -1,0 +1,121 @@
+# ===========================================
+# Docker Compose for Production
+# ===========================================
+# All services run in Docker with pre-built images
+# Build: docker compose -f docker-compose.prod.yml build
+# Run:   docker compose -f docker-compose.prod.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: seniorproject-db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-seniorproject}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 256M
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: seniorproject-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 384M
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: seniorproject-api:latest
+    container_name: seniorproject-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-seniorproject}
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    image: seniorproject-frontend:latest
+    container_name: seniorproject-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - api
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+  worker:
+    platform: linux/amd64
+    build: 
+      context: ./worker
+    image: seniorproject-worker:latest
+    container_name: seniorproject-worker
+    restart: unless-stopped
+    volumes:
+      - ./genomes:/data/genomes
+    environment:
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
+      - API_URL=http://api:3000
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 512M
+
+volumes:
+  postgres_data:
+    driver: local

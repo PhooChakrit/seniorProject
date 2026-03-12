@@ -11,13 +11,14 @@ datasource db {
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
-  email       String       @unique
-  password    String
-  name        String?
-  genomeData  GenomeData[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id         Int          @id @default(autoincrement())
+  email      String       @unique
+  password   String
+  name       String?
+  genomeData GenomeData[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  searchJobs SearchJob[]
 }
 
 model GenomeData {
@@ -30,3 +31,75 @@ model GenomeData {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model SearchJob {
+  id     String @id @default(uuid())
+  jobId  String @unique
+  type   String // 'region_search' or 'gene_search'
+  status String @default("pending") // 'pending', 'processing', 'completed', 'failed'
+
+  // Search parameters (stored as JSON string)
+  species      String
+  chromosome   String?
+  fromPosition Int?
+  toPosition   Int?
+  geneId       String?
+
+  // Result (stored as JSON string)
+  result String?
+  error  String?
+
+  // Notification email (optional)
+  notifyEmail String?
+
+  // Timestamps
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  updatedAt   DateTime  @updatedAt
+}
+
+// ============================================
+// COMMENTED OUT - Not used in current flow
+// Keep for future reference
+// ============================================
+
+// Pre-computed spacers from CRISPR-PLANT v2 pipeline
+// model Spacer {
+//   id          Int      @id @default(autoincrement())
+//   species     String // e.g., "oryza_sativa"
+//   chromosome  String // e.g., "1", "2", etc.
+//   startPos    Int // Start position in genome
+//   endPos      Int // End position in genome
+//   strand      String // "+" or "-"
+//   spacerSeq   String // 20nt gRNA spacer sequence
+//   pam         String // PAM + flanking sequence
+//   location    String? // "exon", "intron", "5'utr", "3'utr", etc.
+//   minMM_GG    String? // Minimal mismatch to NGG off-targets
+//   minMM_AG    String? // Minimal mismatch to NAG off-targets
+//   spacerClass String? // "A0", "B0", "B1", "B2", "A1", "A2", etc.
+//   geneId      String? // e.g., "Os01g01010"
+//   createdAt   DateTime @default(now())
+//
+//   @@index([species, chromosome, startPos])
+//   @@index([species, chromosome, endPos])
+// }
+
+// Gene annotations for Search by Gene ID
+// model Gene {
+//   id          Int      @id @default(autoincrement())
+//   species     String
+//   geneId      String // e.g., "Os01g01010"
+//   symbol      String? // e.g., "Actin1"
+//   chromosome  String
+//   startPos    Int
+//   endPos      Int
+//   strand      String
+//   description String?
+//   createdAt   DateTime @default(now())
+//
+//   @@unique([species, geneId])
+//   @@index([species, symbol])
+// }

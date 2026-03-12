@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import genomeRoutes from './routes/genome';
+import analysisRoutes from './routes/analysis';
 
 dotenv.config();
 
@@ -34,6 +35,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/genome', genomeRoutes);
+app.use('/api/analysis', analysisRoutes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok' });
