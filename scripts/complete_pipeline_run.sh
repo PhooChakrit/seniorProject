@@ -15,10 +15,11 @@ PAM="${5:-NGG}"
 SPACER_LENGTH="${6:-20}"
 MISMATCHES="${7:-3}"
 JOB_ID="${8:-spacers_classified}"
+CONTIG="${9:-ptg000001l}"
 OUTPUT_DIR="output"
 
 if [ -z "$INPUT_FILE" ]; then
-    echo "Usage: complete_pipeline_run.sh <input_fasta> [species] [start_pos] [end_pos] [pam] [spacer_length] [mismatches]"
+    echo "Usage: complete_pipeline_run.sh <input_fasta> [species] [start_pos] [end_pos] [pam] [spacer_length] [mismatches] [job_id] [contig]"
     exit 1
 fi
 
@@ -28,6 +29,7 @@ echo "Species: $SPECIES"
 if [ -n "$START_POS" ] && [ "$START_POS" != "0" ]; then
     echo "Region: $START_POS - $END_POS"
 fi
+echo "Contig: $CONTIG"
 echo "Primary PAM: $PAM"
 echo "Spacer Length: $SPACER_LENGTH"
 echo "Mismatches: $MISMATCHES"
@@ -52,14 +54,24 @@ from Bio.SeqRecord import SeqRecord
 input_file = "$INPUT_FILE"
 start_pos = $START_POS
 end_pos = $END_POS
+contig_id = "$CONTIG"
 output_file = "REGION.fna"
 
 print("Loading genome from %s..." % input_file)
-record = next(SeqIO.parse(input_file, "fasta"))
-print("Genome length: %d" % len(record.seq))
+target_record = None
+for rec in SeqIO.parse(input_file, "fasta"):
+    if rec.id == contig_id:
+        target_record = rec
+        break
 
-region_seq = record.seq[start_pos-1:end_pos]
-region_record = SeqRecord(region_seq, id="%s:%d-%d" % (record.id, start_pos, end_pos), description="")
+if target_record is None:
+    raise ValueError("Contig '%s' not found in %s" % (contig_id, input_file))
+
+print("Target contig: %s" % target_record.id)
+print("Contig length: %d" % len(target_record.seq))
+
+region_seq = target_record.seq[start_pos-1:end_pos]
+region_record = SeqRecord(region_seq, id="%s:%d-%d" % (target_record.id, start_pos, end_pos), description="")
 
 with open(output_file, "w") as out:
     SeqIO.write(region_record, out, "fasta")

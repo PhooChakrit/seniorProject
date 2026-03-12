@@ -141,11 +141,13 @@ def process_region_analysis(task_data):
     start_pos = int(task_data.get('startPos', 0))
     end_pos = int(task_data.get('endPos', 0))
     options = task_data.get('options', {})
+    contig = task_data.get('contig') or options.get('contig', 'ptg000001l')
     
     print(" [x] Processing REGION ANALYSIS:")
     print("     Job ID: %s" % job_id)
     print("     Variety: %s" % variety)
     print("     Region: %s - %s" % (start_pos, end_pos))
+    print("     Contig: %s" % contig)
     print("     Options: %s" % str(options))
     
     # Update status to processing
@@ -186,7 +188,8 @@ def process_region_analysis(task_data):
         pam,
         str(spacer_length),
         str(mismatches),
-        job_id  # Add jobId for unique output filename
+        job_id,  # Add jobId for unique output filename
+        contig
     ]
     
     print(" [x] Executing: %s" % " ".join(cmd))

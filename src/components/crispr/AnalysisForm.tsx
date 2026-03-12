@@ -14,6 +14,8 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
+  SelectLabel,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -32,9 +34,51 @@ const RICE_VARIETIES = [
   },
 ] as const;
 
+const KDML105_ANNOTATED_CONTIGS = new Set([
+  "ptg000001l",
+  "ptg000002l",
+  "ptg000003l",
+  "ptg000004l",
+  "ptg000005l",
+  "ptg000006l",
+  "ptg000007l",
+  "ptg000008l",
+  "ptg000009l",
+  "ptg000010l",
+  "ptg000011l",
+  "ptg000012l",
+  "ptg000013l",
+  "ptg000014l",
+  "ptg000015l",
+  "ptg000017l",
+  "ptg000025l",
+  "ptg000035l",
+  "ptg000039l",
+  "ptg000045l",
+  "ptg000057l",
+  "ptg000104l",
+  "ptg000106l",
+  "ptg000116l",
+  "ptg000161l",
+  "ptg000180l",
+  "ptg000197l",
+  "ptg000206l",
+  "ptg000218l",
+  "ptg000222l",
+  "ptg000241l",
+]);
+
+const KDML105_CONTIGS = Array.from({ length: 246 }, (_, idx) =>
+  `ptg${String(idx + 1).padStart(6, "0")}l`,
+);
+const KDML105_OTHER_CONTIGS = KDML105_CONTIGS.filter(
+  (contig) => !KDML105_ANNOTATED_CONTIGS.has(contig),
+);
+
 const formSchema = z
   .object({
     variety: z.string().min(1, "กรุณาเลือกชนิดข้าว"),
+    contig: z.string().min(1, "กรุณาเลือก Contig"),
     startPos: z
       .string()
       .min(1, "กรุณาระบุตำแหน่งเริ่มต้น")
@@ -92,6 +136,7 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       variety: "kdml105",
+      contig: "ptg000001l",
       startPos: "",
       endPos: "",
       mismatches: "3",
@@ -145,6 +190,7 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
         startPos: parseInt(values.startPos),
         endPos: parseInt(values.endPos),
         options: {
+          contig: values.contig,
           mismatches: parseInt(values.mismatches),
           pam: values.pam,
           spacerLength: parseInt(values.spacerLength),
@@ -196,6 +242,48 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
         />
 
         {/* Region Selection - Required */}
+        <FormField
+          control={form.control}
+          name="contig"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Contig / Scaffold</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="เลือก contig" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Annotated (GFF3 available)</SelectLabel>
+                    {KDML105_CONTIGS.filter((contig) =>
+                      KDML105_ANNOTATED_CONTIGS.has(contig),
+                    ).map((contig) => (
+                      <SelectItem key={contig} value={contig}>
+                        {contig}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                  <SelectGroup>
+                    <SelectLabel>Other scaffolds</SelectLabel>
+                    {KDML105_OTHER_CONTIGS.map((contig) => (
+                      <SelectItem key={contig} value={contig}>
+                        {contig}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                เลือก contig ที่ต้องการวิเคราะห์ (ถ้าไม่มี annotation ใน GFF3
+                ตำแหน่งอาจแสดงเป็น Intergenic)
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <div className="space-y-4 border rounded-md p-4 bg-muted/20">
           <h4 className="text-sm font-semibold">
             Genomic Region <span className="text-red-500">*</span>
