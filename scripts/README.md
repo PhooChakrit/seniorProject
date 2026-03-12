@@ -35,9 +35,12 @@ Documentation for all utility scripts in the CRISPR-PLANT v2 project.
 3. **Global Alignment** - vsearch finds off-targets (100% identity)
 4. **Local Alignment** - vsearch with 2-3 mismatches tolerance
 5. **Classification** - Assigns A0/B0/B1/B2 classes based on off-target matches
-6. **Output** - Produces `spacers_classified.tsv`
+6. **Output** - Produces job-specific TSV output
 
-**Output:** `output/spacers_classified.tsv`
+**Output:**
+
+- Queue/Worker mode: `output/<jobId>.tsv`
+- Manual mode (no jobId arg): `output/spacers_classified.tsv`
 
 ---
 
@@ -113,6 +116,28 @@ npx tsx scripts/verify_api.ts
 
 ---
 
+### `e2e_queue_smoke.sh`
+
+End-to-end smoke test for queue + API flow:
+
+- Register test user
+- Submit `region_analysis` job
+- Poll job status until complete
+- Fetch parsed results (`results-data`) and print summary
+
+```bash
+chmod +x scripts/e2e_queue_smoke.sh
+scripts/e2e_queue_smoke.sh
+```
+
+Optional environment overrides:
+
+```bash
+BASE_URL=http://localhost:3000 START_POS=1 END_POS=5000 TIMEOUT_SECONDS=240 scripts/e2e_queue_smoke.sh
+```
+
+---
+
 ## Complete Workflow
 
 To generate fully annotated spacer data:
@@ -123,7 +148,7 @@ To generate fully annotated spacer data:
 
 # 2. Annotate with GFF3 (local)
 python3 scripts/annotate_spacers.py \
-  data/genomes/oryza/output/spacers_classified.tsv \
+  data/genomes/oryza/output/<jobId>.tsv \
   data/genomes/oryza/Oryza_sativa.IRGSP-1.0.gff3 \
   -o data/genomes/oryza/output/spacers_final.tsv
 

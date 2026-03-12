@@ -98,6 +98,7 @@ genome_seq = record.seq
 
 with open(fuzznuc_file) as f, open(output_file, 'w') as out:
     count = 0
+    base_chr = record.id.split(":")[0]
     for line in f:
         line = line.strip()
         if not line or line.startswith("#") or line.startswith("Start"): continue
@@ -112,7 +113,7 @@ with open(fuzznuc_file) as f, open(output_file, 'w') as out:
             if strand == "-":
                 final_seq = str(seq_slice.reverse_complement())
             strand_label = ":rc" if strand == "-" else ""
-            header = f">{record.id}:{start}-{end}{strand_label}"
+            header = f">{base_chr}:{start}-{end}{strand_label}"
             out.write(f"{header}\n{final_seq}\n")
             count += 1
         except ValueError:
@@ -171,55 +172,11 @@ echo "[5/6] Classification (Dual PAM)..."
 
 cat <<EOF > classify_spacers.py
 import sys
-import os
 
 # Use NGG candidates as primary (since user selected NGG typically)
 candidates_file = "NGG_candidates.fa"
 pam_used = "$PAM"
 mismatches = $MISMATCHES
-
-# GFF3 Annotation file path
-gff3_file = "/data/genomes/KDML/KDML105_annotation.gff3"
-
-# Load GFF3 annotations
-annotations = {}
-if os.path.exists(gff3_file):
-    print(f"Loading annotations from {gff3_file}...", file=sys.stderr)
-    with open(gff3_file) as gf:
-        for line in gf:
-            if line.startswith("#"): continue
-            parts = line.strip().split("\t")
-            if len(parts) < 9: continue
-            chrom = parts[0]
-            feature_type = parts[2].lower()
-            try:
-                start = int(parts[3])
-                end = int(parts[4])
-            except:
-                continue
-            if feature_type in ["exon", "cds", "gene", "mrna", "intron", "five_prime_utr", "three_prime_utr"]:
-                if chrom not in annotations:
-                    annotations[chrom] = []
-                annotations[chrom].append((start, end, feature_type))
-    for chrom in annotations:
-        annotations[chrom].sort(key=lambda x: x[0])
-
-def get_location(chrom, pos_start, pos_end):
-    if chrom not in annotations:
-        return "intergenic"
-    for start, end, feature in annotations[chrom]:
-        if pos_start <= end and pos_end >= start:
-            if feature == "exon":
-                return "exon"
-            elif feature == "cds":
-                return "CDS"
-            elif feature == "gene":
-                return "gene"
-            elif feature in ["five_prime_utr", "three_prime_utr"]:
-                return "UTR"
-            elif feature == "intron":
-                return "intron"
-    return "intergenic"
 
 # Load NGG off-targets
 ngg_off_minus1 = set()
@@ -258,13 +215,9 @@ with open(candidates_file) as f:
                 chrom = parts[0]
                 range_s = parts[1]
                 start, end = range_s.split('-')
-                start_int = int(start)
-                end_int = int(end)
                 strand = "-" if ":rc" in current_id else "+"
             except:
-                chrom="Unknown"; start="0"; end="0"; start_int=0; end_int=0; strand="?"
-            
-            location = get_location(chrom, start_int, end_int)
+                chrom="Unknown"; start="0"; end="0"; strand="?"
             
             # Calculate minMM_GG
             min_mm_gg = str(mismatches + 1) + "+"
@@ -288,10 +241,33 @@ with open(candidates_file) as f:
             else:
                 s_class = f"Off-Target"
             
-            print(f"{current_id}\t{min_mm_gg}\t{min_mm_ag}\t{seq}\t{chrom}\t{start}\t{end}\t{strand}\t{location}\tNGG\t{s_class}")
+            print(f"{current_id}\t{min_mm_gg}\t{min_mm_ag}\t{seq}\t{chrom}\t{start}\t{end}\t{strand}\tNA\tNGG\t{s_class}")
 EOF
 
-python3 classify_spacers.py > "$OUTPUT_DIR/${JOB_ID}.tsv"
+RAW_TSV="$OUTPUT_DIR/${JOB_ID}.raw.tsv"
+FINAL_TSV="$OUTPUT_DIR/${JOB_ID}.tsv"
+
+python3 classify_spacers.py > "$RAW_TSV"
+
+# 5.5 Annotate with real GFF3 (location + gene_id)
+echo "[5.5/6] Annotating spacers with GFF3..."
+
+ANNOTATION_FILE=""
+case "$SPECIES" in
+    kdml105)
+        ANNOTATION_FILE="/data/genomes/KDML/KDML105.gff3"
+        ;;
+esac
+
+if [ -n "$ANNOTATION_FILE" ] && [ -f "$ANNOTATION_FILE" ]; then
+    python3 /app/scripts/annotate_spacers.py "$RAW_TSV" "$ANNOTATION_FILE" -o "$FINAL_TSV" || {
+        echo "[WARN] Annotation step failed, falling back to raw TSV"
+        cp "$RAW_TSV" "$FINAL_TSV"
+    }
+else
+    echo "[WARN] Annotation file not found for species '$SPECIES', using raw TSV"
+    cp "$RAW_TSV" "$FINAL_TSV"
+fi
 
 echo "--- Pipeline Finished (Dual PAM Mode) ---"
 echo "Output: $WORKDIR/$OUTPUT_DIR/${JOB_ID}.tsv"

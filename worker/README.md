@@ -52,6 +52,12 @@ Researchers can configure pipeline parameters per-job by passing an `options` ob
 
 ## Development & Testing
 
+### Important: Script Source of Truth
+
+- Runtime with `docker-compose` uses mounted scripts from project root: `./scripts -> /app/scripts`
+- Active pipeline entrypoint is `/app/scripts/complete_pipeline_run.sh`
+- `worker/complete_pipeline_run.sh` is kept synchronized for build compatibility and should match the root `scripts/` version
+
 ### Running the Worker
 
 The worker is managed via Docker Compose.

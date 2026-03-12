@@ -404,8 +404,19 @@ def process_custom_analysis(task_data):
         update_job_status(job_id, 'failed', error=error_msg)
         raise ValueError(error_msg)
     
-    # Build command
-    cmd = ["/bin/bash", "/app/scripts/complete_pipeline_run.sh", genome_file, species]
+    # Build command (align with current script contract: arg8 = job_id)
+    cmd = [
+        "/bin/bash",
+        "/app/scripts/complete_pipeline_run.sh",
+        genome_file,
+        species,
+        "0",
+        "0",
+        "NGG",
+        "20",
+        "3",
+        job_id,
+    ]
     
     print(" [x] Executing: %s" % " ".join(cmd))
     
@@ -419,9 +430,9 @@ def process_custom_analysis(task_data):
         print(" [x] Execution Duration: %.2f seconds" % duration)
         
         if return_code == 0:
-            # Read output file path
+            # Read output file path (unique per job)
             output_dir = os.path.dirname(genome_file)
-            output_file = os.path.join(output_dir, 'output', 'spacers_classified.tsv')
+            output_file = os.path.join(output_dir, 'output', '%s.tsv' % job_id)
             
             result = {
                 'status': 'completed',
