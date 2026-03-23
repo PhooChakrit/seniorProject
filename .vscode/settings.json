@@ -1,5 +1,12 @@
 {
   "name": "jbrowse2-app",
   "displayName": "JBrowse 2 Application",
-  "description": "Full-stack genomic data visualization with React, TypeScript, and JBrowse 2"
+  "description": "Full-stack genomic data visualization with React, TypeScript, and JBrowse 2",
+  "prisma.pinToPrisma6": true,
+  "chat.tools.terminal.autoApprove": {
+    "/^samtools faidx genomes/KDML/KDML105\\.fasta && bgzip -c genomes/KDML/KDML105\\.gff3 > genomes/KDML/KDML105\\.gff3\\.gz && tabix -p gff genomes/KDML/KDML105\\.gff3\\.gz && ls -la genomes/KDML \\| grep -E 'KDML105\\\\\\.fasta\\\\\\.fai\\|KDML105\\\\\\.gff3\\\\\\.gz\\|KDML105\\\\\\.gff3\\\\\\.gz\\\\\\.tbi'$/": {
+      "approve": true,
+      "matchCommandLine": true
+    }
+  }
 }

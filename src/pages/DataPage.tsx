@@ -1,31 +1,31 @@
-import React, { useState } from 'react';
-import { Layout } from '@/components/layout/Layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from "react";
+import { Layout } from "@/components/layout/Layout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   TargetInput,
   SpeciesSelector,
-  NucleaseSelector,
+  // NucleaseSelector,
   PurposeSelector,
   AdvancedOptions,
-  FindTargetButton
-} from '@/components/crispr';
+  FindTargetButton,
+} from "@/components/crispr";
 
-type NucleaseType = 'cas9' | 'cas12a';
-type PurposeType = 'knock-out' | 'knock-in' | 'prime-edit';
+// type NucleaseType = "cas9" | "cas12a";
+type PurposeType = "knock-out" | "knock-in" | "prime-edit";
 
 export const DataPage: React.FC = () => {
-  const [target, setTarget] = useState('');
-  const [species, setSpecies] = useState('Oryza sativa (IRGSP-1.0)');
-  const [nuclease, setNuclease] = useState<NucleaseType>('cas9');
-  const [purpose, setPurpose] = useState<PurposeType>('knock-out');
+  const [target, setTarget] = useState("");
+  const [species, setSpecies] = useState("Oryza sativa (IRGSP-1.0)");
+  // const [nuclease, setNuclease] = useState<NucleaseType>('cas9');
+  const [purpose, setPurpose] = useState<PurposeType>("knock-out");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [loading, setLoading] = useState(false);
 
   // Advanced options
-  const [pamOverride, setPamOverride] = useState('NGG');
-  const [guideLength, setGuideLength] = useState('20');
-  const [maxMismatch, setMaxMismatch] = useState('3');
-  const [offTargetSensitivity, setOffTargetSensitivity] = useState('medium');
+  const [pamOverride, setPamOverride] = useState("NGG");
+  const [guideLength, setGuideLength] = useState("20");
+  const [maxMismatch, setMaxMismatch] = useState("3");
+  const [offTargetSensitivity, setOffTargetSensitivity] = useState("medium");
 
   const handleFindTargets = async () => {
     if (!target.trim()) return;
@@ -42,7 +42,7 @@ export const DataPage: React.FC = () => {
       const text = await navigator.clipboard.readText();
       setTarget(text);
     } catch (err) {
-      console.error('Failed to read clipboard:', err);
+      console.error("Failed to read clipboard:", err);
     }
   };
 
@@ -63,7 +63,9 @@ export const DataPage: React.FC = () => {
       <div className="max-w-5xl mx-auto space-y-8 py-8">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold tracking-tight">CRISPR-Cas9 Guide RNA Design</h1>
+          <h1 className="text-4xl font-bold tracking-tight">
+            CRISPR-Cas9 Guide RNA Design
+          </h1>
           <p className="text-lg text-muted-foreground">
             Design highly specific guide RNAs for your CRISPR-Cas9 experiments
           </p>
@@ -74,16 +76,14 @@ export const DataPage: React.FC = () => {
           <CardHeader className="space-y-1 pb-8">
             <CardTitle className="text-2xl">Target Selection</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Enter your target gene or sequence to find optimal CRISPR-Cas9 sites
+              Enter your target gene or sequence to find optimal CRISPR-Cas9
+              sites
             </p>
           </CardHeader>
 
           <CardContent className="space-y-8">
             {/* 2. Species Selector */}
-            <SpeciesSelector
-              species={species}
-              onSpeciesChange={setSpecies}
-            />
+            <SpeciesSelector species={species} onSpeciesChange={setSpecies} />
 
             {/* 1. Target Input Section */}
             <TargetInput
@@ -94,17 +94,13 @@ export const DataPage: React.FC = () => {
             />
 
             {/* 4. Purpose Selector */}
-            <PurposeSelector
-              purpose={purpose}
-              onPurposeChange={setPurpose}
-            />
+            <PurposeSelector purpose={purpose} onPurposeChange={setPurpose} />
 
             {/* 3. Nuclease Selector */}
             {/* <NucleaseSelector
               nuclease={nuclease}
               onNucleaseChange={setNuclease}
             /> */}
-
 
             {/* 5. Advanced Options */}
             <AdvancedOptions
@@ -135,7 +131,9 @@ export const DataPage: React.FC = () => {
             <CardContent className="py-12">
               <div className="flex flex-col items-center justify-center space-y-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                <p className="text-muted-foreground">Analyzing sequences and finding optimal CRISPR sites...</p>
+                <p className="text-muted-foreground">
+                  Analyzing sequences and finding optimal CRISPR sites...
+                </p>
               </div>
             </CardContent>
           </Card>

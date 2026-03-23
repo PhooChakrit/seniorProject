@@ -1,0 +1,3 @@
+Chr1	test	gene	100	500	.	+	.	ID=Gene1
+Chr1	test	exon	100	200	.	+	.	Parent=Gene1
+Chr1	test	exon	300	400	.	+	.	Parent=Gene1

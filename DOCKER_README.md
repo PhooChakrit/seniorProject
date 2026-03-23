@@ -38,6 +38,15 @@ npm run dev
 - `npm run docker:logs` - View database logs
 - `npm run docker:reset` - Reset the database (deletes all data and restarts)
 - `npm run db:setup` - Complete setup (start Docker + run migrations)
+- `docker-compose up --build worker` - Rebuild and start the bioinformatics worker
+
+## Worker Service & Bioinformatics Pipeline
+
+This project includes a **bioinformatics worker** (Python 2.7) that processes genome files.
+
+- **Source**: `worker/` directory
+- **Documentation**: See [worker/README.md](worker/README.md) for details on the pipeline, configuration (`PAM_PATTERN`, `MIN_SEQ_LENGTH`), and architecture.
+- **Data**: Mounts local `genomes/` folder to `/data/genomes` in the container.
 
 ## Database Configuration
 
@@ -50,6 +59,7 @@ The database is configured with the following default settings:
 - **Password**: postgres
 
 These settings are defined in:
+
 - `docker-compose.yml` - Docker configuration
 - `.env` - Environment variables (DATABASE_URL)
 
@@ -68,7 +78,7 @@ If port 5432 is already in use, you can change it in `docker-compose.yml`:
 
 ```yaml
 ports:
-  - "5433:5432"  # Change 5432 to 5433 or another port
+  - "5433:5432" # Change 5432 to 5433 or another port
 ```
 
 Then update your `.env` file:

@@ -1,0 +1,33 @@
+{
+  "oryza_sativa": {
+    "name": "Oryza sativa (IRGSP-1.0)",
+    "label": "Oryza sativa (IRGSP-1.0)",
+    "genomeFile": "oryza/IRGSP-1.0.fa",
+    "chromosomes": [
+      { "id": "Chr01", "label": "Chr01" },
+      { "id": "Chr02", "label": "Chr02" },
+      { "id": "Chr03", "label": "Chr03" },
+      { "id": "Chr04", "label": "Chr04" },
+      { "id": "Chr05", "label": "Chr05" },
+      { "id": "Chr06", "label": "Chr06" },
+      { "id": "Chr07", "label": "Chr07" },
+      { "id": "Chr08", "label": "Chr08" },
+      { "id": "Chr09", "label": "Chr09" },
+      { "id": "Chr10", "label": "Chr10" },
+      { "id": "Chr11", "label": "Chr11" },
+      { "id": "Chr12", "label": "Chr12" }
+    ]
+  },
+  "arabidopsis_thaliana": {
+    "name": "Arabidopsis thaliana",
+    "label": "Arabidopsis thaliana",
+    "genomeFile": "arabidopsis/TAIR10.fa",
+    "chromosomes": [
+      { "id": "Chr1", "label": "Chr1" },
+      { "id": "Chr2", "label": "Chr2" },
+      { "id": "Chr3", "label": "Chr3" },
+      { "id": "Chr4", "label": "Chr4" },
+      { "id": "Chr5", "label": "Chr5" }
+    ]
+  }
+}
