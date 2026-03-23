@@ -15,10 +15,11 @@ PAM="${5:-NGG}"
 SPACER_LENGTH="${6:-20}"
 MISMATCHES="${7:-3}"
 JOB_ID="${8:-spacers_classified}"
+CONTIG="${9:-ptg000001l}"
 OUTPUT_DIR="output"
 
 if [ -z "$INPUT_FILE" ]; then
-    echo "Usage: complete_pipeline_run.sh <input_fasta> [species] [start_pos] [end_pos] [pam] [spacer_length] [mismatches]"
+    echo "Usage: complete_pipeline_run.sh <input_fasta> [species] [start_pos] [end_pos] [pam] [spacer_length] [mismatches] [job_id] [contig]"
     exit 1
 fi
 
@@ -28,6 +29,7 @@ echo "Species: $SPECIES"
 if [ -n "$START_POS" ] && [ "$START_POS" != "0" ]; then
     echo "Region: $START_POS - $END_POS"
 fi
+echo "Contig: $CONTIG"
 echo "Primary PAM: $PAM"
 echo "Spacer Length: $SPACER_LENGTH"
 echo "Mismatches: $MISMATCHES"
@@ -52,14 +54,24 @@ from Bio.SeqRecord import SeqRecord
 input_file = "$INPUT_FILE"
 start_pos = $START_POS
 end_pos = $END_POS
+contig_id = "$CONTIG"
 output_file = "REGION.fna"
 
 print("Loading genome from %s..." % input_file)
-record = next(SeqIO.parse(input_file, "fasta"))
-print("Genome length: %d" % len(record.seq))
+target_record = None
+for rec in SeqIO.parse(input_file, "fasta"):
+    if rec.id == contig_id:
+        target_record = rec
+        break
 
-region_seq = record.seq[start_pos-1:end_pos]
-region_record = SeqRecord(region_seq, id="%s:%d-%d" % (record.id, start_pos, end_pos), description="")
+if target_record is None:
+    raise ValueError("Contig '%s' not found in %s" % (contig_id, input_file))
+
+print("Target contig: %s" % target_record.id)
+print("Contig length: %d" % len(target_record.seq))
+
+region_seq = target_record.seq[start_pos-1:end_pos]
+region_record = SeqRecord(region_seq, id="%s:%d-%d" % (target_record.id, start_pos, end_pos), description="")
 
 with open(output_file, "w") as out:
     SeqIO.write(region_record, out, "fasta")
@@ -85,9 +97,7 @@ run_pam_analysis() {
     
     # Extract spacers
     cat <<EOF > extract_${PREFIX}.py
-import sys
 from Bio import SeqIO
-from Bio.Seq import Seq
 
 genome_file = "GENOME.fna"
 fuzznuc_file = "${PREFIX}_spacers.fuzznuc"
@@ -95,6 +105,20 @@ output_file = "${PREFIX}_candidates.fa"
 
 record = next(SeqIO.parse(genome_file, "fasta"))
 genome_seq = record.seq
+record_id = record.id
+base_chr = record_id.split(":", 1)[0]
+
+# If GENOME.fna is an extracted region (e.g., ptg000001l:10000-60000),
+# convert fuzznuc's region-relative coordinates back to genome coordinates.
+region_offset = 0
+if ":" in record_id:
+    coord_part = record_id.split(":", 1)[1]
+    if "-" in coord_part:
+        try:
+            region_start = int(coord_part.split("-", 1)[0])
+            region_offset = region_start - 1
+        except ValueError:
+            region_offset = 0
 
 with open(fuzznuc_file) as f, open(output_file, 'w') as out:
     count = 0
@@ -111,8 +135,10 @@ with open(fuzznuc_file) as f, open(output_file, 'w') as out:
             final_seq = str(seq_slice)
             if strand == "-":
                 final_seq = str(seq_slice.reverse_complement())
+            genome_start = start + region_offset
+            genome_end = end + region_offset
             strand_label = ":rc" if strand == "-" else ""
-            header = f">{record.id}:{start}-{end}{strand_label}"
+            header = f">{base_chr}:{genome_start}-{genome_end}{strand_label}"
             out.write(f"{header}\n{final_seq}\n")
             count += 1
         except ValueError:
@@ -125,8 +151,41 @@ EOF
     VSEARCH_ID=$(python3 -c "print(1.0 - float($MISMATCHES) / float($SPACER_LENGTH))")
     VSEARCH_ID_MINUS_1=$(python3 -c "print(1.0 - float($MISMATCHES - 1) / float($SPACER_LENGTH))")
     
-    grep -v ">" ${PREFIX}_candidates.fa 2>/dev/null | sort | uniq > ${PREFIX}_unique.seq || touch ${PREFIX}_unique.seq
-    awk '{print ">" NR "\n" $0}' ${PREFIX}_unique.seq > ${PREFIX}_unique.fa
+    cat <<EOF > build_unique_${PREFIX}.py
+from collections import OrderedDict
+
+input_fasta = "${PREFIX}_candidates.fa"
+output_fasta = "${PREFIX}_unique.fa"
+
+seq_to_first_id = OrderedDict()
+current_id = ""
+seq_chunks = []
+
+def flush_record():
+    if not current_id:
+        return
+    seq = "".join(seq_chunks).strip()
+    if seq and seq not in seq_to_first_id:
+        seq_to_first_id[seq] = current_id
+
+with open(input_fasta) as f:
+    for raw_line in f:
+        line = raw_line.strip()
+        if not line:
+            continue
+        if line.startswith(">"):
+            flush_record()
+            current_id = line[1:]
+            seq_chunks = []
+        else:
+            seq_chunks.append(line)
+    flush_record()
+
+with open(output_fasta, "w") as out:
+    for seq, seq_id in seq_to_first_id.items():
+        out.write(f">{seq_id}\n{seq}\n")
+EOF
+    python3 build_unique_${PREFIX}.py
     
     echo "[PAM:$PAM_TYPE] Running vsearch alignments..."
     vsearch --usearch_global ${PREFIX}_unique.fa --db ${PREFIX}_unique.fa \
@@ -171,75 +230,71 @@ echo "[5/6] Classification (Dual PAM)..."
 
 cat <<EOF > classify_spacers.py
 import sys
-import os
 
 # Use NGG candidates as primary (since user selected NGG typically)
 candidates_file = "NGG_candidates.fa"
+unique_file = "NGG_unique.fa"
 pam_used = "$PAM"
 mismatches = $MISMATCHES
 
-# GFF3 Annotation file path
-gff3_file = "/data/genomes/KDML/KDML105_annotation.gff3"
+def load_ids(path):
+    ids = set()
+    try:
+        with open(path) as f:
+            for line in f:
+                value = line.strip().split()
+                if value:
+                    ids.add(value[0])
+    except:
+        pass
+    return ids
 
-# Load GFF3 annotations
-annotations = {}
-if os.path.exists(gff3_file):
-    print(f"Loading annotations from {gff3_file}...", file=sys.stderr)
-    with open(gff3_file) as gf:
-        for line in gf:
-            if line.startswith("#"): continue
-            parts = line.strip().split("\t")
-            if len(parts) < 9: continue
-            chrom = parts[0]
-            feature_type = parts[2].lower()
-            try:
-                start = int(parts[3])
-                end = int(parts[4])
-            except:
-                continue
-            if feature_type in ["exon", "cds", "gene", "mrna", "intron", "five_prime_utr", "three_prime_utr"]:
-                if chrom not in annotations:
-                    annotations[chrom] = []
-                annotations[chrom].append((start, end, feature_type))
-    for chrom in annotations:
-        annotations[chrom].sort(key=lambda x: x[0])
+def load_repr_map(path):
+    repr_to_seq = {}
+    current_id = ""
+    seq_chunks = []
 
-def get_location(chrom, pos_start, pos_end):
-    if chrom not in annotations:
-        return "intergenic"
-    for start, end, feature in annotations[chrom]:
-        if pos_start <= end and pos_end >= start:
-            if feature == "exon":
-                return "exon"
-            elif feature == "cds":
-                return "CDS"
-            elif feature == "gene":
-                return "gene"
-            elif feature in ["five_prime_utr", "three_prime_utr"]:
-                return "UTR"
-            elif feature == "intron":
-                return "intron"
-    return "intergenic"
+    def flush_record():
+        if not current_id:
+            return
+        seq = "".join(seq_chunks).strip()
+        if seq:
+            repr_to_seq[current_id] = seq
 
-# Load NGG off-targets
-ngg_off_minus1 = set()
-ngg_off_full = set()
-try:
-    ngg_off_minus1 = set(line.strip().split()[0] for line in open(f"NGG_off_{mismatches}MM_minus1.ids"))
-except: pass
-try:
-    ngg_off_full = set(line.strip().split()[0] for line in open(f"NGG_off_{mismatches}MM.ids"))
-except: pass
+    try:
+        with open(path) as f:
+            for raw_line in f:
+                line = raw_line.strip()
+                if not line:
+                    continue
+                if line.startswith(">"):
+                    flush_record()
+                    current_id = line[1:]
+                    seq_chunks = []
+                else:
+                    seq_chunks.append(line)
+            flush_record()
+    except:
+        pass
+    return repr_to_seq
 
-# Load NAG off-targets
-nag_off_minus1 = set()
-nag_off_full = set()
-try:
-    nag_off_minus1 = set(line.strip().split()[0] for line in open(f"NAG_off_{mismatches}MM_minus1.ids"))
-except: pass
-try:
-    nag_off_full = set(line.strip().split()[0] for line in open(f"NAG_off_{mismatches}MM.ids"))
-except: pass
+def ids_to_sequences(ids, repr_to_seq):
+    return set(repr_to_seq[seq_id] for seq_id in ids if seq_id in repr_to_seq)
+
+# Load representative sequence map from NGG_unique.fa.
+repr_to_seq = load_repr_map(unique_file)
+
+# Load NGG off-target IDs and convert to sequences.
+ngg_off_minus1_ids = load_ids(f"NGG_off_{mismatches}MM_minus1.ids")
+ngg_off_full_ids = load_ids(f"NGG_off_{mismatches}MM.ids")
+ngg_off_minus1_seqs = ids_to_sequences(ngg_off_minus1_ids, repr_to_seq)
+ngg_off_full_seqs = ids_to_sequences(ngg_off_full_ids, repr_to_seq)
+
+# Load NAG off-target IDs and convert to sequences.
+nag_off_minus1_ids = load_ids(f"NAG_off_{mismatches}MM_minus1.ids")
+nag_off_full_ids = load_ids(f"NAG_off_{mismatches}MM.ids")
+nag_off_minus1_seqs = ids_to_sequences(nag_off_minus1_ids, repr_to_seq)
+nag_off_full_seqs = ids_to_sequences(nag_off_full_ids, repr_to_seq)
 
 print("seqID\tminMM_GG\tminMM_AG\tseq\tChr\tcut_start\tcut_end\tstrand\tlocation\tPAM\tclass")
 
@@ -258,26 +313,22 @@ with open(candidates_file) as f:
                 chrom = parts[0]
                 range_s = parts[1]
                 start, end = range_s.split('-')
-                start_int = int(start)
-                end_int = int(end)
                 strand = "-" if ":rc" in current_id else "+"
             except:
-                chrom="Unknown"; start="0"; end="0"; start_int=0; end_int=0; strand="?"
-            
-            location = get_location(chrom, start_int, end_int)
+                chrom="Unknown"; start="0"; end="0"; strand="?"
             
             # Calculate minMM_GG
             min_mm_gg = str(mismatches + 1) + "+"
-            if current_id in ngg_off_minus1:
+            if seq in ngg_off_minus1_seqs:
                 min_mm_gg = str(mismatches - 1)
-            elif current_id in ngg_off_full:
+            elif seq in ngg_off_full_seqs:
                 min_mm_gg = str(mismatches)
             
             # Calculate minMM_AG
             min_mm_ag = str(mismatches + 1) + "+"
-            if current_id in nag_off_minus1:
+            if seq in nag_off_minus1_seqs:
                 min_mm_ag = str(mismatches - 1)
-            elif current_id in nag_off_full:
+            elif seq in nag_off_full_seqs:
                 min_mm_ag = str(mismatches)
             
             # Determine class based on both
@@ -288,10 +339,33 @@ with open(candidates_file) as f:
             else:
                 s_class = f"Off-Target"
             
-            print(f"{current_id}\t{min_mm_gg}\t{min_mm_ag}\t{seq}\t{chrom}\t{start}\t{end}\t{strand}\t{location}\tNGG\t{s_class}")
+            print(f"{current_id}\t{min_mm_gg}\t{min_mm_ag}\t{seq}\t{chrom}\t{start}\t{end}\t{strand}\tNA\tNGG\t{s_class}")
 EOF
 
-python3 classify_spacers.py > "$OUTPUT_DIR/${JOB_ID}.tsv"
+RAW_TSV="$OUTPUT_DIR/${JOB_ID}.raw.tsv"
+FINAL_TSV="$OUTPUT_DIR/${JOB_ID}.tsv"
+
+python3 classify_spacers.py > "$RAW_TSV"
+
+# 5.5 Annotate with real GFF3 (location + gene_id)
+echo "[5.5/6] Annotating spacers with GFF3..."
+
+ANNOTATION_FILE=""
+case "$SPECIES" in
+    kdml105)
+        ANNOTATION_FILE="/data/genomes/KDML/KDML105.gff3"
+        ;;
+esac
+
+if [ -n "$ANNOTATION_FILE" ] && [ -f "$ANNOTATION_FILE" ]; then
+    python3 /app/scripts/annotate_spacers.py "$RAW_TSV" "$ANNOTATION_FILE" -o "$FINAL_TSV" || {
+        echo "[WARN] Annotation step failed, falling back to raw TSV"
+        cp "$RAW_TSV" "$FINAL_TSV"
+    }
+else
+    echo "[WARN] Annotation file not found for species '$SPECIES', using raw TSV"
+    cp "$RAW_TSV" "$FINAL_TSV"
+fi
 
 echo "--- Pipeline Finished (Dual PAM Mode) ---"
 echo "Output: $WORKDIR/$OUTPUT_DIR/${JOB_ID}.tsv"

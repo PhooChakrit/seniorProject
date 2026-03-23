@@ -21,8 +21,9 @@ function generateJobId(): string {
 // Submit a new analysis job
 router.post('/submit', authenticateToken, async (req: AuthRequest, res) => {
   try {
-    const { variety, startPos, endPos, options } = req.body;
+    const { variety, startPos, endPos, contig, options } = req.body;
     const userId = req.user?.userId;
+    const selectedContig = options?.contig || contig || 'ptg000001l';
 
     if (!userId) {
       return res.status(401).json({ error: 'User not authenticated' });
@@ -49,12 +50,13 @@ router.post('/submit', authenticateToken, async (req: AuthRequest, res) => {
         type: 'region_analysis',
         status: 'pending',
         species: variety, // Using species field to store variety
+        chromosome: selectedContig,
         fromPosition: startPos,
         toPosition: endPos,
         userId,
         notifyEmail: options?.email || null,
         // Store options as JSON string in result field temporarily
-        result: JSON.stringify({ options, variety, startPos, endPos }),
+        result: JSON.stringify({ options, variety, contig: selectedContig, startPos, endPos }),
       },
     });
 
@@ -68,6 +70,7 @@ router.post('/submit', authenticateToken, async (req: AuthRequest, res) => {
         type: 'region_analysis',
         jobId,
         variety,
+        contig: selectedContig,
         startPos,
         endPos,
         options: options || {},

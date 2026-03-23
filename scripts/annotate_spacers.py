@@ -150,6 +150,7 @@ def annotate_spacers(spacer_file: str, gff_file: str, output_file: str):
         
         # Find column indices
         cols = header.split('\t')
+        cols_lower = [c.lower() for c in cols]
         try:
             chr_idx = cols.index('Chr')
             start_idx = cols.index('cut_start')
@@ -164,15 +165,35 @@ def annotate_spacers(spacer_file: str, gff_file: str, output_file: str):
                 print(f"Error: Required columns not found. Available: {cols}")
                 print("Need: Chr, cut_start, cut_end (or similar)")
                 sys.exit(1)
+
+        # Reuse existing columns if present to preserve downstream parser positions
+        location_idx: Optional[int] = None
+        gene_id_idx: Optional[int] = None
+        if 'location' in cols_lower:
+            location_idx = cols_lower.index('location')
+        if 'gene_id' in cols_lower:
+            gene_id_idx = cols_lower.index('gene_id')
+
+        # Add missing output columns
+        if location_idx is None:
+            cols.append('location')
+            location_idx = len(cols) - 1
+        if gene_id_idx is None:
+            cols.append('gene_id')
+            gene_id_idx = len(cols) - 1
         
-        # Write header with new columns
-        f_out.write(header + '\tlocation\tgene_id\n')
+        # Write normalized header
+        f_out.write('\t'.join(cols) + '\n')
         
         line_count = 0
         for line in f_in:
             parts = line.strip().split('\t')
             if len(parts) <= max(chr_idx, start_idx, end_idx):
                 continue
+
+            # Ensure row has enough columns for writing location/gene_id in place
+            if len(parts) < len(cols):
+                parts.extend([''] * (len(cols) - len(parts)))
             
             chrom = parts[chr_idx]
             try:
@@ -185,7 +206,9 @@ def annotate_spacers(spacer_file: str, gff_file: str, output_file: str):
             location, gene_id = find_location(chrom, start, end, gene_data)
             stats[location] += 1
             
-            f_out.write(f"{line.strip()}\t{location}\t{gene_id}\n")
+            parts[location_idx] = location
+            parts[gene_id_idx] = gene_id
+            f_out.write('\t'.join(parts[:len(cols)]) + '\n')
             line_count += 1
             
             if line_count % 100000 == 0:

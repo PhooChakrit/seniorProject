@@ -141,11 +141,13 @@ def process_region_analysis(task_data):
     start_pos = int(task_data.get('startPos', 0))
     end_pos = int(task_data.get('endPos', 0))
     options = task_data.get('options', {})
+    contig = task_data.get('contig') or options.get('contig', 'ptg000001l')
     
     print(" [x] Processing REGION ANALYSIS:")
     print("     Job ID: %s" % job_id)
     print("     Variety: %s" % variety)
     print("     Region: %s - %s" % (start_pos, end_pos))
+    print("     Contig: %s" % contig)
     print("     Options: %s" % str(options))
     
     # Update status to processing
@@ -186,7 +188,8 @@ def process_region_analysis(task_data):
         pam,
         str(spacer_length),
         str(mismatches),
-        job_id  # Add jobId for unique output filename
+        job_id,  # Add jobId for unique output filename
+        contig
     ]
     
     print(" [x] Executing: %s" % " ".join(cmd))
@@ -404,8 +407,19 @@ def process_custom_analysis(task_data):
         update_job_status(job_id, 'failed', error=error_msg)
         raise ValueError(error_msg)
     
-    # Build command
-    cmd = ["/bin/bash", "/app/scripts/complete_pipeline_run.sh", genome_file, species]
+    # Build command (align with current script contract: arg8 = job_id)
+    cmd = [
+        "/bin/bash",
+        "/app/scripts/complete_pipeline_run.sh",
+        genome_file,
+        species,
+        "0",
+        "0",
+        "NGG",
+        "20",
+        "3",
+        job_id,
+    ]
     
     print(" [x] Executing: %s" % " ".join(cmd))
     
@@ -419,9 +433,9 @@ def process_custom_analysis(task_data):
         print(" [x] Execution Duration: %.2f seconds" % duration)
         
         if return_code == 0:
-            # Read output file path
+            # Read output file path (unique per job)
             output_dir = os.path.dirname(genome_file)
-            output_file = os.path.join(output_dir, 'output', 'spacers_classified.tsv')
+            output_file = os.path.join(output_dir, 'output', '%s.tsv' % job_id)
             
             result = {
                 'status': 'completed',

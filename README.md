@@ -392,6 +392,10 @@ npm run prisma:generate    # Generate Prisma Client
 npm run prisma:migrate     # Run migrations
 npm run prisma:studio      # Open Prisma Studio GUI
 
+# E2E smoke test (queue + API + worker)
+chmod +x scripts/e2e_queue_smoke.sh
+scripts/e2e_queue_smoke.sh
+
 # Docker commands
 npm run docker:up          # Start containers
 npm run docker:down        # Stop containers
