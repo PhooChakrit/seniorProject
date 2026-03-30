@@ -1,5 +1,5 @@
 import apiClient from '@/lib/axios';
-import { GenomeData, PaginatedResponse } from '@/types';
+import { GenomeData, JBrowseGenomeConfig, PaginatedResponse } from '@/types';
 
 export const genomeApi = {
   getGenomeData: async (page: number = 1, limit: number = 10): Promise<PaginatedResponse<GenomeData>> => {
@@ -16,6 +16,11 @@ export const genomeApi = {
 
   createGenomeData: async (genomeData: Omit<GenomeData, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<GenomeData> => {
     const { data } = await apiClient.post<GenomeData>('/genome', genomeData);
+    return data;
+  },
+
+  getGenomeConfigs: async (): Promise<JBrowseGenomeConfig[]> => {
+    const { data } = await apiClient.get<JBrowseGenomeConfig[]>('/genome/configs');
     return data;
   },
 };

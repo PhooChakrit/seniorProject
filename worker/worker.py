@@ -21,16 +21,64 @@ API_URL = os.environ.get('API_URL', 'http://api:3000')
 CRISPR_SCRIPT = '/app/CRISPR-PLANTv2/CRISPR_PLANT_v2.py'
 GENOMES_DIR = '/data/genomes'
 
-# Variety to genome file mapping (KDML105 only for now)
-VARIETY_CONFIG = {
-    'kdml105': {
-        'genome_file': 'KDML/KDML105.fasta',
-        'name': 'KDML105 (Thai Hom Mali Rice)'
-    }
-}
 
-# Legacy species config (for backwards compatibility)
+def load_variety_config(genomes_dir):
+    """
+    One folder per cultivar under genomes_dir, each with genome.json:
+    { "id", "label", "fasta", "gff3" } — same layout as JBrowse / analysis.
+    """
+    config = {}
+    if not os.path.isdir(genomes_dir):
+        return config
+    try:
+        names = os.listdir(genomes_dir)
+    except OSError:
+        return config
+    for name in names:
+        sub = os.path.join(genomes_dir, name)
+        if not os.path.isdir(sub) or name.startswith('.'):
+            continue
+        manifest_path = os.path.join(sub, 'genome.json')
+        if not os.path.isfile(manifest_path):
+            continue
+        try:
+            with open(manifest_path) as f:
+                data = json.load(f)
+        except (ValueError, IOError):
+            continue
+        vid = data.get('id')
+        fasta_rel = data.get('fasta')
+        if not vid or not fasta_rel:
+            continue
+        genome_rel = os.path.join(name, fasta_rel).replace('\\', '/')
+        key = str(vid)
+        if key in config:
+            print(" [warn] duplicate variety id %r; keeping %s" % (key, config[key].get('folder')))
+            continue
+        config[key] = {
+            'genome_file': genome_rel,
+            'name': data.get('label', key),
+            'folder': name,
+            'gff3': data.get('gff3'),
+        }
+    return config
+
+
+VARIETY_CONFIG = load_variety_config(GENOMES_DIR)
+if not VARIETY_CONFIG:
+    VARIETY_CONFIG = {
+        'kdml105': {
+            'genome_file': 'KDML/KDML105.fasta',
+            'name': 'KDML105 (Thai Hom Mali Rice)',
+            'folder': 'KDML',
+            'gff3': 'KDML105.gff3',
+        }
+    }
+
 SPECIES_CONFIG = VARIETY_CONFIG
+
+if VARIETY_CONFIG:
+    print(" [x] Varieties: %s" % sorted(VARIETY_CONFIG.keys()))
 
 
 def update_job_status(job_id, status, result=None, error=None):

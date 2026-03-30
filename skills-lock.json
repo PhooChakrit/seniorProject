@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "clean-code": {
+      "source": "sickn33/antigravity-awesome-skills",
+      "sourceType": "github",
+      "computedHash": "14ba8e7d8477723eca6d48a79a1924337f4a1f5f1c7ab9b0a7acc073268ecd5a"
+    },
+    "cursor-best-practices": {
+      "source": "siviter-xyz/dot-agent",
+      "sourceType": "github",
+      "computedHash": "83c6ea2105fc8f7255d1edd8cfa4424dee3523760f9812402ac84516039425ba"
+    }
+  }
+}

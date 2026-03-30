@@ -95,8 +95,9 @@ services:
 
   worker:
     platform: linux/amd64
-    build: 
-      context: ./worker
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
     image: seniorproject-worker:latest
     container_name: seniorproject-worker
     restart: unless-stopped

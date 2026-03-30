@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { createViewState, JBrowseLinearGenomeView } from '@jbrowse/react-linear-genome-view';
 import { Layout } from '@/components/layout/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,181 +11,43 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-
-// Oryza sativa (Rice) genome configuration
-const oryzaAssembly = {
-  name: 'Oryza_sativa',
-  aliases: ['IRGSP-1.0'],
-  sequence: {
-    type: 'ReferenceSequenceTrack',
-    trackId: 'Oryza-ReferenceSequenceTrack',
-    adapter: {
-      type: 'IndexedFastaAdapter',
-      fastaLocation: {
-        uri: '/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa',
-        locationType: 'UriLocation',
-      },
-      faiLocation: {
-        uri: '/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa.fai',
-        locationType: 'UriLocation',
-      },
-    },
-  },
-};
-
-// Tracks configuration for Oryza
-const oryzaTracks = [
-  {
-    type: 'FeatureTrack',
-    trackId: 'oryza_gff3_track',
-    name: 'Oryza DNA Annotations',
-    assemblyNames: ['Oryza_sativa'],
-    category: ['Annotations'],
-    adapter: {
-      type: 'Gff3Adapter',
-      gffLocation: {
-        uri: '/genomes/oryza/Oryza_DNA.gff3',
-        locationType: 'UriLocation',
-      },
-    },
-  },
-];
-
-const oryzaDefaultSession = {
-  name: 'Oryza Session',
-  view: {
-    id: 'linearGenomeView',
-    type: 'LinearGenomeView',
-    tracks: [
-      {
-        type: 'ReferenceSequenceTrack',
-        configuration: 'Oryza-ReferenceSequenceTrack',
-        displays: [
-          {
-            type: 'LinearReferenceSequenceDisplay',
-            configuration: 'Oryza-ReferenceSequenceTrack-LinearReferenceSequenceDisplay',
-          },
-        ],
-      },
-      {
-        type: 'FeatureTrack',
-        configuration: 'oryza_gff3_track',
-        displays: [
-          {
-            type: 'LinearBasicDisplay',
-            configuration: 'oryza_gff3_track-LinearBasicDisplay',
-          },
-        ],
-      },
-    ],
-  },
-};
-
-// Sample genome configuration for JBrowse 2 (Human genome)
-const assembly = {
-  name: 'GRCh38',
-  sequence: {
-    type: 'ReferenceSequenceTrack',
-    trackId: 'GRCh38-ReferenceSequenceTrack',
-    adapter: {
-      type: 'BgzipFastaAdapter',
-      fastaLocation: {
-        uri: 'https://jbrowse.org/genomes/GRCh38/fasta/GRCh38.fa.gz',
-        locationType: 'UriLocation',
-      },
-      faiLocation: {
-        uri: 'https://jbrowse.org/genomes/GRCh38/fasta/GRCh38.fa.gz.fai',
-        locationType: 'UriLocation',
-      },
-      gziLocation: {
-        uri: 'https://jbrowse.org/genomes/GRCh38/fasta/GRCh38.fa.gz.gzi',
-        locationType: 'UriLocation',
-      },
-    },
-  },
-  aliases: ['hg38'],
-  refNameAliases: {
-    adapter: {
-      type: 'RefNameAliasAdapter',
-      location: {
-        uri: 'https://s3.amazonaws.com/jbrowse.org/genomes/GRCh38/hg38_aliases.txt',
-        locationType: 'UriLocation',
-      },
-    },
-  },
-};
-
-const tracks = [
-  {
-    type: 'FeatureTrack',
-    trackId: 'ncbi_refseq_109_hg38',
-    name: 'NCBI RefSeq Genes',
-    assemblyNames: ['GRCh38'],
-    category: ['Genes'],
-    adapter: {
-      type: 'Gff3TabixAdapter',
-      gffGzLocation: {
-        uri: 'https://s3.amazonaws.com/jbrowse.org/genomes/GRCh38/ncbi_refseq/GCA_000001405.15_GRCh38_full_analysis_set.refseq_annotation.sorted.gff.gz',
-        locationType: 'UriLocation',
-      },
-      index: {
-        location: {
-          uri: 'https://s3.amazonaws.com/jbrowse.org/genomes/GRCh38/ncbi_refseq/GCA_000001405.15_GRCh38_full_analysis_set.refseq_annotation.sorted.gff.gz.tbi',
-          locationType: 'UriLocation',
-        },
-      },
-    },
-  },
-];
-
-const defaultSession = {
-  name: 'My session',
-  view: {
-    id: 'linearGenomeView',
-    type: 'LinearGenomeView',
-    tracks: [
-      {
-        type: 'ReferenceSequenceTrack',
-        configuration: 'GRCh38-ReferenceSequenceTrack',
-        displays: [
-          {
-            type: 'LinearReferenceSequenceDisplay',
-            configuration: 'GRCh38-ReferenceSequenceTrack-LinearReferenceSequenceDisplay',
-          },
-        ],
-      },
-    ],
-  },
-};
+import { genomeApi } from '@/api/genome';
 
 export const JBrowsePage: React.FC = () => {
   const [viewState, setViewState] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-  const [useOryza, setUseOryza] = useState(true); // Default to Oryza genome
+  const [selectedKey, setSelectedKey] = useState<string>('');
+
+  const { data: genomeConfigs = [], isLoading: configsLoading } = useQuery({
+    queryKey: ['genomeConfigs'],
+    queryFn: genomeApi.getGenomeConfigs,
+  });
+
+  const genome = genomeConfigs.find((g) => g.key === selectedKey) ?? genomeConfigs[0];
+
+  // Set default selected key once configs are loaded
+  useEffect(() => {
+    if (genomeConfigs.length > 0 && !selectedKey) {
+      setSelectedKey(genomeConfigs[0].key);
+    }
+  }, [genomeConfigs, selectedKey]);
 
   useEffect(() => {
+    if (!genome) return;
     try {
-      const config = useOryza
-        ? {
-          assembly: oryzaAssembly,
-          tracks: oryzaTracks,
-          location: '1:2000-20000', // Chromosome 1 region with data
-          defaultSession: oryzaDefaultSession,
-        }
-        : {
-          assembly,
-          tracks,
-          location: 'chr1:1-100,000',
-          defaultSession,
-        };
-
-      const state = createViewState(config);
+      setError(null);
+      const state = createViewState({
+        assembly: genome.assemblyConfig,
+        tracks: genome.tracks,
+        location: genome.defaultLocation,
+        defaultSession: genome.defaultSession,
+      });
       setViewState(state);
     } catch (err: any) {
       console.error('Error creating JBrowse view state:', err);
       setError(err.message || 'Failed to initialize JBrowse');
     }
-  }, [useOryza]);
+  }, [genome]);
 
   return (
     <Layout>
@@ -201,15 +64,19 @@ export const JBrowsePage: React.FC = () => {
               Select Genome
             </Label>
             <Select
-              value={useOryza ? 'oryza' : 'human'}
-              onValueChange={(value) => setUseOryza(value === 'oryza')}
+              value={selectedKey}
+              onValueChange={setSelectedKey}
+              disabled={configsLoading}
             >
               <SelectTrigger className="max-w-md">
-                <SelectValue placeholder="Select a rice variety" />
+                <SelectValue placeholder="Select a genome" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="oryza">oryza</SelectItem>
-                <SelectItem value="human">human</SelectItem>
+                {genomeConfigs.map((g) => (
+                  <SelectItem key={g.key} value={g.key}>
+                    {g.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -217,14 +84,8 @@ export const JBrowsePage: React.FC = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>
-              {useOryza ? 'oryza' : 'human'}
-            </CardTitle>
-            <CardDescription>
-              {useOryza
-                ? 'Premium Thai jasmine rice cultivar - IRGSP-1.0 reference genome with complete annotations including genes, regulatory regions, and structural variants'
-                : 'High-yielding Thai rice variety - Comprehensive genome assembly with QTL mapping for drought tolerance and disease resistance traits'}
-            </CardDescription>
+            <CardTitle>{genome?.label ?? ''}</CardTitle>
+            <CardDescription>{genome?.description ?? ''}</CardDescription>
           </CardHeader>
           <CardContent>
             {error ? (
@@ -255,33 +116,23 @@ export const JBrowsePage: React.FC = () => {
             <div className="grid gap-2 text-sm">
               <div className="flex justify-between">
                 <span className="font-medium">Assembly:</span>
-                <span className="text-muted-foreground">
-                  {useOryza ? 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)' : 'สุพรรณบุรี 1 (Suphan Buri 1)'}
-                </span>
+                <span className="text-muted-foreground">{genome?.assemblyName ?? ''}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Cultivar Type:</span>
-                <span className="text-muted-foreground">
-                  {useOryza ? 'Jasmine Rice (Premium Aromatic)' : 'Field Rice (High-Yield Variety)'}
-                </span>
+                <span className="text-muted-foreground">{genome?.cultivarType ?? ''}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Tracks Loaded:</span>
-                <span className="text-muted-foreground">
-                  {useOryza ? 'Reference Sequence + Gene Annotations (GFF3)' : 'Reference Sequence + QTL Markers'}
-                </span>
+                <span className="text-muted-foreground">{genome?.tracksLoaded ?? ''}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Default Region:</span>
-                <span className="text-muted-foreground">
-                  {useOryza ? 'Chromosome 1: 2,000-20,000 bp' : 'Chromosome 3: 5,000-25,000 bp'}
-                </span>
+                <span className="text-muted-foreground">{genome?.defaultRegion ?? ''}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium">Special Features:</span>
-                <span className="text-muted-foreground">
-                  {useOryza ? 'Aroma genes, Amylose content markers' : 'Drought tolerance, Disease resistance QTLs'}
-                </span>
+                <span className="text-muted-foreground">{genome?.specialFeatures ?? ''}</span>
               </div>
             </div>
           </CardContent>

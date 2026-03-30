@@ -57,6 +57,26 @@ export interface SpeciesData {
   [key: string]: Species;
 }
 
+// JBrowse genome config (mirrors GenomeConfig Prisma model)
+export interface JBrowseGenomeConfig {
+  id: number;
+  key: string;
+  label: string;
+  description: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  assemblyConfig: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tracks: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  defaultSession: any;
+  defaultLocation: string;
+  assemblyName: string;
+  cultivarType: string;
+  tracksLoaded: string;
+  defaultRegion: string;
+  specialFeatures: string;
+}
+
 // Search types
 export interface RegionSearchParams {
   species: string;

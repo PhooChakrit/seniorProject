@@ -11,6 +11,23 @@ function generateJobId(): string {
 }
 
 // ============================================
+// GENOME CONFIG ENDPOINTS (public)
+// ============================================
+
+// GET /api/genome/configs — no auth, returns all genome configs for JBrowse
+router.get('/configs', async (req, res) => {
+  try {
+    const configs = await prisma.genomeConfig.findMany({
+      orderBy: { id: 'asc' },
+    });
+    res.json(configs);
+  } catch (error) {
+    console.error('Error fetching genome configs:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ============================================
 // JOB MANAGEMENT ENDPOINTS
 // ============================================
 

@@ -61,6 +61,24 @@ model SearchJob {
   updatedAt   DateTime  @updatedAt
 }
 
+model GenomeConfig {
+  id              Int      @id @default(autoincrement())
+  key             String   @unique
+  label           String
+  description     String
+  assemblyConfig  Json
+  tracks          Json
+  defaultSession  Json
+  defaultLocation String
+  assemblyName    String
+  cultivarType    String
+  tracksLoaded    String
+  defaultRegion   String
+  specialFeatures String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
 // ============================================
 // COMMENTED OUT - Not used in current flow
 // Keep for future reference

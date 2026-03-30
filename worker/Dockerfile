@@ -36,13 +36,15 @@ WORKDIR /app
 RUN git clone https://github.com/bminkenberg/CRISPR-PLANTv2.git
 
 # Copy worker script and pipeline wrapper
-COPY worker.py .
-COPY run_pipeline.sh .
+COPY worker/worker.py .
+COPY worker/run_pipeline.sh .
 RUN chmod +x worker.py run_pipeline.sh
 
-# Copy complete pipeline script
-RUN mkdir -p /app/scripts
-COPY complete_pipeline_run.sh /app/scripts/
+# Pipeline + shared Python tools (build from repo root: docker compose build worker)
+RUN mkdir -p /app/scripts/spacer
+COPY worker/complete_pipeline_run.sh /app/scripts/
+COPY scripts/spacer/ /app/scripts/spacer/
+COPY scripts/annotate_spacers.py /app/scripts/
 RUN chmod +x /app/scripts/complete_pipeline_run.sh
 
 # Expected volume mount point
