@@ -35,7 +35,72 @@ Example: `genomes/KDML/genome.json` maps `kdml105` → `KDML/KDML105.fasta` and 
 
 If **no** valid manifests are found, the worker falls back to a built-in default for `kdml105` (same paths as before).
 
-To add a new rice line: create `genomes/<YourFolder>/`, add FASTA + GFF3 + `genome.json`, restart the worker, and expose the new `id` in the frontend/API.
+To add a new rice line (no code changes after refactor):
+
+1. Create `genomes/<YourFolder>/` with `genome.json`, FASTA, and GFF3.
+2. Run helper script once:
+   ```bash
+   scripts/register_genome.sh --dir genomes/<YourFolder> --gff3-index
+   ```
+   - This validates `genome.json`
+   - Generates `<fasta>.fai`
+   - Optionally generates `<gff3>.gz` + `.tbi`
+3. Insert/update matching DB row in `GenomeConfig` where `key = genome.json.id`.
+4. Restart worker so it reloads manifests from `/data/genomes/*/genome.json`.
+
+SQL template (adapt values to your cultivar):
+
+```sql
+INSERT INTO "GenomeConfig" (
+  "key",
+  "label",
+  "description",
+  "assemblyConfig",
+  "tracks",
+  "defaultSession",
+  "defaultLocation",
+  "assemblyName",
+  "cultivarType",
+  "tracksLoaded",
+  "defaultRegion",
+  "specialFeatures"
+) VALUES (
+  'kdml105',
+  'KDML105 (ข้าวหอมมะลิ)',
+  'Thai jasmine rice cultivar',
+  '{}'::jsonb,
+  '[]'::jsonb,
+  '{}'::jsonb,
+  'ptg000001l:2000-20000',
+  'KDML105',
+  'Jasmine Rice',
+  'Reference + Annotations',
+  'ptg000001l: 2,000-20,000 bp',
+  'Aroma genes'
+)
+ON CONFLICT ("key") DO UPDATE SET
+  "label" = EXCLUDED."label",
+  "description" = EXCLUDED."description",
+  "assemblyConfig" = EXCLUDED."assemblyConfig",
+  "tracks" = EXCLUDED."tracks",
+  "defaultSession" = EXCLUDED."defaultSession",
+  "defaultLocation" = EXCLUDED."defaultLocation",
+  "assemblyName" = EXCLUDED."assemblyName",
+  "cultivarType" = EXCLUDED."cultivarType",
+  "tracksLoaded" = EXCLUDED."tracksLoaded",
+  "defaultRegion" = EXCLUDED."defaultRegion",
+  "specialFeatures" = EXCLUDED."specialFeatures";
+```
+
+Validation matrix:
+
+- Positive:
+  - `GET /api/genome/configs` includes only configs whose `key` matches a manifest `id`.
+  - `GET /api/analysis/varieties` returns `id`, `label`, `defaultContig`, `contigs`.
+  - Submit analysis using a returned `id` + `contig`, then verify `output/<jobId>.tsv` is created.
+- Negative:
+  - Missing `.fai` -> variety returns with empty `contigs` and warning message.
+  - DB `key` not found in `genome.json` manifests -> excluded from dropdown APIs with server warning.
 
 ---
 

@@ -77,6 +77,14 @@ export interface JBrowseGenomeConfig {
   specialFeatures: string;
 }
 
+export interface AnalysisVariety {
+  id: string;
+  label: string;
+  defaultContig: string;
+  contigs: string[];
+  warnings: string[];
+}
+
 // Search types
 export interface RegionSearchParams {
   species: string;

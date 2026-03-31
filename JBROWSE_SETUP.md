@@ -2,6 +2,14 @@
 
 ## Quick Steps
 
+For maintainers adding a new cultivar, prefer the helper command:
+
+```bash
+scripts/register_genome.sh --dir genomes/<YourFolder> --gff3-index
+```
+
+This handles manifest validation + FASTA index creation (`.fai`) and optional GFF3 indexes in one step.
+
 ### 1. Prepare Your GFF3 File
 
 Your GFF3 file needs to be sorted, compressed, and indexed for JBrowse to use it efficiently.

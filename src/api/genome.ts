@@ -1,5 +1,5 @@
 import apiClient from '@/lib/axios';
-import { GenomeData, JBrowseGenomeConfig, PaginatedResponse } from '@/types';
+import { AnalysisVariety, GenomeData, JBrowseGenomeConfig, PaginatedResponse } from '@/types';
 
 export const genomeApi = {
   getGenomeData: async (page: number = 1, limit: number = 10): Promise<PaginatedResponse<GenomeData>> => {
@@ -22,5 +22,10 @@ export const genomeApi = {
   getGenomeConfigs: async (): Promise<JBrowseGenomeConfig[]> => {
     const { data } = await apiClient.get<JBrowseGenomeConfig[]>('/genome/configs');
     return data;
+  },
+
+  getAnalysisVarieties: async (): Promise<AnalysisVariety[]> => {
+    const { data } = await apiClient.get<{ varieties: AnalysisVariety[] }>('/analysis/varieties');
+    return data.varieties;
   },
 };

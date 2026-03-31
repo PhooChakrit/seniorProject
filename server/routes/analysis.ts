@@ -2,12 +2,27 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import amqplib from 'amqplib';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
+import * as path from 'path';
+import {
+  genomesBaseDir,
+  loadContigsFromFai,
+  loadGenomeManifestById,
+  parseDefaultContig,
+} from '../utils/genomeManifest';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672';
 const QUEUE_NAME = 'crispr_tasks';
+
+interface AnalysisVarietyResponse {
+  id: string;
+  label: string;
+  defaultContig: string;
+  contigs: string[];
+  warnings: string[];
+}
 
 // Helper function to generate unique job ID
 function generateJobId(): string {
@@ -17,6 +32,56 @@ function generateJobId(): string {
 // ============================================
 // ANALYSIS JOB ENDPOINTS
 // ============================================
+
+// Get available varieties for analysis dropdown
+router.get('/varieties', authenticateToken, async (_req: AuthRequest, res) => {
+  try {
+    const configs = await prisma.genomeConfig.findMany({
+      orderBy: { id: 'asc' },
+      select: { key: true, label: true, defaultLocation: true },
+    });
+
+    const genomesDir = genomesBaseDir();
+    const manifestsById = loadGenomeManifestById(genomesDir);
+
+    const varieties: AnalysisVarietyResponse[] = configs.flatMap((cfg) => {
+      const matched = manifestsById.get(cfg.key);
+      if (!matched) {
+        console.warn(`Skipping analysis variety '${cfg.key}': no matching genome.json id`);
+        return [];
+      }
+
+      const warnings: string[] = [];
+      const fasta = matched.manifest.fasta || '';
+      if (!fasta) {
+        warnings.push('Missing fasta path in genome.json');
+      }
+
+      const fastaPath = path.join(genomesDir, matched.folder, fasta);
+      const faiPath = `${fastaPath}.fai`;
+      const contigs = loadContigsFromFai(faiPath);
+      if (!contigs.length) {
+        warnings.push(`Missing or empty FASTA index: ${path.basename(faiPath)}`);
+      }
+
+      const defaultContig = parseDefaultContig(cfg.defaultLocation) || contigs[0] || '';
+      return [
+        {
+          id: cfg.key,
+          label: matched.manifest.label || cfg.label,
+          defaultContig,
+          contigs,
+          warnings,
+        },
+      ];
+    });
+
+    res.json({ varieties });
+  } catch (error) {
+    console.error('Error loading analysis varieties:', error);
+    res.status(500).json({ error: 'Failed to load analysis varieties' });
+  }
+});
 
 // Submit a new analysis job
 router.post('/submit', authenticateToken, async (req: AuthRequest, res) => {

@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import path from 'path';
 import authRoutes from './routes/auth';
 import genomeRoutes from './routes/genome';
 import analysisRoutes from './routes/analysis';
@@ -18,6 +19,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+app.use('/genomes', express.static(path.join(process.cwd(), 'genomes')));
 
 // Routes
 app.get('/', (req, res) => {
