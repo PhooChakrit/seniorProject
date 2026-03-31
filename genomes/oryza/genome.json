@@ -1,0 +1,6 @@
+{
+  "id": "oryza",
+  "label": "Oryza (Rice)",
+  "fasta": "Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa",
+  "gff3": "Oryza_DNA.gff3"
+}

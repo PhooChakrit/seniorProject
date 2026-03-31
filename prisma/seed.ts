@@ -7,7 +7,7 @@ async function main() {
   await prisma.genomeConfig.deleteMany({
     where: {
       key: {
-        in: ['oryza', 'human'],
+        in: ['human'],
       },
     },
   });
@@ -104,7 +104,99 @@ async function main() {
       specialFeatures: 'Aroma genes, Amylose content markers',
     },
   });
-  console.log('Seeded GenomeConfig: kdml105');
+  await prisma.genomeConfig.upsert({
+    where: { key: 'oryza' },
+    update: {
+      key: 'oryza',
+      label: 'Oryza (Rice)',
+      description:
+        'IRGSP-1.0 rice reference genome with Oryza annotations',
+      defaultLocation: '1:2000-20000',
+      assemblyName: 'Oryza_sativa (IRGSP-1.0)',
+      cultivarType: 'Reference Rice Genome',
+      tracksLoaded: 'Reference Sequence + Oryza DNA GFF3',
+      defaultRegion: 'Chromosome 1: 2,000-20,000 bp',
+      specialFeatures: 'Reference assembly for comparative viewing',
+    },
+    create: {
+      key: 'oryza',
+      label: 'Oryza (Rice)',
+      description:
+        'IRGSP-1.0 rice reference genome with Oryza annotations',
+      assemblyConfig: {
+        name: 'Oryza_sativa',
+        aliases: ['IRGSP-1.0'],
+        sequence: {
+          type: 'ReferenceSequenceTrack',
+          trackId: 'Oryza-ReferenceSequenceTrack',
+          adapter: {
+            type: 'IndexedFastaAdapter',
+            fastaLocation: {
+              uri: '/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa',
+              locationType: 'UriLocation',
+            },
+            faiLocation: {
+              uri: '/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa.fai',
+              locationType: 'UriLocation',
+            },
+          },
+        },
+      },
+      tracks: [
+        {
+          type: 'FeatureTrack',
+          trackId: 'oryza_gff3_track',
+          name: 'Oryza DNA Annotations',
+          assemblyNames: ['Oryza_sativa'],
+          category: ['Annotations'],
+          adapter: {
+            type: 'Gff3Adapter',
+            gffLocation: {
+              uri: '/genomes/oryza/Oryza_DNA.gff3',
+              locationType: 'UriLocation',
+            },
+          },
+        },
+      ],
+      defaultSession: {
+        name: 'Oryza Session',
+        view: {
+          id: 'linearGenomeView',
+          type: 'LinearGenomeView',
+          tracks: [
+            {
+              type: 'ReferenceSequenceTrack',
+              configuration: 'Oryza-ReferenceSequenceTrack',
+              displays: [
+                {
+                  type: 'LinearReferenceSequenceDisplay',
+                  configuration:
+                    'Oryza-ReferenceSequenceTrack-LinearReferenceSequenceDisplay',
+                },
+              ],
+            },
+            {
+              type: 'FeatureTrack',
+              configuration: 'oryza_gff3_track',
+              displays: [
+                {
+                  type: 'LinearBasicDisplay',
+                  configuration: 'oryza_gff3_track-LinearBasicDisplay',
+                },
+              ],
+            },
+          ],
+        },
+      },
+      defaultLocation: '1:2000-20000',
+      assemblyName: 'Oryza_sativa (IRGSP-1.0)',
+      cultivarType: 'Reference Rice Genome',
+      tracksLoaded: 'Reference Sequence + Oryza DNA GFF3',
+      defaultRegion: 'Chromosome 1: 2,000-20,000 bp',
+      specialFeatures: 'Reference assembly for comparative viewing',
+    },
+  });
+  console.log('Seeded GenomeConfig: kdml105, oryza');
 }
 
 main()
