@@ -354,10 +354,18 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="NGG">SpCas9</SelectItem>
-                    <SelectItem disabled={true} value="TTTV">Cas12</SelectItem>
-                    <SelectItem disabled={true} value="TTTV">Cas12a</SelectItem>
-                    <SelectItem disabled={true} value="TTTV">Cas13</SelectItem>
-                    <SelectItem disabled={true} value="TTTV">Cas13a</SelectItem>
+                    <SelectItem disabled={true} value="TTTV-CAS12">
+                      Cas12
+                    </SelectItem>
+                    <SelectItem disabled={true} value="TTTV-CAS12A">
+                      Cas12a
+                    </SelectItem>
+                    <SelectItem disabled={true} value="TTTV-CAS13">
+                      Cas13
+                    </SelectItem>
+                    <SelectItem disabled={true} value="TTTV-CAS13A">
+                      Cas13a
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
