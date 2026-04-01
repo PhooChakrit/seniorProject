@@ -168,6 +168,79 @@ router.post('/submit', authenticateToken, async (req: AuthRequest, res) => {
   }
 });
 
+// Submit analysis by gene ID (worker resolves coordinates from GFF3)
+router.post('/submit-by-gene', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const { variety, geneId, options } = req.body;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    if (!variety || typeof variety !== 'string') {
+      return res.status(400).json({ error: 'Rice variety is required' });
+    }
+
+    const trimmedGeneId = typeof geneId === 'string' ? geneId.trim() : '';
+    if (!trimmedGeneId) {
+      return res.status(400).json({ error: 'Gene ID is required' });
+    }
+
+    const jobId = generateJobId();
+
+    await prisma.searchJob.create({
+      data: {
+        jobId,
+        type: 'gene_region_analysis',
+        status: 'pending',
+        species: variety,
+        geneId: trimmedGeneId,
+        userId,
+        notifyEmail: options?.email || null,
+        result: JSON.stringify({ options: options || {}, variety, geneId: trimmedGeneId }),
+      },
+    });
+
+    try {
+      const connection = await amqplib.connect(RABBITMQ_URL);
+      const channel = await connection.createChannel();
+      await channel.assertQueue(QUEUE_NAME, { durable: true });
+
+      const message = {
+        type: 'gene_region_analysis',
+        jobId,
+        variety,
+        geneId: trimmedGeneId,
+        options: options || {},
+      };
+
+      channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(message)), {
+        persistent: true,
+      });
+
+      await channel.close();
+      await connection.close();
+    } catch (mqError) {
+      console.error('RabbitMQ error:', mqError);
+      await prisma.searchJob.update({
+        where: { jobId },
+        data: { status: 'failed', error: 'Failed to queue job' },
+      });
+      return res.status(500).json({ error: 'Failed to queue analysis job' });
+    }
+
+    res.json({
+      success: true,
+      jobId,
+      message: 'Gene analysis job submitted successfully',
+    });
+  } catch (error) {
+    console.error('Error submitting gene analysis job:', error);
+    res.status(500).json({ error: 'Failed to submit gene analysis job' });
+  }
+});
+
 // Delete a job
 router.delete('/:jobId', authenticateToken, async (req: AuthRequest, res) => {
   try {
@@ -380,7 +453,7 @@ router.get('/jobs', authenticateToken, async (req: AuthRequest, res) => {
     const jobs = await prisma.searchJob.findMany({
       where: {
         userId,
-        type: { in: ['custom_analysis', 'region_analysis'] },
+        type: { in: ['custom_analysis', 'region_analysis', 'gene_region_analysis'] },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,

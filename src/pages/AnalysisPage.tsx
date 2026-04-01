@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnalysisForm } from "@/components/crispr/AnalysisForm";
+import { GeneSearchForm } from "@/components/crispr/GeneSearchForm";
 import { Layout } from "@/components/layout/Layout";
 import {
   Card,
@@ -38,8 +39,9 @@ interface Job {
   status: "pending" | "processing" | "completed" | "failed";
   createdAt: string;
   species?: string;
-  fromPosition?: number;
-  toPosition?: number;
+  fromPosition?: number | null;
+  toPosition?: number | null;
+  geneId?: string | null;
 }
 
 export const AnalysisPage: React.FC = () => {
@@ -91,12 +93,12 @@ export const AnalysisPage: React.FC = () => {
     }, 5000);
   };
 
-  const handleJobSubmitted = (jobId: string) => {
-    // Add new job to list
+  const handleJobSubmitted = (jobId: string, geneId?: string) => {
     const newJob: Job = {
       jobId,
       status: "pending",
       createdAt: new Date().toISOString(),
+      ...(geneId ? { geneId } : {}),
     };
     setJobs((prev) => [newJob, ...prev]);
     startPolling();
@@ -176,20 +178,38 @@ export const AnalysisPage: React.FC = () => {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calculator className="h-5 w-5" />
-                Run New Analysis
-              </CardTitle>
-              <CardDescription>
-                Configure parameters for off-target search and annotation.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <AnalysisForm onSubmit={handleJobSubmitted} />
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <Card className="shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-lg">Search by gene ID</CardTitle>
+                <CardDescription>
+                  Pick a genome and a gene locus; coordinates are taken from the
+                  GFF3 annotation, then the same CRISPR-PLANT pipeline runs as
+                  for a custom region.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <GeneSearchForm
+                  onSubmit={(jobId, gid) => handleJobSubmitted(jobId, gid)}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Calculator className="h-5 w-5" />
+                  Run New Analysis
+                </CardTitle>
+                <CardDescription>
+                  Configure parameters for off-target search and annotation.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AnalysisForm onSubmit={handleJobSubmitted} />
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Use a wrapper div that is relative only on desktop to serve as anchor for absolute card */}
           <div className="md:relative">
@@ -227,12 +247,18 @@ export const AnalysisPage: React.FC = () => {
                             {job.jobId.slice(0, 20)}...
                           </span>
                         </div>
-                        {job.fromPosition && job.toPosition && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            Region: {job.fromPosition.toLocaleString()} -{" "}
-                            {job.toPosition.toLocaleString()}
+                        {job.geneId ? (
+                          <div className="text-xs text-muted-foreground mt-1 font-mono">
+                            Gene: {job.geneId}
                           </div>
-                        )}
+                        ) : null}
+                        {job.fromPosition != null &&
+                          job.toPosition != null && (
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Region: {job.fromPosition.toLocaleString()} -{" "}
+                              {job.toPosition.toLocaleString()}
+                            </div>
+                          )}
                         {job.status === "completed" && (
                           <Button
                             size="sm"

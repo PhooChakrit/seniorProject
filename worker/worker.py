@@ -7,6 +7,8 @@ import subprocess
 import time
 import sys
 
+MAX_REGION_BP = 100000
+
 # For Python 2/3 compatibility
 try:
     from urllib2 import Request, urlopen, HTTPError
@@ -179,6 +181,140 @@ def main():
     connection.close()
 
 
+def _parse_gff_attr_dict(attr_str):
+    out = {}
+    for part in attr_str.split(';'):
+        part = part.strip()
+        if not part or '=' not in part:
+            continue
+        k, v = part.split('=', 1)
+        out[k.strip()] = v.strip()
+    return out
+
+
+def _gene_row_matches_query(fields, query):
+    if len(fields) < 9 or fields[2] != 'gene':
+        return False
+    q = (query or '').strip()
+    if not q:
+        return False
+    attrs = _parse_gff_attr_dict(fields[8])
+    gid = attrs.get('gene_id')
+    if gid == q:
+        return True
+    idv = attrs.get('ID')
+    if idv == q:
+        return True
+    if idv and idv.startswith('gene:') and idv[5:] == q:
+        return True
+    name = attrs.get('Name')
+    if name == q:
+        return True
+    return False
+
+
+def resolve_gene_locus(gff_path, gene_id):
+    """
+    Scan GFF3 for the first 'gene' feature matching gene_id.
+    Returns (seqid, start, end) or None.
+    """
+    if not gff_path or not os.path.isfile(gff_path):
+        return None
+    query = (gene_id or '').strip()
+    if not query:
+        return None
+    try:
+        with open(gff_path, 'r') as fh:
+            for line in fh:
+                line = line.strip()
+                if not line or line.startswith('#'):
+                    continue
+                fields = line.split('\t')
+                if len(fields) < 9:
+                    continue
+                if not _gene_row_matches_query(fields, query):
+                    continue
+                try:
+                    start = int(fields[3])
+                    end = int(fields[4])
+                except ValueError:
+                    continue
+                return (fields[0], start, end)
+    except IOError as e:
+        print(" [!] Could not read GFF %s: %s" % (gff_path, e))
+        return None
+    return None
+
+
+def _run_region_pipeline_shell(job_id, variety, contig, start_pos, end_pos, options, result_extra=None):
+    """
+    Run complete_pipeline_run.sh after variety/genome validation.
+    """
+    variety_config = VARIETY_CONFIG[variety]
+    genome_file = os.path.join(GENOMES_DIR, variety_config['genome_file'])
+
+    pam = options.get('pam', 'NGG')
+    spacer_length = options.get('spacerLength', 20)
+    mismatches = options.get('mismatches', 3)
+
+    print("     PAM: %s" % pam)
+    print("     Spacer Length: %s" % spacer_length)
+    print("     Mismatches: %s" % mismatches)
+
+    cmd = [
+        "/bin/bash",
+        "/app/scripts/complete_pipeline_run.sh",
+        genome_file,
+        variety,
+        str(start_pos),
+        str(end_pos),
+        pam,
+        str(spacer_length),
+        str(mismatches),
+        job_id,
+        contig,
+    ]
+
+    print(" [x] Executing: %s" % " ".join(cmd))
+
+    start_time = time.time()
+
+    try:
+        return_code = subprocess.call(cmd)
+        end_time = time.time()
+        duration = end_time - start_time
+        print(" [x] Execution Duration: %.2f seconds" % duration)
+
+        if return_code == 0:
+            output_dir = os.path.dirname(genome_file)
+            output_file = os.path.join(output_dir, 'output', '%s.tsv' % job_id)
+
+            result = {
+                'status': 'completed',
+                'duration': duration,
+                'outputFile': output_file,
+                'variety': variety,
+                'region': {'start': start_pos, 'end': end_pos},
+            }
+            if result_extra:
+                result.update(result_extra)
+
+            update_job_status(job_id, 'completed', result=result)
+            send_notification(job_id, 'completed', output_file=output_file)
+            return result
+
+        error_msg = "Pipeline failed with return code: %d" % return_code
+        update_job_status(job_id, 'failed', error=error_msg)
+        send_notification(job_id, 'failed', error_msg=error_msg)
+        return {'status': 'failed', 'return_code': return_code}
+
+    except Exception as e:
+        error_msg = str(e)
+        print(" [!] Pipeline error: %s" % error_msg)
+        update_job_status(job_id, 'failed', error=error_msg)
+        return {'status': 'failed', 'error': error_msg}
+
+
 def process_region_analysis(task_data):
     """
     Process region analysis request - NEW FLOW.
@@ -190,97 +326,103 @@ def process_region_analysis(task_data):
     end_pos = int(task_data.get('endPos', 0))
     options = task_data.get('options', {})
     contig = task_data.get('contig') or options.get('contig', 'ptg000001l')
-    
+
     print(" [x] Processing REGION ANALYSIS:")
     print("     Job ID: %s" % job_id)
     print("     Variety: %s" % variety)
     print("     Region: %s - %s" % (start_pos, end_pos))
     print("     Contig: %s" % contig)
     print("     Options: %s" % str(options))
-    
-    # Update status to processing
+
     update_job_status(job_id, 'processing')
-    
-    # Validate variety
+
     if variety not in VARIETY_CONFIG:
         error_msg = "Unknown variety: %s. Available: %s" % (variety, list(VARIETY_CONFIG.keys()))
         update_job_status(job_id, 'failed', error=error_msg)
         raise ValueError(error_msg)
-    
-    # Get genome file path
+
     variety_config = VARIETY_CONFIG[variety]
     genome_file = os.path.join(GENOMES_DIR, variety_config['genome_file'])
-    
+
     if not os.path.exists(genome_file):
         error_msg = "Genome file not found: %s" % genome_file
         update_job_status(job_id, 'failed', error=error_msg)
         raise ValueError(error_msg)
-    
-    # Extract pipeline options
-    pam = options.get('pam', 'NGG')
-    spacer_length = options.get('spacerLength', 20)
-    mismatches = options.get('mismatches', 3)
-    
-    print("     PAM: %s" % pam)
-    print("     Spacer Length: %s" % spacer_length)
-    print("     Mismatches: %s" % mismatches)
-    
-    # Build command with all parameters (including jobId for unique output)
-    cmd = [
-        "/bin/bash", 
-        "/app/scripts/complete_pipeline_run.sh", 
-        genome_file, 
-        variety,
-        str(start_pos),
-        str(end_pos),
-        pam,
-        str(spacer_length),
-        str(mismatches),
-        job_id,  # Add jobId for unique output filename
-        contig
-    ]
-    
-    print(" [x] Executing: %s" % " ".join(cmd))
-    
-    start_time = time.time()
-    
-    try:
-        # Run the pipeline
-        return_code = subprocess.call(cmd)
-        end_time = time.time()
-        duration = end_time - start_time
-        print(" [x] Execution Duration: %.2f seconds" % duration)
-        
-        if return_code == 0:
-            # Read output file path (unique per job)
-            output_dir = os.path.dirname(genome_file)
-            output_file = os.path.join(output_dir, 'output', '%s.tsv' % job_id)
-            
-            result = {
-                'status': 'completed',
-                'duration': duration,
-                'outputFile': output_file,
-                'variety': variety,
-                'region': {'start': start_pos, 'end': end_pos}
-            }
-            
-            update_job_status(job_id, 'completed', result=result)
-            
-            # Send email notification
-            send_notification(job_id, 'completed', output_file=output_file)
-            
-            return result
-        else:
-            error_msg = "Pipeline failed with return code: %d" % return_code
-            update_job_status(job_id, 'failed', error=error_msg)
-            send_notification(job_id, 'failed', error_msg=error_msg)
-            return {'status': 'failed', 'return_code': return_code}
-            
-    except Exception as e:
-        error_msg = str(e)
-        print(" [!] Pipeline error: %s" % error_msg)
+
+    return _run_region_pipeline_shell(job_id, variety, contig, start_pos, end_pos, options)
+
+
+def process_gene_region_analysis(task_data):
+    """
+    Resolve gene coordinates from variety GFF3, then run the same pipeline as region_analysis.
+    """
+    job_id = task_data.get('jobId', 'unknown')
+    variety = task_data.get('variety')
+    gene_id = task_data.get('geneId')
+    options = task_data.get('options', {})
+
+    print(" [x] Processing GENE REGION ANALYSIS:")
+    print("     Job ID: %s" % job_id)
+    print("     Variety: %s" % variety)
+    print("     Gene ID: %s" % gene_id)
+    print("     Options: %s" % str(options))
+
+    update_job_status(job_id, 'processing')
+
+    if variety not in VARIETY_CONFIG:
+        error_msg = "Unknown variety: %s. Available: %s" % (variety, list(VARIETY_CONFIG.keys()))
+        update_job_status(job_id, 'failed', error=error_msg)
+        raise ValueError(error_msg)
+
+    variety_config = VARIETY_CONFIG[variety]
+    gff3_rel = variety_config.get('gff3')
+    if not gff3_rel:
+        error_msg = "No GFF3 path in genome manifest for variety %s; use region analysis instead." % variety
+        update_job_status(job_id, 'failed', error=error_msg)
+        raise ValueError(error_msg)
+
+    gff_path = os.path.join(GENOMES_DIR, variety_config['folder'], gff3_rel)
+    if not os.path.isfile(gff_path):
+        error_msg = "GFF3 file not found: %s" % gff_path
+        update_job_status(job_id, 'failed', error=error_msg)
+        raise ValueError(error_msg)
+
+    resolved = resolve_gene_locus(gff_path, gene_id)
+    if not resolved:
+        error_msg = "Gene ID not found in annotation: %s" % gene_id
+        update_job_status(job_id, 'failed', error=error_msg)
+        send_notification(job_id, 'failed', error_msg=error_msg)
+        return {'status': 'failed', 'error': error_msg}
+
+    contig, start_pos, end_pos = resolved[0], resolved[1], resolved[2]
+
+    if end_pos <= start_pos:
+        error_msg = "Invalid gene coordinates from GFF: %s-%s" % (start_pos, end_pos)
         update_job_status(job_id, 'failed', error=error_msg)
         return {'status': 'failed', 'error': error_msg}
+
+    span = end_pos - start_pos
+    if span > MAX_REGION_BP:
+        error_msg = (
+            "Gene span (%d bp) exceeds maximum (%d bp); use custom region analysis with a sub-range."
+            % (span, MAX_REGION_BP)
+        )
+        update_job_status(job_id, 'failed', error=error_msg)
+        send_notification(job_id, 'failed', error_msg=error_msg)
+        return {'status': 'failed', 'error': error_msg}
+
+    genome_file = os.path.join(GENOMES_DIR, variety_config['genome_file'])
+    if not os.path.exists(genome_file):
+        error_msg = "Genome file not found: %s" % genome_file
+        update_job_status(job_id, 'failed', error=error_msg)
+        raise ValueError(error_msg)
+
+    print("     Resolved: %s:%s-%s" % (contig, start_pos, end_pos))
+
+    extra = {'geneId': gene_id, 'resolvedContig': contig}
+    return _run_region_pipeline_shell(
+        job_id, variety, contig, start_pos, end_pos, options, result_extra=extra
+    )
 
 
 def process_region_search(task_data):
@@ -523,6 +665,10 @@ def callback(ch, method, properties, body):
             # NEW: Handle region_analysis from updated frontend
             result = process_region_analysis(task_data)
             print(" [x] Region analysis result: %s" % str(result))
+
+        elif task_type == 'gene_region_analysis':
+            result = process_gene_region_analysis(task_data)
+            print(" [x] Gene region analysis result: %s" % str(result))
             
         elif task_type == 'region_search':
             result = process_region_search(task_data)
