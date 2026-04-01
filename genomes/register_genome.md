@@ -40,6 +40,19 @@ scripts/register_genome.sh --dir genomes/MYVARIETY
 scripts/register_genome.sh --dir genomes/MYVARIETY --gff3-index
 ```
 
+ผ่าน npm scripts (แนะนำเพื่อให้ทีมใช้คำสั่งเดียวกัน):
+
+```bash
+# validate only
+npm run genome:check -- --dir genomes/MYVARIETY
+
+# generate .fai
+npm run genome:index -- --dir genomes/MYVARIETY
+
+# generate .fai + .gff3.gz + .tbi
+npm run genome:gff3-index -- --dir genomes/MYVARIETY
+```
+
 ## สิ่งที่สคริปต์ทำ
 
 | ขั้น | รายละเอียด |

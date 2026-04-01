@@ -1,93 +1,40 @@
-# Database Setup Summary
+# Database Setup
 
-## ✅ What I've Created
+This project uses PostgreSQL (Prisma) for both local and server environments.
 
-### 1. Docker Configuration
-- **`docker-compose.yml`**: PostgreSQL 16 database container configuration
-  - Container name: `seniorproject-db`
-  - Port: 5432
-  - Default credentials: postgres/postgres
-  - Persistent volume for data storage
+## Local DB with Docker
 
-### 2. Docker Support Files
-- **`Dockerfile`**: Multi-stage build for production deployment
-- **`.dockerignore`**: Excludes unnecessary files from Docker builds
-
-### 3. Environment Configuration
-- **`.env.example`**: Template with both local Docker and Supabase options
-- **`.env`**: Already configured with your Supabase database ✓
-
-### 4. Prisma Integration
-- Updated `schema.prisma` to use **PostgreSQL** instead of SQLite
-- Generated Prisma Client for PostgreSQL ✓
-
-### 5. NPM Scripts Added
-```json
-"docker:up": "docker-compose up -d"                    // Start database
-"docker:down": "docker-compose down"                    // Stop database
-"docker:logs": "docker-compose logs -f"                 // View logs
-"docker:reset": "docker-compose down -v && docker-compose up -d"  // Reset
-"wait-for-db": "node scripts/wait-for-db.js"           // Wait for DB (cross-platform)
-"db:setup": "npm run docker:up && npm run wait-for-db && npm run prisma:migrate"  // Full setup
+```bash
+npm run docker:up
+npm run wait-for-db
+npm run prisma:migrate
+npx prisma db seed
 ```
 
-**Note:** The `db:setup` script now uses a cross-platform Node.js script (`wait-for-db.js`) instead of the Unix-only `sleep` command, making it work on Windows, macOS, and Linux.
+Useful commands:
+- `npm run docker:up`
+- `npm run docker:down`
+- `npm run docker:logs`
+- `npm run docker:reset`
+- `npm run prisma:studio`
 
-### 6. Documentation
-- **`DOCKER_README.md`**: Complete guide for using Docker database
+## Production DB with Compose
 
-## 🎯 Current Setup
+บน server ให้ใช้ `docker-compose.prod.yml`:
 
-You're currently using **Supabase** as your database (configured in `.env`):
+```bash
+docker compose -f docker-compose.prod.yml up -d postgres
+docker compose -f docker-compose.prod.yml ps
 ```
-DATABASE_URL="postgresql://postgres:...@db.lxsgultwloovsoozlxmc.supabase.co:5432/postgres"
+
+ถ้ารันทั้ง stack ให้ใช้:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-## 📋 Next Steps
+## Notes
 
-### Option A: Continue with Supabase (Recommended for your current setup)
-1. Run migrations to create tables in Supabase:
-   ```bash
-   npm run prisma:migrate
-   ```
-
-2. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-### Option B: Switch to Local Docker Database
-1. Update `.env` with local database URL:
-   ```
-   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/seniorproject?schema=public"
-   ```
-
-2. Start Docker database and run migrations:
-   ```bash
-   npm run db:setup
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-## 🔧 Useful Commands
-
-### Database Management
-- `npm run prisma:studio` - Open visual database editor
-- `npm run prisma:migrate` - Create and apply migrations
-- `npm run prisma:generate` - Regenerate Prisma Client
-
-### Docker Management (if using local Docker)
-- `npm run docker:up` - Start database
-- `npm run docker:down` - Stop database
-- `npm run docker:logs` - View database logs
-- `npm run docker:reset` - Reset database completely
-
-## 📝 Notes
-
-- The Prisma schema now uses PostgreSQL (changed from SQLite)
-- Your `.env` file is already gitignored for security
-- Docker setup is optional - you can continue using Supabase
-- All database credentials should be changed for production
+- ห้ามใช้คู่มือเก่าที่อ้าง `prisma/dev.db` (SQLite) เพราะโปรเจกต์นี้ใช้ PostgreSQL แล้ว
+- หลังแก้ `prisma/schema.prisma` ให้รัน `npm run prisma:generate`
+- Seed ใช้ `npx prisma db seed` (กำหนดไว้ใน `package.json`)

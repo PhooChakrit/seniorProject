@@ -5,10 +5,10 @@
 For maintainers adding a new cultivar, prefer the helper command:
 
 ```bash
-scripts/register_genome.sh --dir genomes/<YourFolder> --gff3-index
+npm run genome:gff3-index -- --dir genomes/<YourFolder>
 ```
 
-This handles manifest validation + FASTA index creation (`.fai`) and optional GFF3 indexes in one step.
+This handles manifest validation + FASTA index creation (`.fai`) and GFF3 indexes in one step.
 
 ### 1. Prepare Your GFF3 File
 

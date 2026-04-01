@@ -19,6 +19,7 @@ npm install
 ```powershell
 npm run prisma:generate
 npm run prisma:migrate
+npx prisma db seed
 ```
 
 ## 📦 All Available Scripts
@@ -45,6 +46,17 @@ npm run prisma:migrate
 | `npm run prisma:generate` | Generate Prisma Client (after schema changes) |
 | `npm run prisma:migrate` | Create and apply database migrations |
 | `npm run prisma:studio` | Open Prisma Studio (visual database editor) |
+| `npx prisma db seed` | Seed initial data (GenomeConfig, etc.) |
+
+### Genome & Server Init
+
+| Command | Description |
+|---------|-------------|
+| `npm run genome:check -- --dir genomes/<Cultivar>` | Validate `genome.json` + referenced files (no writes) |
+| `npm run genome:index -- --dir genomes/<Cultivar>` | Generate FASTA index `.fai` |
+| `npm run genome:gff3-index -- --dir genomes/<Cultivar>` | Generate `.fai` + `.gff3.gz` + `.tbi` |
+| `GENOME_DIR=genomes/<Cultivar> npm run server:init` | Bootstrap core stack + migrate + genome index |
+| `GENOME_DIR=genomes/<Cultivar> npm run server:init:full` | `server:init` + seed + restart worker |
 
 ## 🔄 Typical Workflow
 
@@ -89,14 +101,12 @@ npm run prisma:studio
 
 ## 🐛 Troubleshooting Commands
 
-### Reset Database
+### Reset Database (PostgreSQL via Docker)
 ```powershell
-# Delete database file
-Remove-Item prisma\dev.db -ErrorAction SilentlyContinue
-Remove-Item prisma\dev.db-journal -ErrorAction SilentlyContinue
-
-# Recreate database
+npm run docker:reset
+npm run wait-for-db
 npm run prisma:migrate
+npx prisma db seed
 ```
 
 ### Clean Install
@@ -181,6 +191,15 @@ npx prisma migrate reset
 # - Create new database
 # - Apply all migrations
 # - Run seed (if configured)
+```
+
+## 🐳 Production Commands (Server)
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml restart worker
 ```
 
 ### Format Schema

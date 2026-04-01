@@ -37,8 +37,8 @@
                             │ Prisma ORM
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    SQLite Database                           │
-│                    prisma/dev.db                             │
+│                  PostgreSQL Database                         │
+│            docker: postgres:16 (port 5432)                  │
 │  ┌──────────────┐  ┌──────────────┐                        │
 │  │   User       │  │ GenomeData   │                        │
 │  ├──────────────┤  ├──────────────┤                        │
@@ -387,7 +387,7 @@ shadcn/ui Base Components
                     │
 ┌─────────────────────────────────────────────┐
 │          Database Layer                      │
-│  Prisma ORM + SQLite                        │
+│  Prisma ORM + PostgreSQL                    │
 └─────────────────────────────────────────────┘
 ```
 

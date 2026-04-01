@@ -40,7 +40,7 @@ To add a new rice line (no code changes after refactor):
 1. Create `genomes/<YourFolder>/` with `genome.json`, FASTA, and GFF3.
 2. Run helper script once:
    ```bash
-   scripts/register_genome.sh --dir genomes/<YourFolder> --gff3-index
+   npm run genome:gff3-index -- --dir genomes/<YourFolder>
    ```
    - This validates `genome.json`
    - Generates `<fasta>.fai`
@@ -323,6 +323,14 @@ docker compose up -d --build worker
 # View worker logs
 docker compose logs -f worker
 ```
+
+### Production deploy note
+
+- On server, run with `docker-compose.prod.yml` (all services in Compose).  
+- No PM2 is required when running API/frontend/worker via Compose.
+- If you changed genome manifests/files, restart worker after indexing:
+  - `npm run genome:gff3-index -- --dir genomes/<Cultivar>`
+  - `docker compose -f docker-compose.prod.yml restart worker`
 
 ### Script source of truth
 
