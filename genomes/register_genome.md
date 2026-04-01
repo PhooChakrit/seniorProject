@@ -50,6 +50,15 @@ scripts/register_genome.sh --dir genomes/MYVARIETY --gff3-index
 
 โหมด `--check` จะตรวจอย่างเดียว ไม่สร้างหรือแก้ไฟล์
 
+## JBrowse กับ annotation ใหญ่
+
+ถ้า GFF3 ใหญ่แล้ว browser กระตุก ให้ใช้ **แบบ Tabix** ใน `GenomeConfig`:
+
+- สร้าง `*.sorted.gff3.gz` + `*.tbi` (เช่น `scripts/register_genome.sh --gff3-index` หรือ `scripts/sort_gff3_tabix.sh` หลัง sort แล้ว)
+- ตั้ง adapter เป็น `Gff3TabixAdapter` ชี้ `gffGzLocation` และ `index` ไปที่ไฟล์คู่นั้น
+
+**หมายเหตุ:** worker วิเคราะห์ spacer ยังอ่าน `gff3` ใน `genome.json` แบบ plain `.gff3` ได้ตามเดิม ไม่ต้องเปลี่ยนเป็น `.gz` ใน manifest
+
 ## หลังรันสคริปต์
 
 1. **ฐานข้อมูล** — เพิ่มหรืออัปเดตแถว `GenomeConfig` ให้ `key` เท่ากับ `genome.json` ของพันธุ์นี้ (รวม path JBrowse ใน `assemblyConfig` / `tracks` ถ้าใช้)
