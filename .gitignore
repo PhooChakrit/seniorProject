@@ -144,8 +144,25 @@ dist
 *.db-journal
 .DS_Store
 
-#genomes
-genomes/
-*.fa
-*.fai
+#genomes — ignore large binary files but track metadata per cultivar
+genomes/**/*.fasta
+genomes/**/*.fa
+genomes/**/*.fai
+genomes/**/*.gff
+genomes/**/*.gff3
+genomes/**/*.gff3.gz
+genomes/**/*.gff3.gz.tbi
+genomes/**/*.fna
+genomes/**/*.fuzznuc
+genomes/**/*.ids
+genomes/**/*.10bp
+genomes/**/*.2MM
+genomes/**/*.2MM_minus1
+genomes/**/*.3MM
+genomes/**/*.3MM_minus1
+genomes/**/*.4MM
+genomes/**/*.4MM_minus1
+genomes/**/*.userout
+genomes/**/*.seq
+genomes/**/output/
 *.fuzznuc

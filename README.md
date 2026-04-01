@@ -310,7 +310,7 @@ docker compose -f docker-compose.prod.yml build
 # หรือ build แยก
 docker build -f Dockerfile.api -t seniorproject-api:latest .
 docker build -f Dockerfile.frontend -t seniorproject-frontend:latest .
-docker build -f worker/Dockerfile -t seniorproject-worker:latest ./worker
+docker build -f worker/Dockerfile -t seniorproject-worker:latest .
 ```
 
 #### Step 2: Push to Docker Hub (Optional)
@@ -462,17 +462,24 @@ seniorProject/
 │   └── index.ts                 # Server entry point
 │
 ├── 📂 worker/                   # Python worker service
-│   ├── Dockerfile               # Worker container config
+│   ├── Dockerfile               # Build from repo root (includes scripts/spacer)
 │   ├── worker.py                # Message consumer
-│   ├── run_pipeline.sh          # CRISPR pipeline script
-│   └── README.md                # Worker documentation
+│   ├── run_pipeline.sh          # CRISPR pipeline helper
+│   ├── complete_pipeline_run.sh # Copy of scripts/ (kept in sync)
+│   └── README.md                # Worker + pipeline documentation
+│
+├── 📂 scripts/                  # Pipeline & utilities
+│   ├── complete_pipeline_run.sh # Main CRISPR pipeline (worker entry)
+│   ├── annotate_spacers.py      # GFF3 annotation of TSV results
+│   ├── spacer/                  # Shared Python CLIs (region, fuzznuc, classify)
+│   └── ...
 │
 ├── 📂 prisma/                   # Database schema
 │   ├── schema.prisma            # Prisma schema
 │   └── migrations/              # Database migrations
 │
-├── 📂 genomes/                  # Genome data files
-│   └── (FASTA files)
+├── 📂 genomes/                  # Per-cultivar data (FASTA, GFF3, analysis output)
+│   └── <Cultivar>/              # e.g. KDML/ — optional genome.json for worker + JBrowse paths
 │
 ├── 📂 public/                   # Static assets
 ├── docker-compose.yml           # Container orchestration
@@ -639,36 +646,41 @@ model GenomeData {
 
 ## ⚙️ Worker Pipeline
 
-The worker service processes CRISPR target design tasks asynchronously:
+The worker service processes CRISPR target design tasks asynchronously (primary path: **`region_analysis`**).
 
-### Pipeline Steps
+### Variety → FASTA
 
-1. **PAM Detection (fuzznuc)**
-   - Pattern: `N(20)NGG` (Cas9 PAM)
-   - Input: FASTA genome file
-   - Output: `.fuzznuc` file with matches
+At startup it loads **`genomes/*/genome.json`** files (see [worker/README.md](worker/README.md)) to map variety `id` (e.g. `kdml105`) to `<Folder>/<fasta>`. If none are found, a default `kdml105` entry is used.
 
-2. **FASTA Conversion**
-   - Converts fuzznuc output to FASTA format
-   - Generates spacer IDs
+### Pipeline Steps (summary)
 
-3. **Sequence Clustering (VSEARCH)**
-   - Dereplicates sequences
-   - Filters by minimum length (default: 20bp)
-   - Outputs unique CRISPR targets
+1. **Region extraction** — `scripts/spacer/extract_region.py` when a window is specified; otherwise symlink reference FASTA as `GENOME.fna`.
+2. **PAM detection (fuzznuc)** — NGG and NAG patterns; spacer extraction via `scripts/spacer/extract_from_fuzznuc.py`.
+3. **Deduplication** — `scripts/spacer/build_unique_fasta.py`.
+4. **Off-targets** — vsearch + CRISPR-PLANTv2 scripts.
+5. **Classification** — `scripts/spacer/classify_spacers.py` (dual PAM).
+6. **Annotation** — `annotate_spacers.py` + GFF3 from `genome.json` when present.
 
-### Job Message Format
+### Job message format (`region_analysis`)
 
 ```json
 {
-  "genome_file": "oryza/genome.fasta",
+  "type": "region_analysis",
+  "jobId": "analysis_1741234567890_abc123",
+  "variety": "kdml105",
+  "startPos": 10000,
+  "endPos": 60000,
   "options": {
-    "PAM_PATTERN": "N(20)NGG",
-    "MIN_SEQ_LENGTH": "20",
+    "pam": "NGG",
+    "spacerLength": 20,
+    "mismatches": 3,
+    "contig": "ptg000001l",
     "email": "user@example.com"
   }
 }
 ```
+
+Legacy messages that only reference `genome_file` may still exist for older code paths; see `worker/worker.py` for handlers.
 
 ### 📧 Email Notification System
 

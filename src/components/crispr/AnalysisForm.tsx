@@ -1,6 +1,7 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import * as z from "zod";
 import {
   Form,
@@ -24,56 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Play } from "lucide-react";
 import apiClient from "@/lib/axios";
-
-// Rice varieties available
-const RICE_VARIETIES = [
-  {
-    value: "kdml105",
-    label: "KDML105 (ข้าวหอมมะลิ)",
-    file: "genomes/KDML/KDML105.fasta",
-  },
-] as const;
-
-const KDML105_ANNOTATED_CONTIGS = new Set([
-  "ptg000001l",
-  "ptg000002l",
-  "ptg000003l",
-  "ptg000004l",
-  "ptg000005l",
-  "ptg000006l",
-  "ptg000007l",
-  "ptg000008l",
-  "ptg000009l",
-  "ptg000010l",
-  "ptg000011l",
-  "ptg000012l",
-  "ptg000013l",
-  "ptg000014l",
-  "ptg000015l",
-  "ptg000017l",
-  "ptg000025l",
-  "ptg000035l",
-  "ptg000039l",
-  "ptg000045l",
-  "ptg000057l",
-  "ptg000104l",
-  "ptg000106l",
-  "ptg000116l",
-  "ptg000161l",
-  "ptg000180l",
-  "ptg000197l",
-  "ptg000206l",
-  "ptg000218l",
-  "ptg000222l",
-  "ptg000241l",
-]);
-
-const KDML105_CONTIGS = Array.from({ length: 246 }, (_, idx) =>
-  `ptg${String(idx + 1).padStart(6, "0")}l`,
-);
-const KDML105_OTHER_CONTIGS = KDML105_CONTIGS.filter(
-  (contig) => !KDML105_ANNOTATED_CONTIGS.has(contig),
-);
+import { genomeApi } from "@/api/genome";
 
 const formSchema = z
   .object({
@@ -135,8 +87,8 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      variety: "kdml105",
-      contig: "ptg000001l",
+      variety: "",
+      contig: "",
       startPos: "",
       endPos: "",
       mismatches: "3",
@@ -145,9 +97,56 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
       email: "",
     },
   });
+  const {
+    data: varieties = [],
+    isLoading: varietiesLoading,
+    isError: varietiesError,
+  } = useQuery({
+    queryKey: ["analysisVarieties"],
+    queryFn: genomeApi.getAnalysisVarieties,
+  });
+
+  const selectedVarietyId = form.watch("variety");
+  const selectedVariety = useMemo(
+    () => varieties.find((v) => v.id === selectedVarietyId) ?? varieties[0],
+    [selectedVarietyId, varieties],
+  );
+  const availableContigs = selectedVariety?.contigs ?? [];
 
   const regionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const spacerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (!varieties.length) return;
+
+    const currentVariety = form.getValues("variety");
+    const fallbackVariety = varieties[0];
+    const variety =
+      varieties.find((v) => v.id === currentVariety)?.id ?? fallbackVariety.id;
+    const matchedVariety = varieties.find((v) => v.id === variety) ?? fallbackVariety;
+    const currentContig = form.getValues("contig");
+    const contig =
+      matchedVariety.contigs.find((c) => c === currentContig) ??
+      matchedVariety.defaultContig ??
+      matchedVariety.contigs[0] ??
+      "";
+
+    form.setValue("variety", variety, { shouldValidate: true });
+    form.setValue("contig", contig, { shouldValidate: true });
+  }, [form, varieties]);
+
+  useEffect(() => {
+    if (!selectedVariety) return;
+    const currentContig = form.getValues("contig");
+    const nextContig =
+      selectedVariety.contigs.find((c) => c === currentContig) ??
+      selectedVariety.defaultContig ??
+      selectedVariety.contigs[0] ??
+      "";
+    if (nextContig !== currentContig) {
+      form.setValue("contig", nextContig, { shouldValidate: true });
+    }
+  }, [form, selectedVariety]);
 
   const handleRegionChange = useCallback(
     (field: "startPos" | "endPos", value: string) => {
@@ -219,22 +218,26 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>ชนิดข้าว (Rice Variety)</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger disabled={varietiesLoading || varietiesError}>
                     <SelectValue placeholder="เลือกชนิดข้าว" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {RICE_VARIETIES.map((variety) => (
-                    <SelectItem key={variety.value} value={variety.value}>
+                  {varieties.map((variety) => (
+                    <SelectItem key={variety.id} value={variety.id}>
                       {variety.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <FormDescription>
-                เลือก genome ที่ต้องการวิเคราะห์
+                {varietiesLoading
+                  ? "กำลังโหลดรายชื่อพันธุ์ข้าว..."
+                  : varietiesError
+                    ? "ไม่สามารถโหลดรายชื่อพันธุ์ข้าวได้"
+                    : "เลือก genome ที่ต้องการวิเคราะห์"}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -248,26 +251,18 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Contig / Scaffold</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger
+                    disabled={varietiesLoading || !selectedVariety || !availableContigs.length}
+                  >
                     <SelectValue placeholder="เลือก contig" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectLabel>Annotated (GFF3 available)</SelectLabel>
-                    {KDML105_CONTIGS.filter((contig) =>
-                      KDML105_ANNOTATED_CONTIGS.has(contig),
-                    ).map((contig) => (
-                      <SelectItem key={contig} value={contig}>
-                        {contig}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                  <SelectGroup>
-                    <SelectLabel>Other scaffolds</SelectLabel>
-                    {KDML105_OTHER_CONTIGS.map((contig) => (
+                    <SelectLabel>All contigs</SelectLabel>
+                    {availableContigs.map((contig) => (
                       <SelectItem key={contig} value={contig}>
                         {contig}
                       </SelectItem>
@@ -276,13 +271,22 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
                 </SelectContent>
               </Select>
               <FormDescription>
-                เลือก contig ที่ต้องการวิเคราะห์ (ถ้าไม่มี annotation ใน GFF3
-                ตำแหน่งอาจแสดงเป็น Intergenic)
+                {!selectedVariety
+                  ? "เลือกชนิดข้าวก่อน"
+                  : !availableContigs.length
+                    ? "ไม่พบ contig (กรุณาตรวจสอบไฟล์ .fai ของพันธุ์นี้)"
+                    : "เลือก contig ที่ต้องการวิเคราะห์"}
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
+        {selectedVariety?.warnings?.length ? (
+          <div className="rounded border border-amber-300 bg-amber-50 p-3 text-sm text-amber-700">
+            {selectedVariety.warnings.join(" | ")}
+          </div>
+        ) : null}
 
         <div className="space-y-4 border rounded-md p-4 bg-muted/20">
           <h4 className="text-sm font-semibold">
@@ -354,10 +358,18 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
                   </FormControl>
                   <SelectContent>
                     <SelectItem value="NGG">SpCas9</SelectItem>
-                    <SelectItem disabled={true} value="TTTV">Cas12</SelectItem>
-                    <SelectItem disabled={true} value="TTTV">Cas12a</SelectItem>
-                    <SelectItem disabled={true} value="TTTV">Cas13</SelectItem>
-                    <SelectItem disabled={true} value="TTTV">Cas13a</SelectItem>
+                    <SelectItem disabled={true} value="TTTV-CAS12">
+                      Cas12
+                    </SelectItem>
+                    <SelectItem disabled={true} value="TTTV-CAS12A">
+                      Cas12a
+                    </SelectItem>
+                    <SelectItem disabled={true} value="TTTV-CAS13">
+                      Cas13
+                    </SelectItem>
+                    <SelectItem disabled={true} value="TTTV-CAS13A">
+                      Cas13a
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -444,7 +456,12 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
         {/* Submit Button */}
         <Button
           type="submit"
-          disabled={form.formState.isSubmitting}
+          disabled={
+            form.formState.isSubmitting ||
+            varietiesLoading ||
+            !selectedVariety ||
+            !availableContigs.length
+          }
           className="w-full"
         >
           {form.formState.isSubmitting ? (

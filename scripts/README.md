@@ -22,25 +22,48 @@ Documentation for all utility scripts in the CRISPR-PLANT v2 project.
 
 ### `complete_pipeline_run.sh`
 
-**Full bioinformatics pipeline** for CRISPR spacer analysis (runs inside Docker).
+**Full bioinformatics pipeline** for CRISPR spacer analysis (runs inside the worker container, cwd = genome folder).
 
 ```bash
-./complete_pipeline_run.sh <genome.fa> [species]
+# From repo: used by worker; manual run typically via Docker exec in /data/genomes/<folder>
+./complete_pipeline_run.sh <input_fasta> [variety_id] [start] [end] [pam] [spacer_len] [mismatches] [job_id] [contig]
 ```
 
-**Steps:**
+Shared Python steps live under **`scripts/spacer/`** (mounted at `/app/scripts/spacer` in dev, copied into the image for production). The shell script calls them instead of generating inline `.py` files.
 
-1. **PAM Site Detection** - fuzznuc finds N(20)NGG patterns
-2. **Sequence Extraction** - Biopython extracts 23bp spacer sequences
-3. **Global Alignment** - vsearch finds off-targets (100% identity)
-4. **Local Alignment** - vsearch with 2-3 mismatches tolerance
-5. **Classification** - Assigns A0/B0/B1/B2 classes based on off-target matches
-6. **Output** - Produces job-specific TSV output
+**Steps (summary):**
+
+1. **Region prep** — `spacer/extract_region.py` (if start/end set) or symlink whole FASTA → `GENOME.fna`
+2. **PAM search (NGG + NAG)** — fuzznuc + `spacer/extract_from_fuzznuc.py` per PAM
+3. **Deduplication** — `spacer/build_unique_fasta.py` per PAM
+4. **Off-targets** — vsearch + CRISPR-PLANTv2 helper scripts
+5. **Classification** — `spacer/classify_spacers.py` (dual PAM: minMM_GG / minMM_AG)
+6. **Annotation** — `annotate_spacers.py` using `gff3` from `genome.json` in the genome folder when present
+7. **Output** — `output/<jobId>.tsv`
 
 **Output:**
 
 - Queue/Worker mode: `output/<jobId>.tsv`
 - Manual mode (no jobId arg): `output/spacers_classified.tsv`
+
+---
+
+### `scripts/spacer/` (per-cultivar helpers)
+
+Reusable CLIs that read **`genomes/<Cultivar>/genome.json`** when you pass **`--genome <folder-or-id>`** (folder name such as `KDML`, or manifest `id` such as `kdml105`). See `genome_paths.py` for resolution rules.
+
+| Script | Role |
+| ------ | ---- |
+| `extract_region.py` | Extract `[start,end]` from reference FASTA (`--input` or `--genome`) |
+| `extract_from_fuzznuc.py` | fuzznuc table → `NGG_candidates.fa` / `NAG_candidates.fa` (`--work-dir`, `--prefix`) |
+| `build_unique_fasta.py` | Deduplicate candidates → `*_unique.fa` |
+| `classify_spacers.py` | Dual-PAM TSV to stdout (`--work-dir`, `--mismatches`, `--pam-label`) |
+
+Example (host, from repo root; requires Biopython):
+
+```bash
+python3 scripts/spacer/extract_region.py --genome KDML --contig ptg000001l --start 10000 --end 20000 -o genomes/KDML/REGION.fna
+```
 
 ---
 

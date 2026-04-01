@@ -7,5 +7,6 @@ export { FindTargetButton } from './FindTargetButton';
 export { ChromosomeSelector } from './ChromosomeSelector';
 export { PositionInput } from './PositionInput';
 export { GeneIdInput } from './GeneIdInput';
+export { GeneSearchForm } from './GeneSearchForm';
 export { JobStatusList } from './JobStatusList';
 export { SpacersTableModal } from './SpacersTableModal';

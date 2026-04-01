@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AnalysisForm } from "@/components/crispr/AnalysisForm";
+import { GeneSearchForm } from "@/components/crispr/GeneSearchForm";
 import { Layout } from "@/components/layout/Layout";
 import {
   Card,
@@ -21,6 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Calculator,
   CheckCircle2,
@@ -38,8 +40,9 @@ interface Job {
   status: "pending" | "processing" | "completed" | "failed";
   createdAt: string;
   species?: string;
-  fromPosition?: number;
-  toPosition?: number;
+  fromPosition?: number | null;
+  toPosition?: number | null;
+  geneId?: string | null;
 }
 
 export const AnalysisPage: React.FC = () => {
@@ -91,12 +94,12 @@ export const AnalysisPage: React.FC = () => {
     }, 5000);
   };
 
-  const handleJobSubmitted = (jobId: string) => {
-    // Add new job to list
+  const handleJobSubmitted = (jobId: string, geneId?: string) => {
     const newJob: Job = {
       jobId,
       status: "pending",
       createdAt: new Date().toISOString(),
+      ...(geneId ? { geneId } : {}),
     };
     setJobs((prev) => [newJob, ...prev]);
     startPolling();
@@ -176,18 +179,52 @@ export const AnalysisPage: React.FC = () => {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <Card>
+          <Card className="shadow-sm">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Calculator className="h-5 w-5" />
-                Run New Analysis
-              </CardTitle>
+              <CardTitle>Run analysis</CardTitle>
               <CardDescription>
-                Configure parameters for off-target search and annotation.
+                Choose how you want to define the target: by gene ID (resolved
+                from GFF3) or by a custom genomic region.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <AnalysisForm onSubmit={handleJobSubmitted} />
+              <Tabs defaultValue="gene">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="gene">Gene ID</TabsTrigger>
+                  <TabsTrigger value="region">Custom region</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="gene" className="mt-0">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <div className="text-sm font-semibold">
+                        Search by gene ID
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Coordinates are taken from the genome’s GFF3 annotation,
+                        then the same CRISPR-PLANT pipeline runs as for a custom
+                        region.
+                      </div>
+                    </div>
+                    <GeneSearchForm
+                      onSubmit={(jobId, gid) => handleJobSubmitted(jobId, gid)}
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="region" className="mt-0">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold">
+                      <Calculator className="h-4 w-4" />
+                      Run New Analysis
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Configure parameters for off-target search and annotation.
+                    </div>
+                    <AnalysisForm onSubmit={handleJobSubmitted} />
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
 
@@ -227,12 +264,18 @@ export const AnalysisPage: React.FC = () => {
                             {job.jobId.slice(0, 20)}...
                           </span>
                         </div>
-                        {job.fromPosition && job.toPosition && (
-                          <div className="text-xs text-muted-foreground mt-1">
-                            Region: {job.fromPosition.toLocaleString()} -{" "}
-                            {job.toPosition.toLocaleString()}
+                        {job.geneId ? (
+                          <div className="text-xs text-muted-foreground mt-1 font-mono">
+                            Gene: {job.geneId}
                           </div>
-                        )}
+                        ) : null}
+                        {job.fromPosition != null &&
+                          job.toPosition != null && (
+                            <div className="text-xs text-muted-foreground mt-1">
+                              Region: {job.fromPosition.toLocaleString()} -{" "}
+                              {job.toPosition.toLocaleString()}
+                            </div>
+                          )}
                         {job.status === "completed" && (
                           <Button
                             size="sm"

@@ -292,7 +292,7 @@ Structure supports adding:
    - Check the data page
 
 3. **Customize**
-   - Add your own genome assemblies
+   - Add your own genome assemblies (`genomes/<cultivar>/` + optional `genome.json` for the worker; JBrowse via `GenomeConfig` / `public/genomes/` — see `worker/README.md`, `JBROWSE_SETUP.md`)
    - Extend the API
    - Add new pages
    - Customize the theme
@@ -319,6 +319,8 @@ The codebase demonstrates:
 
 - `README.md` - Complete project documentation
 - `SETUP.md` - Quick start guide
+- `worker/README.md` - Queue worker, `genome.json`, CRISPR pipeline
+- `scripts/README.md` - `complete_pipeline_run.sh`, `scripts/spacer/`
 - Inline code comments for complex logic
 - TypeScript types document the data structures
 

@@ -44,8 +44,9 @@ services:
 
   worker:
     platform: linux/amd64
-    build: 
-      context: ./worker
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
     container_name: seniorproject-worker
     restart: unless-stopped
     volumes:

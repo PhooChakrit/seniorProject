@@ -6,6 +6,7 @@ interface GeneIdInputProps {
   geneId: string;
   onGeneIdChange: (value: string) => void;
   placeholder?: string;
+  hint?: string;
   error?: string;
 }
 
@@ -13,6 +14,7 @@ export const GeneIdInput: React.FC<GeneIdInputProps> = ({
   geneId,
   onGeneIdChange,
   placeholder = "e.g. AT1G01010",
+  hint = "Enter a gene ID or gene symbol (e.g., AT1G01010, LOC_Os01g53090)",
   error,
 }) => {
   return (
@@ -28,9 +30,7 @@ export const GeneIdInput: React.FC<GeneIdInputProps> = ({
         onChange={(e) => onGeneIdChange(e.target.value)}
       />
       {error && <p className="text-sm text-red-500">{error}</p>}
-      <p className="text-xs text-muted-foreground">
-        Enter a gene ID or gene symbol (e.g., AT1G01010, LOC_Os01g53090)
-      </p>
+      <p className="text-xs text-muted-foreground">{hint}</p>
     </div>
   );
 };
