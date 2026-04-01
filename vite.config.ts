@@ -36,6 +36,10 @@ export default defineConfig(() => {
           target: apiUrl,
           changeOrigin: true,
         },
+        '/genomes': {
+          target: apiUrl,
+          changeOrigin: true,
+        },
       },
     },
   };

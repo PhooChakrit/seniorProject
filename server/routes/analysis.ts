@@ -2,12 +2,27 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import amqplib from 'amqplib';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
+import * as path from 'path';
+import {
+  genomesBaseDir,
+  loadContigsFromFai,
+  loadGenomeManifestById,
+  parseDefaultContig,
+} from '../utils/genomeManifest';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672';
 const QUEUE_NAME = 'crispr_tasks';
+
+interface AnalysisVarietyResponse {
+  id: string;
+  label: string;
+  defaultContig: string;
+  contigs: string[];
+  warnings: string[];
+}
 
 // Helper function to generate unique job ID
 function generateJobId(): string {
@@ -17,6 +32,56 @@ function generateJobId(): string {
 // ============================================
 // ANALYSIS JOB ENDPOINTS
 // ============================================
+
+// Get available varieties for analysis dropdown
+router.get('/varieties', authenticateToken, async (_req: AuthRequest, res) => {
+  try {
+    const configs = await prisma.genomeConfig.findMany({
+      orderBy: { id: 'asc' },
+      select: { key: true, label: true, defaultLocation: true },
+    });
+
+    const genomesDir = genomesBaseDir();
+    const manifestsById = loadGenomeManifestById(genomesDir);
+
+    const varieties: AnalysisVarietyResponse[] = configs.flatMap((cfg) => {
+      const matched = manifestsById.get(cfg.key);
+      if (!matched) {
+        console.warn(`Skipping analysis variety '${cfg.key}': no matching genome.json id`);
+        return [];
+      }
+
+      const warnings: string[] = [];
+      const fasta = matched.manifest.fasta || '';
+      if (!fasta) {
+        warnings.push('Missing fasta path in genome.json');
+      }
+
+      const fastaPath = path.join(genomesDir, matched.folder, fasta);
+      const faiPath = `${fastaPath}.fai`;
+      const contigs = loadContigsFromFai(faiPath);
+      if (!contigs.length) {
+        warnings.push(`Missing or empty FASTA index: ${path.basename(faiPath)}`);
+      }
+
+      const defaultContig = parseDefaultContig(cfg.defaultLocation) || contigs[0] || '';
+      return [
+        {
+          id: cfg.key,
+          label: matched.manifest.label || cfg.label,
+          defaultContig,
+          contigs,
+          warnings,
+        },
+      ];
+    });
+
+    res.json({ varieties });
+  } catch (error) {
+    console.error('Error loading analysis varieties:', error);
+    res.status(500).json({ error: 'Failed to load analysis varieties' });
+  }
+});
 
 // Submit a new analysis job
 router.post('/submit', authenticateToken, async (req: AuthRequest, res) => {
@@ -100,6 +165,79 @@ router.post('/submit', authenticateToken, async (req: AuthRequest, res) => {
   } catch (error) {
     console.error('Error submitting analysis job:', error);
     res.status(500).json({ error: 'Failed to submit analysis job' });
+  }
+});
+
+// Submit analysis by gene ID (worker resolves coordinates from GFF3)
+router.post('/submit-by-gene', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const { variety, geneId, options } = req.body;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    if (!variety || typeof variety !== 'string') {
+      return res.status(400).json({ error: 'Rice variety is required' });
+    }
+
+    const trimmedGeneId = typeof geneId === 'string' ? geneId.trim() : '';
+    if (!trimmedGeneId) {
+      return res.status(400).json({ error: 'Gene ID is required' });
+    }
+
+    const jobId = generateJobId();
+
+    await prisma.searchJob.create({
+      data: {
+        jobId,
+        type: 'gene_region_analysis',
+        status: 'pending',
+        species: variety,
+        geneId: trimmedGeneId,
+        userId,
+        notifyEmail: options?.email || null,
+        result: JSON.stringify({ options: options || {}, variety, geneId: trimmedGeneId }),
+      },
+    });
+
+    try {
+      const connection = await amqplib.connect(RABBITMQ_URL);
+      const channel = await connection.createChannel();
+      await channel.assertQueue(QUEUE_NAME, { durable: true });
+
+      const message = {
+        type: 'gene_region_analysis',
+        jobId,
+        variety,
+        geneId: trimmedGeneId,
+        options: options || {},
+      };
+
+      channel.sendToQueue(QUEUE_NAME, Buffer.from(JSON.stringify(message)), {
+        persistent: true,
+      });
+
+      await channel.close();
+      await connection.close();
+    } catch (mqError) {
+      console.error('RabbitMQ error:', mqError);
+      await prisma.searchJob.update({
+        where: { jobId },
+        data: { status: 'failed', error: 'Failed to queue job' },
+      });
+      return res.status(500).json({ error: 'Failed to queue analysis job' });
+    }
+
+    res.json({
+      success: true,
+      jobId,
+      message: 'Gene analysis job submitted successfully',
+    });
+  } catch (error) {
+    console.error('Error submitting gene analysis job:', error);
+    res.status(500).json({ error: 'Failed to submit gene analysis job' });
   }
 });
 
@@ -315,7 +453,7 @@ router.get('/jobs', authenticateToken, async (req: AuthRequest, res) => {
     const jobs = await prisma.searchJob.findMany({
       where: {
         userId,
-        type: { in: ['custom_analysis', 'region_analysis'] },
+        type: { in: ['custom_analysis', 'region_analysis', 'gene_region_analysis'] },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,

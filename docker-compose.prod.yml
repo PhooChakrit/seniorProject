@@ -59,6 +59,8 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    volumes:
+      - ./genomes:/app/genomes:ro
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-seniorproject}
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
@@ -95,8 +97,9 @@ services:
 
   worker:
     platform: linux/amd64
-    build: 
-      context: ./worker
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
     image: seniorproject-worker:latest
     container_name: seniorproject-worker
     restart: unless-stopped

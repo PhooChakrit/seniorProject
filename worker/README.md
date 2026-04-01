@@ -16,7 +16,91 @@ Given a genomic region (start–end bp) and analysis parameters (PAM, spacer len
 4. Classifies each spacer by specificity (A0, B0, Off-Target)
 5. Annotates each spacer with its genomic location (Exon / Intron / Intergenic) and gene ID via GFF3
 
-Output is a TSV file saved to `genomes/<VARIETY>/output/<jobId>.tsv`.
+Output is a TSV file saved to `genomes/<cultivar-folder>/output/<jobId>.tsv` (the folder that contains the reference FASTA for that variety).
+
+---
+
+## Variety configuration (`genome.json`)
+
+At startup the worker scans `/data/genomes/*/` (mounted from `./genomes` in development) for **`genome.json`** in each subfolder. Each file describes one cultivar:
+
+| Field   | Purpose |
+| :------ | :------ |
+| `id`    | API / RabbitMQ variety key (e.g. `kdml105`) — must be unique |
+| `label` | Human-readable name |
+| `fasta` | Filename relative to that folder (e.g. `KDML105.fasta`) |
+| `gff3`  | Annotation file for `annotate_spacers.py` (same folder) |
+
+Example: `genomes/KDML/genome.json` maps `kdml105` → `KDML/KDML105.fasta` and `KDML105.gff3`.
+
+If **no** valid manifests are found, the worker falls back to a built-in default for `kdml105` (same paths as before).
+
+To add a new rice line (no code changes after refactor):
+
+1. Create `genomes/<YourFolder>/` with `genome.json`, FASTA, and GFF3.
+2. Run helper script once:
+   ```bash
+   scripts/register_genome.sh --dir genomes/<YourFolder> --gff3-index
+   ```
+   - This validates `genome.json`
+   - Generates `<fasta>.fai`
+   - Optionally generates `<gff3>.gz` + `.tbi`
+3. Insert/update matching DB row in `GenomeConfig` where `key = genome.json.id`.
+4. Restart worker so it reloads manifests from `/data/genomes/*/genome.json`.
+
+SQL template (adapt values to your cultivar):
+
+```sql
+INSERT INTO "GenomeConfig" (
+  "key",
+  "label",
+  "description",
+  "assemblyConfig",
+  "tracks",
+  "defaultSession",
+  "defaultLocation",
+  "assemblyName",
+  "cultivarType",
+  "tracksLoaded",
+  "defaultRegion",
+  "specialFeatures"
+) VALUES (
+  'kdml105',
+  'KDML105 (ข้าวหอมมะลิ)',
+  'Thai jasmine rice cultivar',
+  '{}'::jsonb,
+  '[]'::jsonb,
+  '{}'::jsonb,
+  'ptg000001l:2000-20000',
+  'KDML105',
+  'Jasmine Rice',
+  'Reference + Annotations',
+  'ptg000001l: 2,000-20,000 bp',
+  'Aroma genes'
+)
+ON CONFLICT ("key") DO UPDATE SET
+  "label" = EXCLUDED."label",
+  "description" = EXCLUDED."description",
+  "assemblyConfig" = EXCLUDED."assemblyConfig",
+  "tracks" = EXCLUDED."tracks",
+  "defaultSession" = EXCLUDED."defaultSession",
+  "defaultLocation" = EXCLUDED."defaultLocation",
+  "assemblyName" = EXCLUDED."assemblyName",
+  "cultivarType" = EXCLUDED."cultivarType",
+  "tracksLoaded" = EXCLUDED."tracksLoaded",
+  "defaultRegion" = EXCLUDED."defaultRegion",
+  "specialFeatures" = EXCLUDED."specialFeatures";
+```
+
+Validation matrix:
+
+- Positive:
+  - `GET /api/genome/configs` includes only configs whose `key` matches a manifest `id`.
+  - `GET /api/analysis/varieties` returns `id`, `label`, `defaultContig`, `contigs`.
+  - Submit analysis using a returned `id` + `contig`, then verify `output/<jobId>.tsv` is created.
+- Negative:
+  - Missing `.fai` -> variety returns with empty `contigs` and warning message.
+  - DB `key` not found in `genome.json` manifests -> excluded from dropdown APIs with server warning.
 
 ---
 
@@ -48,25 +132,28 @@ Worker (worker.py)
      │
      │  - Picks up message from queue
      │  - Updates job status → "processing" (via API: POST /api/genome/jobs/update)
-     │  - Resolves genome FASTA path from VARIETY_CONFIG
+     │  - Resolves genome FASTA path from discovered varieties (`genome.json` → VARIETY_CONFIG)
      │  - Calls: /bin/bash /app/scripts/complete_pipeline_run.sh
-     │           <genome.fasta> <variety> <start> <end> <pam> <spacerLength> <mismatches> <jobId>
+     │           <genome.fasta> <variety> <start> <end> <pam> <spacerLength> <mismatches> <jobId> <contig>
      ▼
 Pipeline (complete_pipeline_run.sh)
      │
      │  Step 0 — Region Extraction
-     │    extract_region.py (BioPython)
+     │    scripts/spacer/extract_region.py (BioPython, shared CLI)
      │    Cuts genome FASTA at [startPos:endPos] → REGION.fna / GENOME.fna
      │
      │  Step 1 — PAM Search: NGG
      │    fuzznuc -pattern "N(<spacerLen>)NGG" -complement
+     │    scripts/spacer/extract_from_fuzznuc.py --prefix NGG
      │    → NGG_candidates.fa  (all spacer+PAM hits, both strands)
      │
      │  Step 2 — PAM Search: NAG  (for off-target estimation)
      │    fuzznuc -pattern "N(<spacerLen>)NAG" -complement
+     │    scripts/spacer/extract_from_fuzznuc.py --prefix NAG
      │    → NAG_candidates.fa
      │
      │  Step 3 — Off-target Analysis (vsearch, per PAM)
+     │    scripts/spacer/build_unique_fasta.py per PAM (dedupe candidates)
      │    For each PAM (NGG and NAG):
      │      vsearch --usearch_global  (identity = 1 - MM/spacerLen)
      │      → *_global.<MM>MM  and  *_global.<MM-1>MM
@@ -76,7 +163,7 @@ Pipeline (complete_pipeline_run.sh)
      │      cp_remove_10bp_adjacent_spacers.py  → filter adjacent hits
      │    → NGG_off_<MM>.ids,  NAG_off_<MM>.ids
      │
-     │  Step 4 — Spacer Classification  (classify_spacers.py)
+     │  Step 4 — Spacer Classification  (scripts/spacer/classify_spacers.py)
      │    For each NGG spacer candidate:
      │      minMM_GG = min mismatches to any NGG off-target site
      │      minMM_AG = min mismatches to any NAG off-target site
@@ -90,7 +177,8 @@ Pipeline (complete_pipeline_run.sh)
      │    Maps each spacer coordinate to:
      │      location: Exon / Intron / Intergenic
      │      gene_id:  nearest gene
-     │    GFF3 file: /data/genomes/KDML/KDML105.gff3
+     │    GFF3 path: if `genome.json` exists in the genome folder, uses its `gff3` entry;
+     │      else legacy fallback for `kdml105` → `/data/genomes/KDML/KDML105.gff3`
      │    Falls back to raw TSV if GFF3 not available
      │    → output/<jobId>.tsv  (final output)
      │
@@ -172,7 +260,7 @@ Table display + Export CSV
 
 | Parameter      | Default | Range / Options    | Description                              |
 | :------------- | :------ | :----------------- | :--------------------------------------- |
-| `variety`      | —       | `kdml105`          | Rice variety → selects genome FASTA      |
+| `variety`      | —       | keys from `genome.json` (`id`) | Rice line → resolves FASTA via manifest  |
 | `startPos`     | —       | ≥ 1                | Region start position (bp)               |
 | `endPos`       | —       | startPos + 1..+100,000 | Region end (max 100,000 bp window)  |
 | `pam`          | `NGG`   | `NGG`              | PAM pattern (only NGG supported now)     |
@@ -183,9 +271,13 @@ Table display + Export CSV
 
 ## Supported Varieties
 
-| Variety Key | Name                  | Genome File             | GFF3 Annotation        |
-| :---------- | :-------------------- | :---------------------- | :--------------------- |
-| `kdml105`   | KDML105 (ข้าวหอมมะลิ) | `KDML/KDML105.fasta`    | `KDML/KDML105.gff3`    |
+Discovered automatically from `genomes/*/genome.json` at worker startup.
+
+| Variety Key (`id`) | Example folder | Example FASTA (relative) | Example GFF3 (relative) |
+| :----------------- | :------------- | :------------------------- | :---------------------- |
+| `kdml105`          | `KDML/`        | `KDML105.fasta`            | `KDML105.gff3`          |
+
+Add more rows by adding folders under `genomes/` with their own `genome.json`.
 
 ---
 
@@ -200,14 +292,16 @@ Table display + Export CSV
         │
         ▼
    complete_pipeline_run.sh
-   ├── extract_region.py       (BioPython — region extraction)
-   ├── fuzznuc                 (EMBOSS — PAM search NGG + NAG)
-   ├── vsearch                 (off-target alignment)
-   ├── cp_global_2MM.py        (CRISPR-PLANTv2)
-   ├── cp_global_3MM.py        (CRISPR-PLANTv2)
-   ├── cp_remove_10bp_...py    (CRISPR-PLANTv2)
-   ├── classify_spacers.py     (inline — dual PAM classification)
-   └── annotate_spacers.py     (GFF3-based location annotation)
+   ├── spacer/extract_region.py       (BioPython — region extraction)
+   ├── fuzznuc                        (EMBOSS — PAM search NGG + NAG)
+   ├── spacer/extract_from_fuzznuc.py (per PAM)
+   ├── spacer/build_unique_fasta.py   (dedupe)
+   ├── vsearch                        (off-target alignment)
+   ├── cp_global_2MM.py               (CRISPR-PLANTv2)
+   ├── cp_global_3MM.py               (CRISPR-PLANTv2)
+   ├── cp_remove_10bp_...py           (CRISPR-PLANTv2)
+   ├── spacer/classify_spacers.py    (dual PAM classification)
+   └── annotate_spacers.py           (GFF3-based location annotation)
         │
         ▼
    output/<jobId>.tsv
@@ -230,8 +324,8 @@ docker compose up -d --build worker
 docker compose logs -f worker
 ```
 
-### Script Source of Truth
+### Script source of truth
 
-- Active pipeline entrypoint: `/app/scripts/complete_pipeline_run.sh`
-  (mounted from project root `./scripts/`)
-- `worker/complete_pipeline_run.sh` is kept in sync for build compatibility
+- **Development:** `./scripts` is mounted to `/app/scripts` in `docker-compose.yml`, so edits to `complete_pipeline_run.sh` and `scripts/spacer/*` apply immediately after container restart.
+- **Production image:** Build the worker from the **repository root** (`context: .`, `dockerfile: worker/Dockerfile`). The Dockerfile copies `worker/complete_pipeline_run.sh`, `scripts/spacer/`, and `scripts/annotate_spacers.py` into `/app/scripts/`.
+- **`worker/complete_pipeline_run.sh`** is kept identical to **`scripts/complete_pipeline_run.sh`** for reference and for tooling that expects a copy under `worker/`.

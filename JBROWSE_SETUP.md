@@ -2,6 +2,14 @@
 
 ## Quick Steps
 
+For maintainers adding a new cultivar, prefer the helper command:
+
+```bash
+scripts/register_genome.sh --dir genomes/<YourFolder> --gff3-index
+```
+
+This handles manifest validation + FASTA index creation (`.fai`) and optional GFF3 indexes in one step.
+
 ### 1. Prepare Your GFF3 File
 
 Your GFF3 file needs to be sorted, compressed, and indexed for JBrowse to use it efficiently.
@@ -117,7 +125,7 @@ public/
 
 If you don't want to compress/index, you can use the raw GFF3:
 
-Update `oryzaTracks` in `JBrowsePage.tsx`:
+Update the JBrowse track configuration where your app defines it (e.g. **`GenomeConfig`** rows / `prisma/seed.ts`, not hardcoded in `JBrowsePage.tsx` — the page loads configs from the API):
 ```tsx
 adapter: {
   type: 'Gff3Adapter',  // Instead of Gff3TabixAdapter
@@ -134,3 +142,10 @@ cp Oryza_DNA.gff3 public/genomes/oryza/
 ```
 
 **Note:** This will be slower for large files.
+
+---
+
+## Same files for JBrowse and the CRISPR worker?
+
+- **Worker / pipeline** use data under **`genomes/<Cultivar>/`** (mounted as `/data/genomes` in Docker). Optional **`genome.json`** in that folder registers the variety and points to `fasta` / `gff3` for annotation (see [worker/README.md](worker/README.md)).
+- **JBrowse** serves browser assets from **`public/genomes/...`** (or other URLs you put in `GenomeConfig`). Paths do not have to be identical, but using the same assembly files avoids drift. For KDML layout and indexes, see [genomes/KDML/README.md](genomes/KDML/README.md).

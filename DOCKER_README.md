@@ -42,11 +42,13 @@ npm run dev
 
 ## Worker Service & Bioinformatics Pipeline
 
-This project includes a **bioinformatics worker** (Python 2.7) that processes genome files.
+This project includes a **bioinformatics worker** (Python 2.7 main process; Python 3 + Biopython for the pipeline) that processes genome files.
 
-- **Source**: `worker/` directory
-- **Documentation**: See [worker/README.md](worker/README.md) for details on the pipeline, configuration (`PAM_PATTERN`, `MIN_SEQ_LENGTH`), and architecture.
-- **Data**: Mounts local `genomes/` folder to `/data/genomes` in the container.
+- **Code**: `worker/worker.py`, `worker/Dockerfile`; pipeline scripts under **`scripts/`** (`complete_pipeline_run.sh`, `scripts/spacer/*`, `annotate_spacers.py`).
+- **Build**: Docker Compose uses **`context: .`** and **`dockerfile: worker/Dockerfile`** so the image can copy both `worker/` and `scripts/spacer/`. Manual build: `docker build -f worker/Dockerfile -t seniorproject-worker:latest .` (from repo root).
+- **Documentation**: [worker/README.md](worker/README.md) (pipeline flow, `genome.json` variety discovery).
+- **Data**: Mounts local `genomes/` to `/data/genomes`. Each cultivar folder may include **`genome.json`** (`id`, `label`, `fasta`, `gff3`) so the worker can register varieties without editing Python.
+- **Dev note**: `docker-compose.yml` also mounts `./scripts` → `/app/scripts`, so pipeline edits on the host apply without rebuilding the worker image.
 
 ## Database Configuration
 

@@ -19,6 +19,7 @@ Welcome to the JBrowse 2 Application! This file helps you navigate all documenta
 ### Getting Started
 | File | Purpose | When to Use |
 |------|---------|-------------|
+| **INSTALL.md** | ตั้งเครื่องใหม่ / ย้าย environment | **เริ่มที่นี่เมื่อตั้งเครื่องใหม่** |
 | **CHECKLIST.md** | Interactive setup checklist | First time setup, verification |
 | **SETUP.md** | Quick start guide | Initial installation |
 | **COMMANDS.md** | npm scripts reference | Daily development |
@@ -29,6 +30,9 @@ Welcome to the JBrowse 2 Application! This file helps you navigate all documenta
 | **README.md** | Complete documentation | Understanding features, API |
 | **PROJECT_SUMMARY.md** | Project overview | Quick reference, onboarding |
 | **ARCHITECTURE.md** | Architecture diagrams | Understanding structure |
+| **worker/README.md** | Worker + `genome.json` + pipeline steps | CRISPR queue, new cultivars |
+| **scripts/README.md** | Pipeline scripts and `scripts/spacer/` | Manual runs, tooling |
+| **DOCKER_README.md** | DB + worker Docker notes | Compose, worker image build |
 
 ### Code Organization
 | Location | Purpose |
@@ -36,6 +40,9 @@ Welcome to the JBrowse 2 Application! This file helps you navigate all documenta
 | `src/` | Frontend React application |
 | `server/` | Backend Express API |
 | `prisma/` | Database schema |
+| `scripts/` | CRISPR pipeline (`complete_pipeline_run.sh`), `scripts/spacer/` CLIs, `annotate_spacers.py` |
+| `genomes/` | Per-cultivar FASTA/GFF3/output; optional `genome.json` per folder for the worker |
+| `worker/` | RabbitMQ consumer (`worker.py`), Dockerfile (build from repo root) |
 
 ## 🚀 Quick Navigation
 
@@ -211,6 +218,11 @@ senior/
 │   ├── middleware/           (Express middleware)
 │   └── index.ts             (Server entry)
 │
+├── 🧬 Data & worker
+│   ├── genomes/              (Per-cultivar files + optional genome.json)
+│   ├── scripts/              (Pipeline, spacer/, annotate_spacers.py)
+│   └── worker/               (worker.py, Dockerfile)
+│
 └── 🗄️ Database (prisma/)
     └── schema.prisma         (Database schema)
 ```
@@ -242,6 +254,9 @@ senior/
 
 **...modify the database**
 → prisma/schema.prisma → COMMANDS.md (Prisma commands)
+
+**...add a new rice genome for analysis / JBrowse**
+→ Add `genomes/<Folder>/genome.json` + FASTA/GFF3 → [worker/README.md](worker/README.md) → restart worker
 
 **...customize styling**
 → tailwind.config.js → src/index.css
@@ -282,4 +297,4 @@ This project includes:
 
 **Questions? Check the relevant documentation file above.**
 
-*Last updated: Project creation*
+*Last updated: genome.json + scripts/spacer pipeline layout*

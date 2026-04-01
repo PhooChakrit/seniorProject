@@ -1,6 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { authenticateToken, AuthRequest } from '../middleware/auth';
+import { genomesBaseDir, loadGenomeManifestById } from '../utils/genomeManifest';
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -9,6 +10,31 @@ const prisma = new PrismaClient();
 function generateJobId(): string {
   return `job_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
+
+// ============================================
+// GENOME CONFIG ENDPOINTS (public)
+// ============================================
+
+// GET /api/genome/configs — no auth, returns all genome configs for JBrowse
+router.get('/configs', async (req, res) => {
+  try {
+    const configs = await prisma.genomeConfig.findMany({
+      orderBy: { id: 'asc' },
+    });
+    const manifestsById = loadGenomeManifestById(genomesBaseDir());
+    const filtered = configs.filter((cfg) => {
+      const valid = manifestsById.has(cfg.key);
+      if (!valid) {
+        console.warn(`Skipping genome config '${cfg.key}': no matching genome.json id`);
+      }
+      return valid;
+    });
+    res.json(filtered);
+  } catch (error) {
+    console.error('Error fetching genome configs:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // ============================================
 // JOB MANAGEMENT ENDPOINTS
