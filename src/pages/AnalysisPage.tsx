@@ -22,6 +22,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Calculator,
   CheckCircle2,
@@ -178,38 +179,54 @@ export const AnalysisPage: React.FC = () => {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-6">
-            <Card className="shadow-sm">
-              <CardHeader>
-                <CardTitle className="text-lg">Search by gene ID</CardTitle>
-                <CardDescription>
-                  Pick a genome and a gene locus; coordinates are taken from the
-                  GFF3 annotation, then the same CRISPR-PLANT pipeline runs as
-                  for a custom region.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <GeneSearchForm
-                  onSubmit={(jobId, gid) => handleJobSubmitted(jobId, gid)}
-                />
-              </CardContent>
-            </Card>
+          <Card className="shadow-sm">
+            <CardHeader>
+              <CardTitle>Run analysis</CardTitle>
+              <CardDescription>
+                Choose how you want to define the target: by gene ID (resolved
+                from GFF3) or by a custom genomic region.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="gene">
+                <TabsList className="mb-4">
+                  <TabsTrigger value="gene">Gene ID</TabsTrigger>
+                  <TabsTrigger value="region">Custom region</TabsTrigger>
+                </TabsList>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calculator className="h-5 w-5" />
-                  Run New Analysis
-                </CardTitle>
-                <CardDescription>
-                  Configure parameters for off-target search and annotation.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <AnalysisForm onSubmit={handleJobSubmitted} />
-              </CardContent>
-            </Card>
-          </div>
+                <TabsContent value="gene" className="mt-0">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <div className="text-sm font-semibold">
+                        Search by gene ID
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Coordinates are taken from the genome’s GFF3 annotation,
+                        then the same CRISPR-PLANT pipeline runs as for a custom
+                        region.
+                      </div>
+                    </div>
+                    <GeneSearchForm
+                      onSubmit={(jobId, gid) => handleJobSubmitted(jobId, gid)}
+                    />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="region" className="mt-0">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-sm font-semibold">
+                      <Calculator className="h-4 w-4" />
+                      Run New Analysis
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Configure parameters for off-target search and annotation.
+                    </div>
+                    <AnalysisForm onSubmit={handleJobSubmitted} />
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
 
           {/* Use a wrapper div that is relative only on desktop to serve as anchor for absolute card */}
           <div className="md:relative">
