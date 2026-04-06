@@ -37,7 +37,7 @@ Shared Python steps live under **`scripts/spacer/`** (mounted at `/app/scripts/s
 2. **PAM search (NGG + NAG)** — fuzznuc + `spacer/extract_from_fuzznuc.py` per PAM
 3. **Deduplication** — `spacer/build_unique_fasta.py` per PAM
 4. **Off-targets** — vsearch + CRISPR-PLANTv2 helper scripts
-5. **Classification** — `spacer/classify_spacers.py` (dual PAM: minMM_GG / minMM_AG)
+5. **Classification** — `spacer/classify_spacers.py` (dual PAM + CRISPR-PLANT v2 classes A0…B2)
 6. **Annotation** — `annotate_spacers.py` using `gff3` from `genome.json` in the genome folder when present
 7. **Output** — `output/<jobId>.tsv`
 
@@ -57,7 +57,7 @@ Reusable CLIs that read **`genomes/<Cultivar>/genome.json`** when you pass **`--
 | `extract_region.py` | Extract `[start,end]` from reference FASTA (`--input` or `--genome`) |
 | `extract_from_fuzznuc.py` | fuzznuc table → `NGG_candidates.fa` / `NAG_candidates.fa` (`--work-dir`, `--prefix`) |
 | `build_unique_fasta.py` | Deduplicate candidates → `*_unique.fa` |
-| `classify_spacers.py` | Dual-PAM TSV to stdout (`--work-dir`, `--mismatches`, `--pam-label`) |
+| `classify_spacers.py` | Dual-PAM TSV to stdout (`--work-dir`, `--mismatches`, `--spacer-length`, `--pam-label`) |
 
 Example (host, from repo root; requires Biopython):
 

@@ -9,6 +9,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import apiClient from "@/lib/axios";
+import { spacerClassSoftBadgeClassName } from "@/lib/spacerClassStyles";
+import { cn } from "@/lib/utils";
 
 interface Spacer {
   id: number;
@@ -50,19 +52,11 @@ interface SpacersTableModalProps {
   toPosition: number;
 }
 
-const getClassColor = (spacerClass?: string): string => {
-  if (!spacerClass) return "bg-gray-100";
-  if (spacerClass.startsWith("A0") || spacerClass.startsWith("B0")) {
-    return "bg-green-100 text-green-800";
-  }
-  if (spacerClass.startsWith("A1") || spacerClass.startsWith("B1")) {
-    return "bg-yellow-100 text-yellow-800";
-  }
-  if (spacerClass.startsWith("A2") || spacerClass.startsWith("B2")) {
-    return "bg-orange-100 text-orange-800";
-  }
-  return "bg-gray-100";
-};
+const getClassChipClass = (spacerClass?: string): string =>
+  cn(
+    "px-2 py-0.5 rounded text-xs font-medium",
+    spacerClassSoftBadgeClassName(spacerClass ?? ""),
+  );
 
 export const SpacersTableModal: React.FC<SpacersTableModalProps> = ({
   open,
@@ -253,11 +247,7 @@ export const SpacersTableModal: React.FC<SpacersTableModalProps> = ({
                       <td className="px-3 py-2">{spacer.strand}</td>
                       <td className="px-3 py-2">{spacer.location || "-"}</td>
                       <td className="px-3 py-2">
-                        <span
-                          className={`px-2 py-0.5 rounded text-xs font-medium ${getClassColor(
-                            spacer.spacerClass,
-                          )}`}
-                        >
+                        <span className={getClassChipClass(spacer.spacerClass)}>
                           {spacer.spacerClass || "-"}
                         </span>
                       </td>

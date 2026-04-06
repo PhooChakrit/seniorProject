@@ -13,7 +13,7 @@ Given a genomic region (start–end bp) and analysis parameters (PAM, spacer len
 1. Extracts the target region from the genome FASTA
 2. Finds all spacer candidates with the specified PAM on both strands
 3. Runs off-target analysis against both NGG and NAG PAMs (dual PAM mode)
-4. Classifies each spacer by specificity (A0, B0, Off-Target)
+4. Classifies each spacer by CRISPR-PLANT v2 specificity (A0–B2, Off-Target)
 5. Annotates each spacer with its genomic location (Exon / Intron / Intergenic) and gene ID via GFF3
 
 Output is a TSV file saved to `genomes/<cultivar-folder>/output/<jobId>.tsv` (the folder that contains the reference FASTA for that variety).
@@ -165,12 +165,12 @@ Pipeline (complete_pipeline_run.sh)
      │
      │  Step 4 — Spacer Classification  (scripts/spacer/classify_spacers.py)
      │    For each NGG spacer candidate:
-     │      minMM_GG = min mismatches to any NGG off-target site
-     │      minMM_AG = min mismatches to any NAG off-target site
-     │      class:
-     │        A0  — specific to NGG AND NAG  (best)
-     │        B0  — specific to NGG, has NAG off-target
-     │        Off-Target — has NGG off-target
+     │      minMM_GG / minMM_AG from vsearch off-target ID lists (as before)
+     │      class (CRISPR-PLANT v2 tiering on NGG-clean hits):
+     │        Off-Target — NGG off-target within threshold
+     │        Else A vs B from duplicate PAM-proximal 10 nt among region-clean set
+     │        A2/B2 — 15 nt seed exact match to an NAG site in the region
+     │        A0/B0, A0.1/B0.1, A1/B1 — NAG tiers (none / only at M / at ≤ M−1 MM)
      │    → output/<jobId>.raw.tsv
      │
      │  Step 5 — Genomic Annotation  (annotate_spacers.py + GFF3)
@@ -221,18 +221,22 @@ Table display + Export CSV
 | `strand`     | `+` or `-`                                                   |
 | `location`   | `Exon` / `Intron` / `Intergenic` / `Gene`                   |
 | `PAM`        | PAM sequence used (e.g. `NGG`)                               |
-| `class`      | `A0`, `B0`, or `Off-Target`                                  |
+| `class`      | `A0`, `A0.1`, `A1`, `A2`, `B0`, `B0.1`, `B1`, `B2`, `Off-Target` |
 | `gene_id`    | Gene ID from GFF3 annotation (if applicable)                 |
 
 ---
 
 ## Spacer Classification
 
-| Class      | Meaning                                                              |
-| :--------- | :------------------------------------------------------------------- |
-| `A0`       | No off-target found under NGG **or** NAG — most specific            |
-| `B0`       | No NGG off-target, but has NAG off-target — moderately specific     |
-| `Off-Target` | Has NGG off-target within mismatch threshold — use with caution   |
+Same rules as [CRISPR-PLANT v2 `pipeline-commands.txt`](https://github.com/bminkenberg/CRISPR-PLANTv2/blob/master/pipeline-commands.txt), adapted to this worker: **global vsearch only** (no merged local/usearch), and **A/B duplicate-10 nt counts use only NGG-clean spacers in the analyzed region**, not the whole genome.
+
+| Class        | Meaning (short) |
+| :----------- | :-------------- |
+| `Off-Target` | NGG off-target within the mismatch threshold |
+| `A0` / `B0`  | NGG-clean; A or B line; not class 2; no NAG off-target at ≤ M MM |
+| `A0.1` / `B0.1` | NGG-clean; not 2; NAG off-target at exactly M MM (full tier, not M−1 tier) |
+| `A1` / `B1`  | NGG-clean; not 2; NAG off-target at ≤ M−1 MM |
+| `A2` / `B2`  | NGG-clean; PAM-proximal 15 nt matches some NAG protospacer in the region (exact) |
 
 ---
 
