@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/contexts/AuthContext";
 import { Layout } from "@/components/layout/Layout";
 import {
   Card,
@@ -28,7 +27,7 @@ interface AnalysisJobsResponse {
 }
 
 export const DashboardPage: React.FC = () => {
-  const { user } = useAuth();
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard-overview"],
