@@ -22,9 +22,13 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Only redirect if not already on login page
+      // Keep public pages (dashboard/jbrowse) accessible without login.
+      // Redirect to login only when user is on protected analysis routes.
       const currentPath = window.location.pathname;
-      if (currentPath !== '/login') {
+      const shouldRedirectToLogin =
+        currentPath.startsWith('/analysis') && currentPath !== '/login';
+
+      if (shouldRedirectToLogin) {
         localStorage.removeItem('token');
         window.location.href = '/login';
       }

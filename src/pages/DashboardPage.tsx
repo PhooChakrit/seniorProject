@@ -22,13 +22,8 @@ import {
 import { genomeApi } from "@/api/genome";
 import apiClient from "@/lib/axios";
 
-interface AnalysisJob {
-  status: "pending" | "processing" | "completed" | "failed";
-  createdAt: string;
-}
-
 interface AnalysisJobsResponse {
-  jobs?: AnalysisJob[];
+  completedThisMonth: number;
   queueWaiting?: number;
 }
 
@@ -38,29 +33,15 @@ export const DashboardPage: React.FC = () => {
   const { data, isLoading } = useQuery({
     queryKey: ["dashboard-overview"],
     queryFn: async () => {
-      const [genomeConfigs, analysisJobs] = await Promise.all([
+      const [genomeConfigs, summaryRes] = await Promise.all([
         genomeApi.getGenomeConfigs(),
-        apiClient.get<AnalysisJobsResponse>("/analysis/jobs"),
+        apiClient.get<AnalysisJobsResponse>("/analysis/public-summary"),
       ]);
-
-      const jobs = analysisJobs.data.jobs ?? [];
-      const now = new Date();
-      const currentMonth = now.getMonth();
-      const currentYear = now.getFullYear();
-
-      const completedThisMonth = jobs.filter((job) => {
-        if (job.status !== "completed") return false;
-        const createdDate = new Date(job.createdAt);
-        return (
-          createdDate.getMonth() === currentMonth &&
-          createdDate.getFullYear() === currentYear
-        );
-      }).length;
 
       return {
         genomeAssemblies: genomeConfigs.length,
-        queueWaiting: analysisJobs.data.queueWaiting ?? 0,
-        completedThisMonth,
+        queueWaiting: summaryRes.data.queueWaiting ?? 0,
+        completedThisMonth: summaryRes.data.completedThisMonth ?? 0,
       };
     },
   });
@@ -93,10 +74,10 @@ export const DashboardPage: React.FC = () => {
     <Layout>
       <div className="space-y-6">
         <div className="rounded-2xl border bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 p-6 text-white shadow-sm">
-          <p className="text-sm text-blue-100">CU POWER Grant Dashboard</p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight">
+          <h2 className="mt-2 text-3xl font-bold tracking-tight">CU POWER Grant Dashboard</h2>
+          {/* <h2 className="mt-2 text-3xl font-bold tracking-tight">
             Welcome back, {user?.name || user?.email}
-          </h2>
+          </h2> */}
           <p className="mt-2 max-w-2xl text-sm text-blue-100/90">
             Platform for Food Plant Gene Editing - project overview and the latest platform usage statistics.
           </p>
