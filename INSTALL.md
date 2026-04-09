@@ -66,25 +66,16 @@ genomes/
     └── KDML105.gff3      ← copy จากเครื่องเก่า (40 MB)   ✅ จำเป็น
 ```
 
-> Worker ใช้ BioPython อ่าน FASTA ตรงๆ และอ่าน GFF3 raw — ไม่ต้องสร้าง index ใดๆ
+> แนะนำให้สร้าง index ตั้งแต่แรกด้วย helper script เพื่อรองรับทั้ง worker และ UI/contig listing
 
-**ถ้าต้องการแสดง KDML บน JBrowse** ด้วย (optional) ต้องสร้าง index เพิ่ม:
+**คำสั่งแนะนำ (แทนรัน samtools/tabix ทีละคำสั่ง):**
 
 ```bash
-# ต้องติดตั้ง: samtools, bgzip, tabix (htslib)
-# macOS: brew install samtools htslib
-# Ubuntu: sudo apt-get install samtools tabix
+# validate only
+npm run genome:check -- --dir genomes/KDML
 
-# FASTA index (สำหรับ JBrowse IndexedFasta adapter)
-samtools faidx genomes/KDML/KDML105.fasta
-
-# Sort + bgzip + tabix GFF3 (สำหรับ JBrowse Gff3TabixAdapter)
-grep -v '^#' genomes/KDML/KDML105.gff3 \
-  | awk -F'\t' 'NF>=5{print $1"\t"$4"\t"$0}' \
-  | sort -k1,1 -k2,2n \
-  | cut -f3- > genomes/KDML/KDML105.sorted.gff3
-bgzip -c genomes/KDML/KDML105.sorted.gff3 > genomes/KDML/KDML105.sorted.gff3.gz
-tabix -p gff genomes/KDML/KDML105.sorted.gff3.gz
+# generate .fai + .gff3.gz + .tbi
+npm run genome:gff3-index -- --dir genomes/KDML
 ```
 
 แล้วอัปเดต `GenomeConfig` ใน DB (หรือ `prisma/seed.ts`) ให้ชี้ไปที่ไฟล์เหล่านี้
@@ -117,15 +108,8 @@ EOF
 ## ขั้นตอน 4 — เริ่ม Database และ Services
 
 ```bash
-# Start PostgreSQL + RabbitMQ (background)
-docker compose up -d postgres rabbitmq
-
-# รอจนกว่า postgres healthy (ประมาณ 10-20 วินาที)
-npm run wait-for-db
-
-# Run Prisma migrations + seed genome configs
-npm run prisma:migrate
-npx prisma db seed
+# one-liner (แนะนำ)
+GENOME_DIR=genomes/KDML npm run server:init:full
 ```
 
 > `prisma db seed` จะเพิ่ม `GenomeConfig` สำหรับ JBrowse (oryza, human GRCh38) ลงใน DB
@@ -159,6 +143,18 @@ docker compose logs -f worker
 # ตรวจสอบว่า worker เห็น genome ที่เตรียมไว้
 # ควรเห็น: [x] Varieties: ['kdml105']
 ```
+
+## Deploy บน server (production)
+
+ใช้ `docker-compose.prod.yml` เป็นหลัก:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs -f
+```
+
+> ไม่ต้องใช้ PM2 ถ้า deploy ผ่าน Compose ทั้ง stack
 
 ---
 

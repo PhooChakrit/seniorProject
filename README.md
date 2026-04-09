@@ -301,6 +301,8 @@ npm run dev:client
 
 ใช้วิธีนี้สำหรับ deploy บน server (ทุกอย่างอยู่ใน Docker):
 
+> ถ้า deploy ด้วย `docker-compose.prod.yml` ครบทั้ง stack แล้ว **ไม่ต้องใช้ PM2**
+
 #### Step 1: Build Images (บนเครื่อง dev)
 
 ```bash
@@ -391,6 +393,15 @@ npm run build
 npm run prisma:generate    # Generate Prisma Client
 npm run prisma:migrate     # Run migrations
 npm run prisma:studio      # Open Prisma Studio GUI
+
+# Genome registration helpers
+npm run genome:check -- --dir genomes/<Cultivar>
+npm run genome:index -- --dir genomes/<Cultivar>
+npm run genome:gff3-index -- --dir genomes/<Cultivar>
+
+# Server bootstrap shortcuts
+GENOME_DIR=genomes/<Cultivar> npm run server:init
+GENOME_DIR=genomes/<Cultivar> npm run server:init:full
 
 # E2E smoke test (queue + API + worker)
 chmod +x scripts/e2e_queue_smoke.sh

@@ -16,12 +16,32 @@ const prisma = new PrismaClient();
 const RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@localhost:5672';
 const QUEUE_NAME = 'crispr_tasks';
 
+/** Messages waiting in the worker queue (best-effort; null if RabbitMQ unreachable). */
+async function getCrisprQueueDepth(): Promise<number | null> {
+  try {
+    const connection = await amqplib.connect(RABBITMQ_URL);
+    const channel = await connection.createChannel();
+    const { messageCount } = await channel.assertQueue(QUEUE_NAME, { durable: true });
+    await channel.close();
+    await connection.close();
+    return typeof messageCount === 'number' ? messageCount : null;
+  } catch (err) {
+    console.warn('[analysis/jobs] RabbitMQ queue depth unavailable:', err);
+    return null;
+  }
+}
+
 interface AnalysisVarietyResponse {
   id: string;
   label: string;
   defaultContig: string;
   contigs: string[];
   warnings: string[];
+}
+
+interface PublicDashboardSummary {
+  queueWaiting: number;
+  completedThisMonth: number;
 }
 
 // Helper function to generate unique job ID
@@ -32,6 +52,39 @@ function generateJobId(): string {
 // ============================================
 // ANALYSIS JOB ENDPOINTS
 // ============================================
+
+// Public dashboard summary (no auth required)
+router.get('/public-summary', async (_req, res) => {
+  try {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+    const [completedThisMonth, queueWaiting] = await Promise.all([
+      prisma.searchJob.count({
+        where: {
+          status: 'completed',
+          completedAt: {
+            gte: startOfMonth,
+            lt: startOfNextMonth,
+          },
+          type: { in: ['custom_analysis', 'region_analysis', 'gene_region_analysis'] },
+        },
+      }),
+      getCrisprQueueDepth(),
+    ]);
+
+    const payload: PublicDashboardSummary = {
+      queueWaiting: queueWaiting ?? 0,
+      completedThisMonth,
+    };
+
+    res.json(payload);
+  } catch (error) {
+    console.error('Error getting public dashboard summary:', error);
+    res.status(500).json({ error: 'Failed to get dashboard summary' });
+  }
+});
 
 // Get available varieties for analysis dropdown
 router.get('/varieties', authenticateToken, async (_req: AuthRequest, res) => {
@@ -459,7 +512,9 @@ router.get('/jobs', authenticateToken, async (req: AuthRequest, res) => {
       take: 50,
     });
 
-    res.json({ jobs });
+    const queueWaiting = await getCrisprQueueDepth();
+
+    res.json({ jobs, queueWaiting });
   } catch (error) {
     console.error('Error listing jobs:', error);
     res.status(500).json({ error: 'Failed to list jobs' });

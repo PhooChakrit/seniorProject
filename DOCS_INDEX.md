@@ -8,6 +8,7 @@ Welcome to the JBrowse 2 Application! This file helps you navigate all documenta
 1. **[CHECKLIST.md](./CHECKLIST.md)** ⭐ - Step-by-step setup guide
 2. **[SETUP.md](./SETUP.md)** - Quick start instructions
 3. **[COMMANDS.md](./COMMANDS.md)** - Common npm commands reference
+4. **[INSTALL.md](./INSTALL.md)** - Full install + server deploy flow
 
 ### Understanding the Project
 4. **[README.md](./README.md)** - Complete project documentation
@@ -131,6 +132,9 @@ Welcome to the JBrowse 2 Application! This file helps you navigate all documenta
 
 **How do I start the app?**
 → See COMMANDS.md or run `npm run dev`
+
+**How do I bootstrap server quickly?**
+→ See SETUP.md and run `GENOME_DIR=genomes/<Cultivar> npm run server:init:full`
 
 **What's the project structure?**
 → See README.md "Project Structure" or ARCHITECTURE.md
@@ -293,7 +297,7 @@ This project includes:
 
 ---
 
-**Start with CHECKLIST.md if you're new to the project!**
+**Start with CHECKLIST.md if you're new to the project.**
 
 **Questions? Check the relevant documentation file above.**
 

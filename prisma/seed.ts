@@ -71,12 +71,12 @@ async function main() {
       key: 'kdml105',
       label: 'KDML105 (ข้าวหอมมะลิ)',
       description:
-        'Thai jasmine rice cultivar (KDML105) with local reference and annotations from genomes/KDML',
-      defaultLocation: 'ptg000001l:2000-20000',
+        'Thai jasmine rice cultivar (KDML105) with local reference and MAKER annotations (genomes/KDML). Gene IDs match the GFF3 track (e.g. maker-…, snap-…, augustus-…) — use the same IDs in Analysis → Search by gene ID.',
+      defaultLocation: 'ptg000001l:12500-20000',
       assemblyName: 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)',
       cultivarType: 'Jasmine Rice (Premium Aromatic)',
       tracksLoaded: 'Reference Sequence + Gene Annotations (GFF3 Tabix)',
-      defaultRegion: 'ptg000001l: 2,000-20,000 bp',
+      defaultRegion: 'ptg000001l: ~12,500–20,000 bp (MAKER genes)',
       specialFeatures: 'Aroma genes, Amylose content markers',
       tracks: kdml105Tracks,
       defaultSession: kdml105DefaultSession,
@@ -85,7 +85,7 @@ async function main() {
       key: 'kdml105',
       label: 'KDML105 (ข้าวหอมมะลิ)',
       description:
-        'Thai jasmine rice cultivar (KDML105) with local reference and annotations from genomes/KDML',
+        'Thai jasmine rice cultivar (KDML105) with local reference and MAKER annotations (genomes/KDML). Gene IDs match the GFF3 track (e.g. maker-…, snap-…, augustus-…) — use the same IDs in Analysis → Search by gene ID.',
       assemblyConfig: {
         name: 'KDML105',
         aliases: ['KDML'],
@@ -107,11 +107,11 @@ async function main() {
       },
       tracks: kdml105Tracks,
       defaultSession: kdml105DefaultSession,
-      defaultLocation: 'ptg000001l:2000-20000',
+      defaultLocation: 'ptg000001l:12500-20000',
       assemblyName: 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)',
       cultivarType: 'Jasmine Rice (Premium Aromatic)',
       tracksLoaded: 'Reference Sequence + Gene Annotations (GFF3 Tabix)',
-      defaultRegion: 'ptg000001l: 2,000-20,000 bp',
+      defaultRegion: 'ptg000001l: ~12,500–20,000 bp (MAKER genes)',
       specialFeatures: 'Aroma genes, Amylose content markers',
     },
   });

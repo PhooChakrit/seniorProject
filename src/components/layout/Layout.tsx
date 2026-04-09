@@ -30,11 +30,18 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8">
-              <div>
-                <h1 className="text-2xl font-bold">Thai Rice Genome</h1>
-                <p className="text-xs text-muted-foreground">
-                  Faculty of Science, Chulalongkorn University{" "}
-                </p>
+              <div className="flex items-center gap-3">
+                <img
+                  src="/genomes/logochula01_big.png"
+                  alt="Chulalongkorn University"
+                  className="h-12 w-auto rounded-sm object-contain"
+                />
+                <div>
+                  <h1 className="text-2xl font-bold">Thai Rice Genome</h1>
+                  <p className="text-xs text-muted-foreground">
+                    Faculty of Science, Chulalongkorn University
+                  </p>
+                </div>
               </div>
               <nav className="flex space-x-4">
                 {navItems.map((item) => {

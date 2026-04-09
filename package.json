@@ -19,7 +19,12 @@
     "docker:logs": "docker-compose logs -f",
     "docker:reset": "docker-compose down -v && docker-compose up -d",
     "wait-for-db": "node scripts/wait-for-db.js",
-    "db:setup": "npm run docker:up && npm run wait-for-db && npm run prisma:migrate"
+    "db:setup": "npm run docker:up && npm run wait-for-db && npm run prisma:migrate",
+    "server:init": "bash -lc '[ -n \"${GENOME_DIR:-}\" ] || { echo \"GENOME_DIR is required (example: GENOME_DIR=genomes/oryza)\"; exit 1; }; npm run docker:up && npm run wait-for-db && npm run prisma:migrate && npm run prisma:generate && npm run genome:gff3-index -- --dir \"$GENOME_DIR\"'",
+    "server:init:full": "bash -lc '[ -n \"${GENOME_DIR:-}\" ] || { echo \"GENOME_DIR is required (example: GENOME_DIR=genomes/oryza)\"; exit 1; }; npm run docker:up && npm run wait-for-db && npm run prisma:migrate && npm run prisma:generate && npm run genome:gff3-index -- --dir \"$GENOME_DIR\" && npx prisma db seed && docker-compose restart worker'",
+    "genome:check": "bash scripts/register_genome.sh --check",
+    "genome:index": "bash scripts/register_genome.sh",
+    "genome:gff3-index": "bash scripts/register_genome.sh --gff3-index"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

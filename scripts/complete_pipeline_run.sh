@@ -127,6 +127,7 @@ FINAL_TSV="$OUTPUT_DIR/${JOB_ID}.tsv"
 python3 "$SPACER_DIR/classify_spacers.py" \
     --work-dir . \
     --mismatches "$MISMATCHES" \
+    --spacer-length "$SPACER_LENGTH" \
     --pam-label "$PAM" > "$RAW_TSV"
 
 # 5.5 Annotate with real GFF3 (location + gene_id)

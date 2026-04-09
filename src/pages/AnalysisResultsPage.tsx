@@ -20,6 +20,19 @@ import {
 } from "@/components/ui/card";
 import { ArrowDown, ArrowLeft, ArrowUp, ArrowUpDown, Download, Loader2 } from "lucide-react";
 import apiClient from "@/lib/axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import {
+  SPACER_CLASS_FILTER_ORDER,
+  sortSpacerClassLabels,
+  spacerClassBadgeClassName,
+} from "@/lib/spacerClassStyles";
 
 interface SpacerResult {
   seqId: string;
@@ -41,8 +54,7 @@ type SortKey =
   | "seq"
   | "pam"
   | "strand"
-  | "location"
-  | "spacerClass";
+  | "location";
 
 type SortDirection = "asc" | "desc";
 
@@ -54,8 +66,13 @@ export const AnalysisResultsPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [classFilter, setClassFilter] = useState<string>("__all__");
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(100);
+
+  useEffect(() => {
+    setClassFilter("__all__");
+  }, [jobId]);
 
   useEffect(() => {
     if (!jobId) return;
@@ -75,23 +92,36 @@ export const AnalysisResultsPage: React.FC = () => {
     fetchResults();
   }, [jobId]);
 
-  const getClassBadgeVariant = (cls: string) => {
-    if (cls.includes("A0") || cls.includes("B0")) return "default";
-    if (cls.includes("Off-Target")) return "destructive";
-    return "secondary";
-  };
-
   const parseSortableNumber = (value: string) => {
     const numeric = parseFloat(value.replace(/[^\d.-]/g, ""));
     return Number.isNaN(numeric) ? Number.MAX_SAFE_INTEGER : numeric;
   };
 
+  const classOptions = useMemo(() => {
+    const fromData = new Set<string>();
+    for (const r of results) {
+      if (r.spacerClass?.trim()) fromData.add(r.spacerClass.trim());
+    }
+    const merged = new Set<string>([
+      ...SPACER_CLASS_FILTER_ORDER,
+      ...fromData,
+    ]);
+    return sortSpacerClassLabels([...merged]);
+  }, [results]);
+
+  const filteredResults = useMemo(() => {
+    if (classFilter === "__all__") return results;
+    return results.filter(
+      (r) => (r.spacerClass ?? "").trim() === classFilter,
+    );
+  }, [results, classFilter]);
+
   const sortedResults = useMemo(() => {
     if (!sortKey) {
-      return results;
+      return filteredResults;
     }
 
-    const sorted = [...results].sort((a, b) => {
+    const sorted = [...filteredResults].sort((a, b) => {
       let compare = 0;
 
       switch (sortKey) {
@@ -122,9 +152,6 @@ export const AnalysisResultsPage: React.FC = () => {
         case "location":
           compare = (a.location || "N/A").localeCompare(b.location || "N/A");
           break;
-        case "spacerClass":
-          compare = a.spacerClass.localeCompare(b.spacerClass);
-          break;
         default:
           compare = 0;
       }
@@ -133,7 +160,7 @@ export const AnalysisResultsPage: React.FC = () => {
     });
 
     return sorted;
-  }, [results, sortDirection, sortKey]);
+  }, [filteredResults, sortDirection, sortKey]);
 
   const totalPages = Math.max(1, Math.ceil(sortedResults.length / rowsPerPage));
 
@@ -147,7 +174,17 @@ export const AnalysisResultsPage: React.FC = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [sortDirection, sortKey, rowsPerPage]);
+  }, [sortDirection, sortKey, rowsPerPage, classFilter]);
+
+  useEffect(() => {
+    if (
+      classFilter !== "__all__" &&
+      classOptions.length > 0 &&
+      !classOptions.includes(classFilter)
+    ) {
+      setClassFilter("__all__");
+    }
+  }, [classFilter, classOptions]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -255,7 +292,14 @@ export const AnalysisResultsPage: React.FC = () => {
             {!loading && (
               <CardDescription>
                 {results.length} spacer{results.length !== 1 ? "s" : ""} found
-                {results.length > 0 && (
+                {classFilter !== "__all__" &&
+                  filteredResults.length !== results.length && (
+                    <>
+                      {" "}
+                      • {filteredResults.length} after class filter
+                    </>
+                  )}
+                {sortedResults.length > 0 && (
                   <> • Showing {pageStart}-{pageEnd}</>
                 )}
               </CardDescription>
@@ -281,24 +325,47 @@ export const AnalysisResultsPage: React.FC = () => {
                   <div className="text-sm text-muted-foreground">
                     Page {currentPage} / {totalPages}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <label
-                      htmlFor="rows-per-page"
-                      className="text-sm text-muted-foreground"
-                    >
-                      Rows:
-                    </label>
-                    <select
-                      id="rows-per-page"
-                      value={rowsPerPage}
-                      onChange={(e) => setRowsPerPage(Number(e.target.value))}
-                      className="h-9 rounded-md border bg-background px-2 text-sm"
-                    >
-                      <option value={50}>50</option>
-                      <option value={100}>100</option>
-                      <option value={250}>250</option>
-                      <option value={500}>500</option>
-                    </select>
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground whitespace-nowrap">
+                        Class
+                      </span>
+                      <Select
+                        value={classFilter}
+                        onValueChange={setClassFilter}
+                      >
+                        <SelectTrigger className="h-9 w-[min(100vw-4rem,11rem)] sm:w-[11rem]">
+                          <SelectValue placeholder="All classes" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__all__">All classes</SelectItem>
+                          {classOptions.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-muted-foreground whitespace-nowrap">
+                        Rows
+                      </span>
+                      <Select
+                        value={String(rowsPerPage)}
+                        onValueChange={(v) => setRowsPerPage(Number(v))}
+                      >
+                        <SelectTrigger className="h-9 w-[4.5rem]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="50">50</SelectItem>
+                          <SelectItem value="100">100</SelectItem>
+                          <SelectItem value="250">250</SelectItem>
+                          <SelectItem value="500">500</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <Button
                       size="sm"
                       variant="outline"
@@ -400,16 +467,8 @@ export const AnalysisResultsPage: React.FC = () => {
                           {renderSortIcon("location")}
                         </Button>
                       </TableHead>
-                      <TableHead className="w-[120px]">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-auto px-0 font-semibold"
-                          onClick={() => handleSort("spacerClass")}
-                        >
-                          Class
-                          {renderSortIcon("spacerClass")}
-                        </Button>
+                      <TableHead className="w-[120px] font-semibold">
+                        Class
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -452,7 +511,13 @@ export const AnalysisResultsPage: React.FC = () => {
                         </TableCell>
                         <TableCell>{row.location || "N/A"}</TableCell>
                         <TableCell>
-                          <Badge variant={getClassBadgeVariant(row.spacerClass)}>
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "shadow-none",
+                              spacerClassBadgeClassName(row.spacerClass),
+                            )}
+                          >
                             {row.spacerClass}
                           </Badge>
                         </TableCell>

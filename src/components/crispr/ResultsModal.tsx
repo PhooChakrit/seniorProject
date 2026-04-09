@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+import { spacerClassBadgeClassName } from "@/lib/spacerClassStyles";
 
 interface SpacerResult {
   seqId: string;
@@ -41,12 +43,6 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
   onClose,
   results,
 }) => {
-  const getClassBadgeVariant = (cls: string) => {
-    if (cls.includes("A0") || cls.includes("B0")) return "default";
-    if (cls.includes("Off-Target")) return "destructive";
-    return "secondary";
-  };
-
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-6xl max-h-[80vh]">
@@ -105,7 +101,13 @@ export const ResultsModal: React.FC<ResultsModalProps> = ({
                   <TableCell className="text-center">{row.strand}</TableCell>
                   <TableCell>{row.location || "N/A"}</TableCell>
                   <TableCell>
-                    <Badge variant={getClassBadgeVariant(row.spacerClass)}>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "shadow-none",
+                        spacerClassBadgeClassName(row.spacerClass),
+                      )}
+                    >
                       {row.spacerClass}
                     </Badge>
                   </TableCell>

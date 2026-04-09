@@ -1,31 +1,38 @@
-# Docker Database Setup
+# Docker Setup
 
-This project uses Docker to run a PostgreSQL database for development.
+เอกสารนี้สรุปการใช้ Docker Compose สำหรับโปรเจกต์นี้
 
 ## Prerequisites
 
 - Docker and Docker Compose installed on your system
 - Node.js and npm installed
 
-## Quick Start
+## Compose files
 
-### 1. Start the Database
+- `docker-compose.yml`: สำหรับ local/dev (เน้น `postgres`, `rabbitmq`, `worker`)
+- `docker-compose.prod.yml`: สำหรับ server production (ครบ `postgres`, `rabbitmq`, `api`, `frontend`, `worker`)
+
+## Quick Start (local/dev)
+
+### 1. Start core services
 
 ```bash
 npm run docker:up
 ```
 
-This will start a PostgreSQL container in the background.
+This starts services in background.
 
-### 2. Set up the Database Schema
+### 2. Set up database
 
 ```bash
+npm run wait-for-db
 npm run prisma:migrate
+npx prisma db seed
 ```
 
-This will create the database tables based on your Prisma schema.
+This creates/upgrades tables and seeds initial data.
 
-### 3. Start the Development Server
+### 3. Start application
 
 ```bash
 npm run dev
@@ -33,12 +40,12 @@ npm run dev
 
 ## Available Docker Commands
 
-- `npm run docker:up` - Start the PostgreSQL container
-- `npm run docker:down` - Stop the PostgreSQL container
-- `npm run docker:logs` - View database logs
-- `npm run docker:reset` - Reset the database (deletes all data and restarts)
-- `npm run db:setup` - Complete setup (start Docker + run migrations)
-- `docker-compose up --build worker` - Rebuild and start the bioinformatics worker
+- `npm run docker:up` - Start dev compose services
+- `npm run docker:down` - Stop dev compose services
+- `npm run docker:logs` - View compose logs
+- `npm run docker:reset` - Reset compose volume and restart
+- `npm run db:setup` - Start docker + wait db + migrate
+- `npm run server:init:full` - Bootstrap server-like flow (requires `GENOME_DIR`)
 
 ## Worker Service & Bioinformatics Pipeline
 
@@ -106,6 +113,14 @@ npm run prisma:studio
 
 This will open a web interface at http://localhost:5555 to view and edit your data.
 
-## Production Deployment
+## Production deployment
 
-For production, update the database credentials in your `.env` file and use a managed database service instead of Docker.
+สำหรับ server ให้ใช้ `docker-compose.prod.yml`:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml logs -f
+```
+
+ไม่ต้องใช้ PM2 เมื่อ deploy ผ่าน Compose ทั้ง stack.

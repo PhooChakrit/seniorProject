@@ -6,7 +6,6 @@ import { ProtectedRoute } from "./components/common/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { JBrowsePage } from "./pages/JBrowsePage";
-import { DataPage } from "./pages/DataPage";
 import { AnalysisPage } from "./pages/AnalysisPage";
 import { AnalysisResultsPage } from "./pages/AnalysisResultsPage";
 import "./index.css";
@@ -29,7 +28,6 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/jbrowse" element={<JBrowsePage />} />
-            <Route path="/data" element={<DataPage />} />
             <Route
               path="/analysis"
               element={

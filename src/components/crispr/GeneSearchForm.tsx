@@ -52,12 +52,17 @@ export const GeneSearchForm: React.FC<GeneSearchFormProps> = ({
 
   const genePlaceholder = useMemo(() => {
     if (selectedVariety?.id === "oryza") return "Os01g0100100";
-    if (selectedVariety?.id === "kdml105") return "g14938";
+    if (selectedVariety?.id === "kdml105")
+      return "maker-ptg000010l-snap-gene-0.2";
     return "e.g. Os01g0100100";
   }, [selectedVariety?.id]);
 
-  const geneHint =
-    "Use the gene ID format from the annotation for this genome (e.g. RAP/Ensembl Os01g… for IRGSP, or your cultivar’s GFF IDs).";
+  const geneHint = useMemo(() => {
+    if (selectedVariety?.id === "kdml105") {
+      return "KDML105 uses MAKER-style IDs from the GFF3 — use the ID on each gene row (e.g. maker-…, snap-…, augustus-…).";
+    }
+    return "Use the gene ID format from the annotation for this genome (e.g. RAP/Ensembl Os01g… for IRGSP, or your cultivar’s GFF IDs).";
+  }, [selectedVariety?.id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,37 +1,15 @@
-# ✅ Getting Started Checklist
+# Getting Started Checklist
 
-Use this checklist to set up and verify your JBrowse 2 application.
+## Local development
 
-## 📋 Setup Checklist
-
-### Step 1: Install Dependencies
-- [ ] Run `npm install` in the project root
-- [ ] Wait for all packages to download (this may take a few minutes)
-- [ ] Verify no error messages in the terminal
-
-### Step 2: Configure Environment
-- [ ] Check `.env` file exists with:
-  - DATABASE_URL
-  - JWT_SECRET
-  - PORT
-- [ ] (Optional) Update JWT_SECRET to a secure random string
-
-### Step 3: Database Setup
-- [ ] Run `npm run prisma:generate`
-- [ ] Run `npm run prisma:migrate`
-- [ ] Enter migration name when prompted (e.g., "init")
-- [ ] Verify `prisma/dev.db` file was created
-
-### Step 4: Start Development Server
-- [ ] Run `npm run dev`
-- [ ] Verify frontend starts on http://localhost:5173
-- [ ] Verify backend starts on http://localhost:3000
-- [ ] Check terminal for "Server is running" message
-
-### Step 5: Access Application
-- [ ] Open browser to http://localhost:5173
-- [ ] Verify login page loads correctly
-- [ ] No console errors in browser DevTools
+- [ ] รัน `npm install`
+- [ ] เตรียม `.env` (อย่างน้อย `DATABASE_URL`, `JWT_SECRET`, `RABBITMQ_URL`)
+- [ ] รัน `npm run docker:up`
+- [ ] รัน `npm run wait-for-db`
+- [ ] รัน `npm run prisma:migrate`
+- [ ] รัน `npx prisma db seed`
+- [ ] รัน `npm run dev`
+- [ ] เปิด `http://localhost:5173` และลอง login/register
 
 ## 🧪 Verification Checklist
 
@@ -95,13 +73,14 @@ Use this checklist to set up and verify your JBrowse 2 application.
 - [ ] Check if port 3000 is in use: `netstat -ano | findstr :3000`
 - [ ] Kill process if needed
 - [ ] Verify `.env` file exists
-- [ ] Check `prisma/dev.db` exists
+- [ ] ตรวจว่า `DATABASE_URL` ชี้ Postgres ที่ใช้งานได้
 - [ ] Re-run `npm run prisma:generate`
 
 ### If Database Errors
-- [ ] Delete `prisma/dev.db` and `prisma/dev.db-journal`
-- [ ] Run `npm run prisma:migrate` again
-- [ ] Check DATABASE_URL in `.env`
+- [ ] ตรวจสถานะ `docker compose ps postgres`
+- [ ] รัน `npm run wait-for-db`
+- [ ] รัน `npm run prisma:migrate` อีกครั้ง
+- [ ] ตรวจ `DATABASE_URL` ใน `.env`
 
 ### If JBrowse Won't Load
 - [ ] Check browser console for errors
@@ -204,14 +183,29 @@ After verification:
 - [ ] Create admin panel
 - [ ] Add more JBrowse tracks
 
-## ✨ Success Criteria
+## Server production
+
+- [ ] ใช้ `docker-compose.prod.yml` บน server
+- [ ] รัน `docker compose -f docker-compose.prod.yml up -d --build`
+- [ ] ตรวจ `docker compose -f docker-compose.prod.yml ps`
+- [ ] ตรวจ logs: `docker compose -f docker-compose.prod.yml logs -f`
+- [ ] ไม่ต้องรัน PM2 ถ้า deploy ผ่าน Compose ทั้ง stack
+
+## Genome onboarding
+
+- [ ] วางไฟล์ใน `genomes/<Cultivar>/` ให้ครบ (`genome.json`, `.fasta`, `.gff3`)
+- [ ] รัน `npm run genome:gff3-index -- --dir genomes/<Cultivar>`
+- [ ] รัน `npx prisma db seed` (หรืออัปเดต `GenomeConfig` ให้ key ตรง `genome.json.id`)
+- [ ] restart worker
+
+## Success Criteria
 
 You're ready to develop when:
 - ✅ All setup steps complete
 - ✅ All authentication tests pass
 - ✅ All pages load without errors
 - ✅ JBrowse genome browser works
-- ✅ Database operations successful
+- ✅ Database operations successful (PostgreSQL)
 - ✅ No console errors
 
 ## 📞 Support
