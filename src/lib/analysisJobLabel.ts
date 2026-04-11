@@ -31,7 +31,7 @@ export function formatAnalysisJobTitle(
   if (job.type === "gene_region_analysis" && job.geneId?.trim()) {
     const g = job.geneId.trim();
     const geneShort = g.length > 28 ? `${g.slice(0, 26)}…` : g;
-    return `${n}_${variety}_ยีน-${geneShort}_${suffix}`;
+    return `${n}_${variety}-${geneShort}_${suffix}`;
   }
 
   const from = job.fromPosition;
