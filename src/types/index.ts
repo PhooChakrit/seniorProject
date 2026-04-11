@@ -20,26 +20,6 @@ export interface AuthResponse {
   token: string;
 }
 
-export interface GenomeData {
-  id: number;
-  name: string;
-  assembly: string;
-  description?: string;
-  userId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
-}
-
 // Species and Chromosome types
 export interface Chromosome {
   id: string;

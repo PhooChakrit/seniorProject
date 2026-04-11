@@ -11,25 +11,13 @@ datasource db {
 }
 
 model User {
-  id         Int          @id @default(autoincrement())
-  email      String       @unique
+  id         Int         @id @default(autoincrement())
+  email      String      @unique
   password   String
   name       String?
-  genomeData GenomeData[]
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   searchJobs SearchJob[]
-}
-
-model GenomeData {
-  id          Int      @id @default(autoincrement())
-  name        String
-  assembly    String
-  description String?
-  userId      Int
-  user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
 }
 
 model SearchJob {
