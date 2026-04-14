@@ -429,7 +429,7 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
         />
 
         {/* Email Notification */}
-        <FormField
+        {/* <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
@@ -444,7 +444,7 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
 
         {/* Error message */}
         {form.formState.errors.root && (
