@@ -6,6 +6,52 @@ import { genomesBaseDir, loadGenomeManifestById } from '../utils/genomeManifest'
 const router = express.Router();
 const prisma = new PrismaClient();
 
+function gatewayPrefixFromBaseUrl(baseUrl: string): string {
+  const normalizedBaseUrl = baseUrl.replace(/\/+$/, '');
+  const apiGenomeSuffix = '/api/genome';
+  if (!normalizedBaseUrl.endsWith(apiGenomeSuffix)) {
+    return '';
+  }
+
+  return normalizedBaseUrl.slice(0, -apiGenomeSuffix.length);
+}
+
+function rewriteGenomeUri(uri: string, gatewayPrefix: string): string {
+  if (!uri.startsWith('/genomes/')) {
+    return uri;
+  }
+
+  const normalizedPrefix = gatewayPrefix.replace(/\/+$/, '');
+  if (!normalizedPrefix) {
+    return uri;
+  }
+
+  return `${normalizedPrefix}${uri}`;
+}
+
+function rewriteUrisInJson(value: unknown, gatewayPrefix: string): unknown {
+  if (Array.isArray(value)) {
+    return value.map((entry) => rewriteUrisInJson(entry, gatewayPrefix));
+  }
+
+  if (value && typeof value === 'object') {
+    const inputRecord = value as Record<string, unknown>;
+    const outputRecord: Record<string, unknown> = {};
+
+    for (const [key, entryValue] of Object.entries(inputRecord)) {
+      if (key === 'uri' && typeof entryValue === 'string') {
+        outputRecord[key] = rewriteGenomeUri(entryValue, gatewayPrefix);
+      } else {
+        outputRecord[key] = rewriteUrisInJson(entryValue, gatewayPrefix);
+      }
+    }
+
+    return outputRecord;
+  }
+
+  return value;
+}
+
 // ============================================
 // GENOME CONFIG ENDPOINTS (public)
 // ============================================
@@ -16,6 +62,7 @@ router.get('/configs', async (req, res) => {
     const configs = await prisma.genomeConfig.findMany({
       orderBy: { id: 'asc' },
     });
+    const gatewayPrefix = gatewayPrefixFromBaseUrl(req.baseUrl);
     const manifestsById = loadGenomeManifestById(genomesBaseDir());
     const filtered = configs.filter((cfg) => {
       const valid = manifestsById.has(cfg.key);
@@ -24,7 +71,13 @@ router.get('/configs', async (req, res) => {
       }
       return valid;
     });
-    res.json(filtered);
+    const withMappedGenomeUris = filtered.map((cfg) => ({
+      ...cfg,
+      assemblyConfig: rewriteUrisInJson(cfg.assemblyConfig, gatewayPrefix) as typeof cfg.assemblyConfig,
+      tracks: rewriteUrisInJson(cfg.tracks, gatewayPrefix) as typeof cfg.tracks,
+      defaultSession: rewriteUrisInJson(cfg.defaultSession, gatewayPrefix) as typeof cfg.defaultSession,
+    }));
+    res.json(withMappedGenomeUris);
   } catch (error) {
     console.error('Error fetching genome configs:', error);
     res.status(500).json({ error: 'Internal server error' });

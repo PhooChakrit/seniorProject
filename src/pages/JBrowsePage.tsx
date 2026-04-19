@@ -13,6 +13,40 @@ import {
 import { Label } from '@/components/ui/label';
 import { genomeApi } from '@/api/genome';
 
+const apiBasePath = (import.meta.env.VITE_API_BASE_PATH || '/api').replace(/\/+$/, '');
+const apiGatewayPath = apiBasePath.endsWith('/api') ? apiBasePath.slice(0, -4) : '';
+
+function mapGenomeUri(uri: string): string {
+  if (!uri.startsWith('/genomes/')) {
+    return uri;
+  }
+
+  return apiGatewayPath ? `${apiGatewayPath}${uri}` : uri;
+}
+
+function rewriteGenomeUris(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map((entry) => rewriteGenomeUris(entry));
+  }
+
+  if (value && typeof value === 'object') {
+    const input = value as Record<string, unknown>;
+    const output: Record<string, unknown> = {};
+
+    for (const [key, entryValue] of Object.entries(input)) {
+      if (key === 'uri' && typeof entryValue === 'string') {
+        output[key] = mapGenomeUri(entryValue);
+      } else {
+        output[key] = rewriteGenomeUris(entryValue);
+      }
+    }
+
+    return output;
+  }
+
+  return value;
+}
+
 export const JBrowsePage: React.FC = () => {
   const [viewState, setViewState] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -36,11 +70,14 @@ export const JBrowsePage: React.FC = () => {
     if (!genome) return;
     try {
       setError(null);
+      const assemblyConfig = rewriteGenomeUris(genome.assemblyConfig);
+      const tracks = rewriteGenomeUris(genome.tracks);
+      const defaultSession = rewriteGenomeUris(genome.defaultSession);
       const state = createViewState({
-        assembly: genome.assemblyConfig,
-        tracks: genome.tracks,
+        assembly: assemblyConfig as any,
+        tracks: tracks as any,
         location: genome.defaultLocation,
-        defaultSession: genome.defaultSession,
+        defaultSession: defaultSession as any,
       });
       setViewState(state);
     } catch (err: any) {
