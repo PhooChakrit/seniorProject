@@ -58,7 +58,7 @@ services:
     container_name: seniorproject-api
     restart: unless-stopped
     ports:
-      - "3000:3000"
+      - "5002:5002"
     volumes:
       - ./genomes:/app/genomes:ro
     environment:
@@ -86,7 +86,9 @@ services:
     ports:
       - "5173:5173"
     environment:
-      - VITE_API_URL=http://localhost:3000
+      - API_URL=http://api:5002
+      - VITE_BASE_PATH=/thairice/
+      - VITE_API_BASE_PATH=/thairiceapi/api
     depends_on:
       - api
     deploy:
@@ -107,7 +109,7 @@ services:
       - ./genomes:/data/genomes
     environment:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
-      - API_URL=http://api:3000
+      - API_URL=http://api:5002
     depends_on:
       rabbitmq:
         condition: service_healthy

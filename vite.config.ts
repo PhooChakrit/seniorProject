@@ -3,12 +3,14 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 // https://vitejs.dev/config/
-export default defineConfig(() => {
-  // Docker passes API_URL via process.env
-  const apiUrl = process.env.API_URL || 'http://localhost:3000';
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const apiUrl = env.API_URL || process.env.API_URL || 'http://localhost:5002';
+  const basePath = env.VITE_BASE_PATH || process.env.VITE_BASE_PATH || '/';
   console.log('Vite proxy target:', apiUrl);
   
   return {
+    base: basePath,
     plugins: [react()],
     resolve: {
       alias: {

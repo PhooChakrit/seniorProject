@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+const apiBasePath = import.meta.env.VITE_API_BASE_PATH || '/api';
+const appBasePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+
 const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: apiBasePath,
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
@@ -25,12 +28,14 @@ apiClient.interceptors.response.use(
       // Keep public pages (dashboard/jbrowse) accessible without login.
       // Redirect to login only when user is on protected analysis routes.
       const currentPath = window.location.pathname;
+      const analysisPath = `${appBasePath}/analysis`;
+      const loginPath = `${appBasePath}/login`;
       const shouldRedirectToLogin =
-        currentPath.startsWith('/analysis') && currentPath !== '/login';
+        currentPath.startsWith(analysisPath) && currentPath !== loginPath;
 
       if (shouldRedirectToLogin) {
         localStorage.removeItem('token');
-        window.location.href = '/login';
+        window.location.href = loginPath;
       }
     }
     return Promise.reject(error);

@@ -54,7 +54,7 @@ services:
       - ./scripts:/app/scripts
     environment:
       - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/%2F
-      - API_URL=http://host.docker.internal:3000
+      - API_URL=http://host.docker.internal:5002
     depends_on:
       rabbitmq:
         condition: service_healthy

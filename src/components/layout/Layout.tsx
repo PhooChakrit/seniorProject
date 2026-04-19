@@ -12,6 +12,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const logoSrc = `${import.meta.env.BASE_URL}genomes/logochula01_big.png`;
 
   const handleLogout = async () => {
     await logout();
@@ -32,7 +33,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="flex items-center space-x-8">
               <div className="flex items-center gap-3">
                 <img
-                  src="/genomes/logochula01_big.png"
+                  src={logoSrc}
                   alt="Chulalongkorn University"
                   className="h-12 w-auto rounded-sm object-contain"
                 />
