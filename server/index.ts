@@ -11,6 +11,7 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5002;
+const HOST = process.env.HOST || '0.0.0.0';
 const DIST_DIR = path.join(process.cwd(), 'dist');
 const STATIC_BASE_PATH = normalizePathPrefix(process.env.VITE_BASE_PATH || '/thairice/');
 const PUBLIC_API_BASE_PATH = normalizePathPrefix(process.env.VITE_API_BASE_PATH || '/thairiceapi/api');
@@ -85,6 +86,6 @@ app.get(`${STATIC_BASE_PATH}/*`, (req, res) => {
   res.sendFile(path.join(DIST_DIR, 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(Number(PORT), HOST, () => {
+  console.log(`Server is running on http://${HOST}:${PORT}`);
 });
