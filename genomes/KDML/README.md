@@ -9,25 +9,20 @@
 
 ## ไฟล์หลัก (แนะนำให้ใช้)
 
-- `KDML105.fasta`  
-  ไฟล์ reference genome ของ KDML105
+- `KDML105.fasta` (~396 MB)  
+  ไฟล์ reference genome ของ KDML105 (ตรงกับ `KDML105.asm.default.fa`)
 
 - `KDML105.fasta.fai`  
   index ของ FASTA (สร้างด้วย `samtools faidx`)  
   ใช้สำหรับ random access ตามช่วงตำแหน่ง (region) ให้เร็วขึ้น
 
-- `KDML105.sorted.gff3.gz`  
-  ไฟล์ annotation GFF3 ที่ถูก sort + bgzip แล้ว  
-  เหมาะกับงาน query ตาม genomic region
+- `KDML105.gff3` (~110 MB)  
+  ไฟล์ Final Genome Annotation (`KDML105_final_renamed_sorted.gff3`) ที่รวม 3 แหล่ง (RAP-DB liftoff 23,786 ยีน + IR64 liftoff 11,572 ยีน + MAKER 5,589 ยีน = 40,947 ยีน)  
+  รหัสยีนใช้รูปแบบ `KDML_contigname_NNNNNN` (เช่น `KDML_ptg000001l_000100`) และเก็บรหัสเดิมไว้ใน `original_ID`
 
-- `KDML105.sorted.gff3.gz.tbi`  
-  index ของ GFF3 (สร้างด้วย `tabix -p gff`)  
-  ต้องใช้คู่กับ `KDML105.sorted.gff3.gz`
-
-## ไฟล์ต้นฉบับ / ไฟล์กลาง
-
-- `KDML105.gff3`  
-  ไฟล์ GFF3 ต้นฉบับ
+- `KDML105.sorted.gff3.gz` (~12 MB) + `KDML105.sorted.gff3.gz.tbi` (~77 KB)  
+  ไฟล์ annotation GFF3 ที่ถูก sort + bgzip และทำ tabix index แล้ว  
+  ใช้สำหรับแสดงผล Track บน JBrowse อย่างรวดเร็ว
 
 - `KDML105.gff`  
   ไฟล์ GFF format เดิม (ไม่ใช่ GFF3) — โดยทั่วไปไม่ใช้กับ script ที่ต้องการ GFF3

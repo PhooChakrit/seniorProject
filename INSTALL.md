@@ -33,15 +33,15 @@ npm install
 # Database
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/seniorproject?schema=public"
 
-# API
-PORT=3000
+# API (ต้องใช้พอร์ต 5002 ให้ตรงกับ Vite Proxy และ Worker)
+PORT=5002
 JWT_SECRET=your_secret_key_change_in_production
 
 # RabbitMQ
 RABBITMQ_URL=amqp://guest:guest@localhost:5672/%2F
 
-# Worker
-API_URL=http://host.docker.internal:3000
+# Vite Proxy Target (สำหรับ Local Dev ต้องชี้ไป localhost:5002 ห้ามใช้ host.docker.internal)
+API_URL=http://localhost:5002
 GENOMES_DIR=/data/genomes
 ```
 
@@ -144,17 +144,9 @@ docker compose logs -f worker
 # ควรเห็น: [x] Varieties: ['kdml105']
 ```
 
-## Deploy บน server (production)
+## Deploy บน Server จริง (`studenttracker.sc.chula.ac.th`)
 
-ใช้ `docker-compose.prod.yml` เป็นหลัก:
-
-```bash
-docker compose -f docker-compose.prod.yml up -d --build
-docker compose -f docker-compose.prod.yml ps
-docker compose -f docker-compose.prod.yml logs -f
-```
-
-> ไม่ต้องใช้ PM2 ถ้า deploy ผ่าน Compose ทั้ง stack
+ดูรายละเอียดขั้นตอน `rsync` ไฟล์ Genome, `git pull`, `npm run build`, การคัดลอกไป `/data/html/thairice/` และการรีสตาร์ท `thairice-api` + `worker` (รวมถึงวิธีแก้ `KeyError: 'ContainerConfig'` บน `docker-compose 1.29.2`) ได้ใน **[SETUP.md](./SETUP.md)**
 
 ---
 

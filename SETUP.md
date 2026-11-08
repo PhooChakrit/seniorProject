@@ -15,27 +15,60 @@ npm run dev
 
 เปิดใช้งาน:
 - Frontend: `http://localhost:5173`
-- API: `http://localhost:3000`
+- API: `http://localhost:5002` (ตั้งค่าใน `.env`: `PORT=5002`, `API_URL="http://localhost:5002"`)
 
 ## Server bootstrap (one-liner)
 
 ถ้าต้องเตรียม genome + db + worker แบบครบ:
 
 ```bash
-GENOME_DIR=genomes/oryza npm run server:init:full
+GENOME_DIR=genomes/KDML npm run server:init:full
 ```
 
 คำสั่งนี้จะรัน: docker up -> wait db -> migrate -> generate -> genome gff3 index -> seed -> restart worker
 
-## Production บน server
+## Production บน Server จริง (`studenttracker.sc.chula.ac.th`)
 
-ใช้ `docker-compose.prod.yml` เป็นหลัก (ไม่ต้องใช้ PM2 เมื่อรันครบ stack ด้วย Compose):
+### ข้อมูลโครงสร้างบน Server (`161.200.118.52`)
+- **SSH User:** `csti@161.200.118.52` (ใช้ไฟล์ `key/senior.pem`)
+- **โฟลเดอร์โปรเจกต์หลัก (Git / API / Worker / Genomes):** `/data/api/thairice`
+- **โฟลเดอร์ไฟล์ Genome บน Server:** `/data/api/thairice/genomes/<Cultivar>/`
+- **โฟลเดอร์ Static Frontend (เว็บที่แสดงผลที่ `/thairice/`):** `/data/html/thairice`
+- **Systemd Service สำหรับ API:** `thairice-api` (รันที่พอร์ต `5002`)
+- **Docker Containers (`postgres`, `rabbitmq`, `worker`):** รันจาก `/data/api/thairice/docker-compose.yml`
 
-```bash
-docker compose -f docker-compose.prod.yml up -d --build
-docker compose -f docker-compose.prod.yml ps
-docker compose -f docker-compose.prod.yml logs -f
-```
+### ขั้นตอน Deploy / อัปเดตโค้ดและ Genome ขึ้น Server
+
+1. **โอนไฟล์ Genome ขนาดใหญ่ (ที่ไม่อยู่ใน Git) จากเครื่อง Local ขึ้น Server ด้วย `rsync`:**
+   ```bash
+   rsync -avzP -e "ssh -i key/senior.pem" \
+     genomes/KDML/KDML105.gff3 \
+     genomes/KDML/KDML105.sorted.gff3.gz \
+     genomes/KDML/KDML105.sorted.gff3.gz.tbi \
+     csti@161.200.118.52:/data/api/thairice/genomes/KDML/
+   ```
+
+2. **ดึงโค้ดล่าสุด + Seed DB + Build Frontend บน Server:**
+   ```bash
+   ssh -i key/senior.pem csti@161.200.118.52 '
+     export PATH="/home/csti/.nvm/versions/node/v20.20.0/bin:$PATH"
+     cd /data/api/thairice
+     git fetch origin && git reset --hard origin/main
+     npx prisma db seed
+     npm run build
+     cp -r dist/* /data/html/thairice/
+   '
+   ```
+
+3. **Restart API และ Rebuild/Restart Worker บน Server (รันใน SSH/PuTTY เพราะต้องใช้ `sudo`):**
+   ```bash
+   cd /data/api/thairice
+   sudo systemctl restart thairice-api
+   sudo docker-compose build worker
+   sudo docker rm -f $(sudo docker ps -aq --filter "label=com.docker.compose.service=worker")
+   sudo docker-compose up -d --no-deps worker
+   ```
+   *(หมายเหตุ: บน Server ใช้ `docker-compose 1.29.2` จึงควร `docker rm -f` ตัว container worker เก่าก่อนสั่ง `up -d` เพื่อเลี่ยงบัค `KeyError: 'ContainerConfig'`)*
 
 ## หมายเหตุเรื่อง genome index
 
@@ -43,5 +76,5 @@ docker compose -f docker-compose.prod.yml logs -f
   - `npm run genome:check -- --dir genomes/<Cultivar>`
 - สร้าง `.fai`:
   - `npm run genome:index -- --dir genomes/<Cultivar>`
-- สร้าง `.fai + .gff3.gz + .tbi`:
-  - `npm run genome:gff3-index -- --dir genomes/<Cultivar>`
+- สร้าง `.sorted.gff3.gz + .tbi` (สำหรับ JBrowse):
+  - `bash scripts/sort_gff3_tabix.sh genomes/<Cultivar>/<File>.gff3 genomes/<Cultivar>/<File>.sorted`
