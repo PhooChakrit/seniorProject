@@ -53,13 +53,13 @@ export const GeneSearchForm: React.FC<GeneSearchFormProps> = ({
   const genePlaceholder = useMemo(() => {
     if (selectedVariety?.id === "oryza") return "Os01g0100100";
     if (selectedVariety?.id === "kdml105")
-      return "maker-ptg000010l-snap-gene-0.2";
+      return "KDML_ptg000001l_000100";
     return "e.g. Os01g0100100";
   }, [selectedVariety?.id]);
 
   const geneHint = useMemo(() => {
     if (selectedVariety?.id === "kdml105") {
-      return "KDML105 uses MAKER-style IDs from the GFF3 — use the ID on each gene row (e.g. maker-…, snap-…, augustus-…).";
+      return "KDML105 uses renamed gene IDs from the GFF3 (e.g. KDML_ptg000001l_000100) or original_ID.";
     }
     return "Use the gene ID format from the annotation for this genome (e.g. RAP/Ensembl Os01g… for IRGSP, or your cultivar’s GFF IDs).";
   }, [selectedVariety?.id]);

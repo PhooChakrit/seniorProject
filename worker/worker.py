@@ -210,6 +210,9 @@ def _gene_row_matches_query(fields, query):
     name = attrs.get('Name')
     if name == q:
         return True
+    orig_id = attrs.get('original_ID')
+    if orig_id == q:
+        return True
     return False
 
 

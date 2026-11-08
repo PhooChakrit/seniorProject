@@ -166,3 +166,7 @@ genomes/**/*.userout
 genomes/**/*.seq
 genomes/**/output/
 *.fuzznuc
+key/
+*.ppk
+*.pem
+OneDrive_*/

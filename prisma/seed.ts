@@ -69,23 +69,23 @@ async function main() {
     where: { key: 'kdml105' },
     update: {
       key: 'kdml105',
-      label: 'KDML105 (ข้าวหอมมะลิ)',
+      label: 'KDML105 (ขาวดอกมะลิ 105)',
       description:
-        'Thai jasmine rice cultivar (KDML105) with local reference and MAKER annotations (genomes/KDML). Gene IDs match the GFF3 track (e.g. maker-…, snap-…, augustus-…) — use the same IDs in Analysis → Search by gene ID.',
+        'Thai jasmine rice cultivar (KDML105) with final merged genome annotations (40,947 genes: RAP-DB liftoff, IR64 liftoff, and MAKER). Gene IDs use the format KDML_contigname_NNNNNN (e.g. KDML_ptg000001l_000100) — use the same IDs in Analysis → Search by gene ID.',
       defaultLocation: 'ptg000001l:12500-20000',
       assemblyName: 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)',
       cultivarType: 'Jasmine Rice (Premium Aromatic)',
       tracksLoaded: 'Reference Sequence + Gene Annotations (GFF3 Tabix)',
-      defaultRegion: 'ptg000001l: ~12,500–20,000 bp (MAKER genes)',
+      defaultRegion: 'ptg000001l: ~12,500–20,000 bp (KDML_ptg000001l_000100)',
       specialFeatures: 'Aroma genes, Amylose content markers',
       tracks: kdml105Tracks,
       defaultSession: kdml105DefaultSession,
     },
     create: {
       key: 'kdml105',
-      label: 'KDML105 (ข้าวหอมมะลิ)',
+      label: 'KDML105 (ขาวดอกมะลิ 105)',
       description:
-        'Thai jasmine rice cultivar (KDML105) with local reference and MAKER annotations (genomes/KDML). Gene IDs match the GFF3 track (e.g. maker-…, snap-…, augustus-…) — use the same IDs in Analysis → Search by gene ID.',
+        'Thai jasmine rice cultivar (KDML105) with final merged genome annotations (40,947 genes: RAP-DB liftoff, IR64 liftoff, and MAKER). Gene IDs use the format KDML_contigname_NNNNNN (e.g. KDML_ptg000001l_000100) — use the same IDs in Analysis → Search by gene ID.',
       assemblyConfig: {
         name: 'KDML105',
         aliases: ['KDML'],
@@ -111,7 +111,7 @@ async function main() {
       assemblyName: 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)',
       cultivarType: 'Jasmine Rice (Premium Aromatic)',
       tracksLoaded: 'Reference Sequence + Gene Annotations (GFF3 Tabix)',
-      defaultRegion: 'ptg000001l: ~12,500–20,000 bp (MAKER genes)',
+      defaultRegion: 'ptg000001l: ~12,500–20,000 bp (KDML_ptg000001l_000100)',
       specialFeatures: 'Aroma genes, Amylose content markers',
     },
   });

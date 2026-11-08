@@ -31,6 +31,8 @@ def parse_gff3(gff_file: str) -> Dict[str, List[FeatureInfo]]:
     Returns: {chr: [(gene_id, gene_name, [(exon_start, exon_end), ...]), ...]}
     """
     genes: Dict[str, Dict[str, dict]] = defaultdict(dict)  # chr -> gene_id -> info
+    raw_exons: Dict[str, List[Tuple[int, int, str]]] = defaultdict(list)  # chr -> [(start, end, parent)]
+    mrna_to_gene: Dict[str, str] = {}
     
     with open(gff_file) as f:
         for line in f:
@@ -61,13 +63,37 @@ def parse_gff3(gff_file: str) -> Dict[str, List[FeatureInfo]]:
                         'strand': strand,
                         'exons': []
                     }
-            
-            elif feature_type in ('exon', 'CDS'):
-                # Find parent gene
+            elif feature_type in ('mRNA', 'transcript'):
+                tid = attr_dict.get('ID', '')
                 parent = attr_dict.get('Parent', '')
-                # Handle mRNA parent - need to map back to gene
-                # For simplicity, we'll use direct exon-gene mapping based on coordinates
-                for gene_id, gene_info in genes[chrom].items():
+                if tid and parent:
+                    mrna_to_gene[tid] = parent
+            elif feature_type in ('exon', 'CDS'):
+                parent = attr_dict.get('Parent', '')
+                raw_exons[chrom].append((start, end, parent))
+
+    # Map exons/CDS to their parent gene (even if exons appeared before the gene row in GFF3)
+    for chrom, exon_list in raw_exons.items():
+        chrom_genes = genes.get(chrom, {})
+        for start, end, parent in exon_list:
+            matched = False
+            if parent:
+                for p in parent.split(','):
+                    p = p.strip()
+                    gid = mrna_to_gene.get(p, p)
+                    if gid in chrom_genes:
+                        chrom_genes[gid]['exons'].append((start, end))
+                        matched = True
+                        break
+                    # Fallback prefix match (e.g. KDML_ptg000001l_000100_mRNA01 -> KDML_ptg000001l_000100)
+                    if '_mRNA' in p:
+                        base_gid = p.split('_mRNA')[0]
+                        if base_gid in chrom_genes:
+                            chrom_genes[base_gid]['exons'].append((start, end))
+                            matched = True
+                            break
+            if not matched:
+                for gene_id, gene_info in chrom_genes.items():
                     if gene_info['start'] <= start <= gene_info['end']:
                         gene_info['exons'].append((start, end))
                         break
