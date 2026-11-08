@@ -78,3 +78,25 @@ GENOME_DIR=genomes/KDML npm run server:init:full
   - `npm run genome:index -- --dir genomes/<Cultivar>`
 - สร้าง `.sorted.gff3.gz + .tbi` (สำหรับ JBrowse):
   - `bash scripts/sort_gff3_tabix.sh genomes/<Cultivar>/<File>.gff3 genomes/<Cultivar>/<File>.sorted`
+
+## การทำ Backup และ Restore บน Server (`/data/backup`)
+
+บน Server มีสคริปต์เตรียมไว้ให้ทั้งใน `/data/backup/` และ `/data/api/thairice/scripts/`:
+
+### 1. สั่ง Backup (ทำเมื่อไหร่ก็ได้ที่ต้องการ)
+```bash
+/data/backup/thairice-backup.sh
+```
+- สคริปต์จะสร้างโฟลเดอร์ `/data/backup/thairice-YYYY-MM-DD_HHMMSS/` ซึ่งเก็บครบทั้ง 3 ส่วน:
+  1. `thairice_db.sql.gz` — ฐานข้อมูล PostgreSQL (`seniorproject`) ทั้งหมด
+  2. `thairice_api.tar.gz` — โค้ด, `.env`, และไฟล์ Genome ทั้งหมดใน `/data/api/thairice` (ไม่รวม `node_modules`)
+  3. `thairice_html.tar.gz` — ไฟล์หน้าเว็บ Frontend ใน `/data/html/thairice`
+
+### 2. สั่ง Restore (กู้คืนข้อมูลจากโฟลเดอร์ Backup)
+```bash
+# ดูรายชื่อโฟลเดอร์ Backup ที่มีทั้งหมด
+ls -la /data/backup/
+
+# สั่ง Restore จากโฟลเดอร์ที่ต้องการ
+/data/backup/thairice-restore.sh /data/backup/thairice-YYYY-MM-DD_HHMMSS
+```
