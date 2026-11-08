@@ -2,7 +2,7 @@ import React from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, Home, Dna, FlaskConical } from "lucide-react";
+import { LogIn, LogOut, Home, Dna, FlaskConical } from "lucide-react";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -63,13 +63,26 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">
-                {user?.email}
-              </span>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Logout
-              </Button>
+              {user ? (
+                <>
+                  <span className="text-sm text-muted-foreground">
+                    {user.email}
+                  </span>
+                  <Button variant="outline" size="sm" onClick={handleLogout}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/login")}
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Login
+                </Button>
+              )}
             </div>
           </div>
         </div>
