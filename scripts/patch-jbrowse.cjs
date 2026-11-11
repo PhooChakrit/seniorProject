@@ -3,27 +3,27 @@ const path = require('path');
 
 const MAX_CONTIGS = 500;
 
-const targetFiles = [
-  path.join(
-    __dirname,
-    '../node_modules/@jbrowse/plugin-linear-genome-view/dist/LinearGenomeView/components/RefNameAutocomplete/util.js'
-  ),
-  path.join(
-    __dirname,
-    '../node_modules/@jbrowse/plugin-linear-genome-view/esm/LinearGenomeView/components/RefNameAutocomplete/util.js'
-  ),
-  path.join(
-    __dirname,
-    '../node_modules/@jbrowse/react-linear-genome-view/dist/react-linear-genome-view.umd.development.js'
-  ),
-  path.join(
-    __dirname,
-    '../node_modules/@jbrowse/react-linear-genome-view/dist/react-linear-genome-view.umd.production.min.js'
-  ),
-];
+function findTargetFiles(dir, results = []) {
+  if (!fs.existsSync(dir)) return results;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === '.git' || entry.name === '.vite' || entry.name === '.cache') continue;
+      findTargetFiles(fullPath, results);
+    } else if (
+      (entry.name === 'util.js' && fullPath.includes('RefNameAutocomplete')) ||
+      entry.name.startsWith('react-linear-genome-view.umd.') && entry.name.endsWith('.js')
+    ) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+const nodeModulesDir = path.join(__dirname, '../node_modules');
+const targetFiles = findTargetFiles(nodeModulesDir);
 
 for (const filePath of targetFiles) {
-  if (!fs.existsSync(filePath)) continue;
   const content = fs.readFileSync(filePath, 'utf8');
   const updated = content
     .replace(/filtered\.slice\(0,\s*100\)/g, `filtered.slice(0, ${MAX_CONTIGS})`)
