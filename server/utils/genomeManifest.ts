@@ -43,7 +43,9 @@ export function loadGenomeManifestById(genomesDir: string): Map<string, { folder
   return byId;
 }
 
-export function loadContigsFromFai(faiPath: string): string[] {
+export const MAX_CONTIGS = 500;
+
+export function loadContigsFromFai(faiPath: string, maxContigs: number = MAX_CONTIGS): string[] {
   if (!fs.existsSync(faiPath)) return [];
   const rows = fs
     .readFileSync(faiPath, 'utf-8')
@@ -52,5 +54,6 @@ export function loadContigsFromFai(faiPath: string): string[] {
     .filter(Boolean);
   return rows
     .map((line) => line.split('\t')[0]?.trim())
-    .filter((contig): contig is string => Boolean(contig));
+    .filter((contig): contig is string => Boolean(contig))
+    .slice(0, maxContigs);
 }

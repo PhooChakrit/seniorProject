@@ -4,10 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "postinstall": "node scripts/patch-jbrowse.cjs",
     "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\"",
     "dev:client": "vite",
     "dev:server": "tsx watch server/index.ts",
-    "build": "tsc && vite build",
+    "build": "node scripts/patch-jbrowse.cjs && tsc && vite build",
     "build:server": "tsc -p tsconfig.server.json",
     "preview": "vite preview",
     "prisma:generate": "prisma generate",
