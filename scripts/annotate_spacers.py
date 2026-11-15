@@ -53,24 +53,28 @@ def parse_gff3(gff_file: str) -> Dict[str, List[FeatureInfo]]:
                     attr_dict[key] = value
             
             if feature_type == 'gene':
-                gene_id = attr_dict.get('ID', attr_dict.get('gene_id', ''))
-                gene_name = attr_dict.get('Name', gene_id)
-                if gene_id:
-                    genes[chrom][gene_id] = {
+                raw_id = attr_dict.get('ID', attr_dict.get('gene_id', ''))
+                gene_id = raw_id[5:] if raw_id.startswith('gene:') else raw_id
+                gene_name = attr_dict.get('Name', attr_dict.get('gene_id', gene_id))
+                if raw_id:
+                    genes[chrom][raw_id] = {
+                        'clean_id': gene_id,
                         'name': gene_name,
                         'start': start,
                         'end': end,
                         'strand': strand,
                         'exons': []
                     }
-            elif feature_type in ('mRNA', 'transcript'):
+                    if gene_id != raw_id:
+                        mrna_to_gene[gene_id] = raw_id
+            elif feature_type in ('exon', 'CDS'):
+                parent = attr_dict.get('Parent', '')
+                raw_exons[chrom].append((start, end, parent))
+            else:
                 tid = attr_dict.get('ID', '')
                 parent = attr_dict.get('Parent', '')
                 if tid and parent:
                     mrna_to_gene[tid] = parent
-            elif feature_type in ('exon', 'CDS'):
-                parent = attr_dict.get('Parent', '')
-                raw_exons[chrom].append((start, end, parent))
 
     # Map exons/CDS to their parent gene (even if exons appeared before the gene row in GFF3)
     for chrom, exon_list in raw_exons.items():
@@ -112,7 +116,7 @@ def parse_gff3(gff_file: str) -> Dict[str, List[FeatureInfo]]:
                     merged_exons.append(exon)
             
             result[chrom].append((
-                gene_id,
+                info.get('clean_id', gene_id),
                 info['name'],
                 merged_exons,
                 info['start'],

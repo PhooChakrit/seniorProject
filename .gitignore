@@ -170,3 +170,14 @@ key/
 *.ppk
 *.pem
 OneDrive_*/
+download_233/
+genomes/**/*.chain
+genomes/**/*.unmap
+genomes/**/*.vcf*
+genomes/**/*.csi
+genomes/**/*.tbi
+public/genomes/**/*.fa
+public/genomes/**/*.fasta
+public/genomes/**/*.fai
+public/genomes/**/*.gff3*
+public/genomes/**/*.tbi

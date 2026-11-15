@@ -1,17 +1,145 @@
 import { PrismaClient } from '@prisma/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const prisma = new PrismaClient();
 
+interface Variety233Entry {
+  sampleNo: number;
+  nCode: string;
+  code: string;
+  gsNumber: string;
+  thaiName: string;
+  englishName: string;
+  label: string;
+}
+
+function buildCultivarGenomeConfig(params: {
+  key: string;
+  code: string;
+  label: string;
+  description: string;
+  assemblyName: string;
+  cultivarType: string;
+  defaultLocation: string;
+  defaultRegion: string;
+  specialFeatures: string;
+}) {
+  const {
+    key,
+    code,
+    label,
+    description,
+    assemblyName,
+    cultivarType,
+    defaultLocation,
+    defaultRegion,
+    specialFeatures,
+  } = params;
+
+  const trackId = `${key}_gff3_track`;
+  const refTrackId = `${code}-ReferenceSequenceTrack`;
+
+  const assemblyConfig = {
+    name: code,
+    aliases: [key],
+    sequence: {
+      type: 'ReferenceSequenceTrack',
+      trackId: refTrackId,
+      adapter: {
+        type: 'IndexedFastaAdapter',
+        fastaLocation: {
+          uri: `/genomes/${code}/${code}.fa`,
+          locationType: 'UriLocation',
+        },
+        faiLocation: {
+          uri: `/genomes/${code}/${code}.fa.fai`,
+          locationType: 'UriLocation',
+        },
+      },
+    },
+  };
+
+  const tracks = [
+    {
+      type: 'FeatureTrack',
+      trackId,
+      name: `${code} Gene Annotations`,
+      assemblyNames: [code],
+      category: ['Annotations'],
+      adapter: {
+        type: 'Gff3TabixAdapter',
+        gffGzLocation: {
+          uri: `/genomes/${code}/${code}.sorted.gff3.gz`,
+          locationType: 'UriLocation',
+        },
+        index: {
+          location: {
+            uri: `/genomes/${code}/${code}.sorted.gff3.gz.tbi`,
+            locationType: 'UriLocation',
+          },
+        },
+      },
+    },
+  ];
+
+  const defaultSession = {
+    name: `${code} Session`,
+    view: {
+      id: 'linearGenomeView',
+      type: 'LinearGenomeView',
+      tracks: [
+        {
+          type: 'ReferenceSequenceTrack',
+          configuration: refTrackId,
+          displays: [
+            {
+              type: 'LinearReferenceSequenceDisplay',
+              configuration: `${refTrackId}-LinearReferenceSequenceDisplay`,
+            },
+          ],
+        },
+        {
+          type: 'FeatureTrack',
+          configuration: trackId,
+          displays: [
+            {
+              type: 'LinearBasicDisplay',
+              configuration: `${trackId}-LinearBasicDisplay`,
+            },
+          ],
+        },
+      ],
+    },
+  };
+
+  return {
+    key,
+    label,
+    description,
+    assemblyConfig,
+    tracks,
+    defaultSession,
+    defaultLocation,
+    assemblyName,
+    cultivarType,
+    tracksLoaded: 'Reference Sequence + Gene Annotations (GFF3 Tabix)',
+    defaultRegion,
+    specialFeatures,
+  };
+}
+
 async function main() {
-  // Cleanup legacy demo configs that do not map to genomes/<folder>/genome.json ids
+  // Remove legacy demo and Oryza (Rice) configs per updated scope
   await prisma.genomeConfig.deleteMany({
     where: {
       key: {
-        in: ['human'],
+        in: ['human', 'oryza'],
       },
     },
   });
 
+  // 1. KDML105 (ขาวดอกมะลิ 105) — folder: genomes/KDML, files: KDML105.fa & KDML105.gff3
   const kdml105Tracks = [
     {
       type: 'FeatureTrack',
@@ -34,6 +162,7 @@ async function main() {
       },
     },
   ];
+
   const kdml105DefaultSession = {
     name: 'KDML105 Session',
     view: {
@@ -65,6 +194,26 @@ async function main() {
     },
   };
 
+  const kdml105AssemblyConfig = {
+    name: 'KDML105',
+    aliases: ['KDML'],
+    sequence: {
+      type: 'ReferenceSequenceTrack',
+      trackId: 'KDML105-ReferenceSequenceTrack',
+      adapter: {
+        type: 'IndexedFastaAdapter',
+        fastaLocation: {
+          uri: '/genomes/KDML/KDML105.fa',
+          locationType: 'UriLocation',
+        },
+        faiLocation: {
+          uri: '/genomes/KDML/KDML105.fa.fai',
+          locationType: 'UriLocation',
+        },
+      },
+    },
+  };
+
   await prisma.genomeConfig.upsert({
     where: { key: 'kdml105' },
     update: {
@@ -72,6 +221,7 @@ async function main() {
       label: 'KDML105 (ขาวดอกมะลิ 105)',
       description:
         'Thai jasmine rice cultivar (KDML105) with final merged genome annotations (40,947 genes: RAP-DB liftoff, IR64 liftoff, and MAKER). Gene IDs use the format KDML_contigname_NNNNNN (e.g. KDML_ptg000001l_000100) — use the same IDs in Analysis → Search by gene ID.',
+      assemblyConfig: kdml105AssemblyConfig,
       defaultLocation: 'ptg000001l:12500-20000',
       assemblyName: 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)',
       cultivarType: 'Jasmine Rice (Premium Aromatic)',
@@ -86,25 +236,7 @@ async function main() {
       label: 'KDML105 (ขาวดอกมะลิ 105)',
       description:
         'Thai jasmine rice cultivar (KDML105) with final merged genome annotations (40,947 genes: RAP-DB liftoff, IR64 liftoff, and MAKER). Gene IDs use the format KDML_contigname_NNNNNN (e.g. KDML_ptg000001l_000100) — use the same IDs in Analysis → Search by gene ID.',
-      assemblyConfig: {
-        name: 'KDML105',
-        aliases: ['KDML'],
-        sequence: {
-          type: 'ReferenceSequenceTrack',
-          trackId: 'KDML105-ReferenceSequenceTrack',
-          adapter: {
-            type: 'IndexedFastaAdapter',
-            fastaLocation: {
-              uri: '/genomes/KDML/KDML105.fasta',
-              locationType: 'UriLocation',
-            },
-            faiLocation: {
-              uri: '/genomes/KDML/KDML105.fasta.fai',
-              locationType: 'UriLocation',
-            },
-          },
-        },
-      },
+      assemblyConfig: kdml105AssemblyConfig,
       tracks: kdml105Tracks,
       defaultSession: kdml105DefaultSession,
       defaultLocation: 'ptg000001l:12500-20000',
@@ -115,110 +247,67 @@ async function main() {
       specialFeatures: 'Aroma genes, Amylose content markers',
     },
   });
-  const oryzaTracks = [
-    {
-      type: 'FeatureTrack',
-      trackId: 'oryza_gff3_track',
-      name: 'Oryza DNA Annotations',
-      assemblyNames: ['Oryza_sativa'],
-      category: ['Annotations'],
-      adapter: {
-        type: 'Gff3TabixAdapter',
-        gffGzLocation: {
-          uri: '/genomes/oryza/Oryza_DNA.sorted.gff3.gz',
-          locationType: 'UriLocation',
-        },
-        index: {
-          location: {
-            uri: '/genomes/oryza/Oryza_DNA.sorted.gff3.gz.tbi',
-            locationType: 'UriLocation',
-          },
-        },
-      },
-    },
-  ];
-  const oryzaDefaultSession = {
-    name: 'Oryza Session',
-    view: {
-      id: 'linearGenomeView',
-      type: 'LinearGenomeView',
-      tracks: [
-        {
-          type: 'ReferenceSequenceTrack',
-          configuration: 'Oryza-ReferenceSequenceTrack',
-          displays: [
-            {
-              type: 'LinearReferenceSequenceDisplay',
-              configuration:
-                'Oryza-ReferenceSequenceTrack-LinearReferenceSequenceDisplay',
-            },
-          ],
-        },
-        {
-          type: 'FeatureTrack',
-          configuration: 'oryza_gff3_track',
-          displays: [
-            {
-              type: 'LinearBasicDisplay',
-              configuration: 'oryza_gff3_track-LinearBasicDisplay',
-            },
-          ],
-        },
-      ],
-    },
-  };
+
+  // 2. IRGSP-1.0 (Nipponbare) — folder: genomes/IRGSP, files: IRGSP.fa & IRGSP.gff3
+  const irgspConfig = buildCultivarGenomeConfig({
+    key: 'irgsp1',
+    code: 'IRGSP',
+    label: 'IRGSP-1.0 (Nipponbare)',
+    description:
+      'Oryza sativa Japonica Group reference genome (IRGSP-1.0 / Nipponbare, Chromosomes 1–12) with RAP-DB / Ensembl Plants gene annotations (e.g. Os01g0100100).',
+    assemblyName: 'IRGSP-1.0 (Nipponbare)',
+    cultivarType: 'Reference Genome (Japonica)',
+    defaultLocation: '1:2500-15000',
+    defaultRegion: 'Chromosome 1: 2,500–15,000 bp (Os01g0100100)',
+    specialFeatures: 'Standard international rice reference assembly (Chr 1–12)',
+  });
 
   await prisma.genomeConfig.upsert({
-    where: { key: 'oryza' },
-    update: {
-      key: 'oryza',
-      label: 'Oryza (Rice)',
-      description:
-        'IRGSP-1.0 rice reference genome with Oryza annotations',
-      defaultLocation: '1:2000-20000',
-      assemblyName: 'Oryza_sativa (IRGSP-1.0)',
-      cultivarType: 'Reference Rice Genome',
-      tracksLoaded: 'Reference Sequence + Oryza DNA GFF3 (Tabix)',
-      defaultRegion: 'Chromosome 1: 2,000-20,000 bp',
-      specialFeatures: 'Reference assembly for comparative viewing',
-      tracks: oryzaTracks,
-      defaultSession: oryzaDefaultSession,
-    },
-    create: {
-      key: 'oryza',
-      label: 'Oryza (Rice)',
-      description:
-        'IRGSP-1.0 rice reference genome with Oryza annotations',
-      assemblyConfig: {
-        name: 'Oryza_sativa',
-        aliases: ['IRGSP-1.0'],
-        sequence: {
-          type: 'ReferenceSequenceTrack',
-          trackId: 'Oryza-ReferenceSequenceTrack',
-          adapter: {
-            type: 'IndexedFastaAdapter',
-            fastaLocation: {
-              uri: '/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa',
-              locationType: 'UriLocation',
-            },
-            faiLocation: {
-              uri: '/genomes/oryza/Oryza_sativa.IRGSP-1.0.dna.chromosome.1.fa.fai',
-              locationType: 'UriLocation',
-            },
-          },
-        },
-      },
-      tracks: oryzaTracks,
-      defaultSession: oryzaDefaultSession,
-      defaultLocation: '1:2000-20000',
-      assemblyName: 'Oryza_sativa (IRGSP-1.0)',
-      cultivarType: 'Reference Rice Genome',
-      tracksLoaded: 'Reference Sequence + Oryza DNA GFF3 (Tabix)',
-      defaultRegion: 'Chromosome 1: 2,000-20,000 bp',
-      specialFeatures: 'Reference assembly for comparative viewing',
-    },
+    where: { key: irgspConfig.key },
+    update: irgspConfig,
+    create: irgspConfig,
   });
-  console.log('Seeded GenomeConfig: kdml105, oryza');
+
+  // 3. Auto-seed all installed cultivars from the 233 Thai rice varieties list
+  const varietiesJsonPath = path.join(process.cwd(), 'scripts', 'varieties_233.json');
+  const genomesDir = path.join(process.cwd(), 'genomes');
+  const seededCultivars: string[] = ['kdml105', 'irgsp1'];
+
+  if (fs.existsSync(varietiesJsonPath)) {
+    const varieties233: Variety233Entry[] = JSON.parse(
+      fs.readFileSync(varietiesJsonPath, 'utf-8')
+    );
+
+    for (const v of varieties233) {
+      const manifestPath = path.join(genomesDir, v.code, 'genome.json');
+      if (!fs.existsSync(manifestPath)) {
+        continue;
+      }
+
+      const key = v.code.toLowerCase();
+      const cfg = buildCultivarGenomeConfig({
+        key,
+        code: v.code,
+        label: v.label,
+        description: `Thai rice cultivar ${v.thaiName} (${v.englishName}, Code: ${v.code}, Sample: ${v.sampleNo}, G.S. No. ${v.gsNumber}) consensus assembly built from SNP + Indel VCF against IRGSP-1.0 with CrossMap lifted-over gene annotations (e.g. Os01g0100100).`,
+        assemblyName: `${v.code} - ${v.thaiName} (${v.englishName})`,
+        cultivarType: `Thai Rice Accession (G.S. No. ${v.gsNumber})`,
+        defaultLocation: '1:2500-15000',
+        defaultRegion: 'Chromosome 1: 2,500–15,000 bp (Os01g0100100)',
+        specialFeatures: 'Consensus FASTA (bcftools) + Indel-shifted GFF3 (CrossMap)',
+      });
+
+      await prisma.genomeConfig.upsert({
+        where: { key: cfg.key },
+        update: cfg,
+        create: cfg,
+      });
+
+      seededCultivars.push(cfg.key);
+    }
+  }
+
+  console.log(`Seeded GenomeConfig (${seededCultivars.length}): ${seededCultivars.join(', ')}`);
 }
 
 main()

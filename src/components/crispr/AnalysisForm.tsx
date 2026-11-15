@@ -428,24 +428,6 @@ export const AnalysisForm: React.FC<AnalysisFormProps> = ({ onSubmit }) => {
           )}
         />
 
-        {/* Email Notification */}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email Notification (Optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="your@email.com" {...field} />
-              </FormControl>
-              <FormDescription>
-                ระบบจะแจ้งเตือนเมื่อการวิเคราะห์เสร็จสิ้น
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         {/* Error message */}
         {form.formState.errors.root && (
           <div className="text-sm text-red-500 text-center">

@@ -70,8 +70,8 @@ VARIETY_CONFIG = load_variety_config(GENOMES_DIR)
 if not VARIETY_CONFIG:
     VARIETY_CONFIG = {
         'kdml105': {
-            'genome_file': 'KDML/KDML105.fasta',
-            'name': 'KDML105 (Thai Hom Mali Rice)',
+            'genome_file': 'KDML/KDML105.fa',
+            'name': 'KDML105 (ขาวดอกมะลิ 105)',
             'folder': 'KDML',
             'gff3': 'KDML105.gff3',
         }
