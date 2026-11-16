@@ -1,0 +1,6 @@
+{
+  "id": "bn040",
+  "label": "BN040 (พวงนาค)",
+  "fasta": "BN040.fa.gz",
+  "gff3": "BN040.sorted.gff3.gz"
+}

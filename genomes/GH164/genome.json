@@ -1,0 +1,6 @@
+{
+  "id": "gh164",
+  "label": "GH164 (ข้าวเหนียวแดงกรามแรด)",
+  "fasta": "GH164.fa.gz",
+  "gff3": "GH164.sorted.gff3.gz"
+}

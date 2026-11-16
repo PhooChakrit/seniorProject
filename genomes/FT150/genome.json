@@ -1,0 +1,6 @@
+{
+  "id": "ft150",
+  "label": "FT150 (เอวมดแดง)",
+  "fasta": "FT150.fa.gz",
+  "gff3": "FT150.sorted.gff3.gz"
+}

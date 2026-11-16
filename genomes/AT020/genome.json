@@ -1,0 +1,6 @@
+{
+  "id": "at020",
+  "label": "AT020 (เหลืองใบมัน)",
+  "fasta": "AT020.fa.gz",
+  "gff3": "AT020.sorted.gff3.gz"
+}

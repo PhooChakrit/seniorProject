@@ -1,0 +1,6 @@
+{
+  "id": "dr096",
+  "label": "DR096 (ขาวตาแห้ง)",
+  "fasta": "DR096.fa.gz",
+  "gff3": "DR096.sorted.gff3.gz"
+}

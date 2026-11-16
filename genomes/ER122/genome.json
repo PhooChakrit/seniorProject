@@ -1,0 +1,6 @@
+{
+  "id": "er122",
+  "label": "ER122 (หอมมะลิ)",
+  "fasta": "ER122.fa.gz",
+  "gff3": "ER122.sorted.gff3.gz"
+}

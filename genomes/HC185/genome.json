@@ -1,0 +1,6 @@
+{
+  "id": "hc185",
+  "label": "HC185 (บัวหลวง)",
+  "fasta": "HC185.fa.gz",
+  "gff3": "HC185.sorted.gff3.gz"
+}

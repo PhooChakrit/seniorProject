@@ -1,0 +1,6 @@
+{
+  "id": "iw231",
+  "label": "IW231 (CH1)",
+  "fasta": "IW231.fa.gz",
+  "gff3": "IW231.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "be031",
+  "label": "BE031 (สองรวง)",
+  "fasta": "BE031.fa.gz",
+  "gff3": "BE031.sorted.gff3.gz"
+}

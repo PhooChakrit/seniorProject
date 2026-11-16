@@ -1,0 +1,6 @@
+{
+  "id": "bq043",
+  "label": "BQ043 (ขาวตาเอ็ก)",
+  "fasta": "BQ043.fa.gz",
+  "gff3": "BQ043.sorted.gff3.gz"
+}

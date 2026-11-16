@@ -1,0 +1,6 @@
+{
+  "id": "ch060",
+  "label": "CH060 (ขาวเกษตร)",
+  "fasta": "CH060.fa.gz",
+  "gff3": "CH060.sorted.gff3.gz"
+}

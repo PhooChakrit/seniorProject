@@ -1,0 +1,6 @@
+{
+  "id": "bc029",
+  "label": "BC029 (ขาวหลวง)",
+  "fasta": "BC029.fa.gz",
+  "gff3": "BC029.sorted.gff3.gz"
+}

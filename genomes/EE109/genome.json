@@ -1,0 +1,6 @@
+{
+  "id": "ee109",
+  "label": "EE109 (เหลืองอ่อน)",
+  "fasta": "EE109.fa.gz",
+  "gff3": "EE109.sorted.gff3.gz"
+}

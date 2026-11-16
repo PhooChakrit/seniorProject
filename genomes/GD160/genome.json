@@ -1,0 +1,6 @@
+{
+  "id": "gd160",
+  "label": "GD160 (มะลิ)",
+  "fasta": "GD160.fa.gz",
+  "gff3": "GD160.sorted.gff3.gz"
+}

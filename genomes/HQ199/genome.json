@@ -1,0 +1,6 @@
+{
+  "id": "hq199",
+  "label": "HQ199 (เหลืองอ่อน)",
+  "fasta": "HQ199.fa.gz",
+  "gff3": "HQ199.sorted.gff3.gz"
+}

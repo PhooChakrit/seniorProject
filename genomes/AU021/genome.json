@@ -1,0 +1,6 @@
+{
+  "id": "au021",
+  "label": "AU021 (ข้าวคัด)",
+  "fasta": "AU021.fa.gz",
+  "gff3": "AU021.sorted.gff3.gz"
+}

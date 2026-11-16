@@ -1,0 +1,6 @@
+{
+  "id": "ih216",
+  "label": "IH216 (ดำด่าง)",
+  "fasta": "IH216.fa.gz",
+  "gff3": "IH216.sorted.gff3.gz"
+}

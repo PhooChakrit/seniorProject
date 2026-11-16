@@ -1,0 +1,6 @@
+{
+  "id": "dy103",
+  "label": "DY103 (ปลุกเสก)",
+  "fasta": "DY103.fa.gz",
+  "gff3": "DY103.sorted.gff3.gz"
+}

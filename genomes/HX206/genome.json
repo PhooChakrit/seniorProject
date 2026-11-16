@@ -1,0 +1,6 @@
+{
+  "id": "hx206",
+  "label": "HX206 (หอมกุหลาบแดง)",
+  "fasta": "HX206.fa.gz",
+  "gff3": "HX206.sorted.gff3.gz"
+}

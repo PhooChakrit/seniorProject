@@ -1,0 +1,6 @@
+{
+  "id": "cp068",
+  "label": "CP068 (ตาเจือ)",
+  "fasta": "CP068.fa.gz",
+  "gff3": "CP068.sorted.gff3.gz"
+}

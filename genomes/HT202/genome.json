@@ -1,0 +1,6 @@
+{
+  "id": "ht202",
+  "label": "HT202 (เหนียวซิวแดง)",
+  "fasta": "HT202.fa.gz",
+  "gff3": "HT202.sorted.gff3.gz"
+}

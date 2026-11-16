@@ -1,0 +1,6 @@
+{
+  "id": "br044",
+  "label": "BR044 (หอมสุรินทร์)",
+  "fasta": "BR044.fa.gz",
+  "gff3": "BR044.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "go171",
+  "label": "GO171 (แดงหอมกุหลาบ)",
+  "fasta": "GO171.fa.gz",
+  "gff3": "GO171.sorted.gff3.gz"
+}

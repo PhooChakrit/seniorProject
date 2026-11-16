@@ -1,0 +1,6 @@
+{
+  "id": "im221",
+  "label": "IM221 (ช่อปลีขาว)",
+  "fasta": "IM221.fa.gz",
+  "gff3": "IM221.sorted.gff3.gz"
+}

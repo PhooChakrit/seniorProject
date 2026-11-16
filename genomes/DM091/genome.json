@@ -1,0 +1,6 @@
+{
+  "id": "dm091",
+  "label": "DM091 (เจ็ดรวง)",
+  "fasta": "DM091.fa.gz",
+  "gff3": "DM091.sorted.gff3.gz"
+}

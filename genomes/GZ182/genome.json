@@ -1,0 +1,6 @@
+{
+  "id": "gz182",
+  "label": "GZ182 (ปลาเข็ง)",
+  "fasta": "GZ182.fa.gz",
+  "gff3": "GZ182.sorted.gff3.gz"
+}

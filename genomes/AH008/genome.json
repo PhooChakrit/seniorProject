@@ -1,0 +1,6 @@
+{
+  "id": "ah008",
+  "label": "AH008 (สายบัว 59-106-2)",
+  "fasta": "AH008.fa.gz",
+  "gff3": "AH008.sorted.gff3.gz"
+}

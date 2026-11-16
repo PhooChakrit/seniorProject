@@ -1,0 +1,6 @@
+{
+  "id": "hu203",
+  "label": "HU203 (หอมกระดังงา)",
+  "fasta": "HU203.fa.gz",
+  "gff3": "HU203.sorted.gff3.gz"
+}

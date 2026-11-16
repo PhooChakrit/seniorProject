@@ -1,0 +1,6 @@
+{
+  "id": "aq017",
+  "label": "AQ017 (ตาขุย)",
+  "fasta": "AQ017.fa.gz",
+  "gff3": "AQ017.sorted.gff3.gz"
+}

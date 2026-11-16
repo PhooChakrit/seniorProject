@@ -1,0 +1,6 @@
+{
+  "id": "cq069",
+  "label": "CQ069 (ขาวตาแห้ง)",
+  "fasta": "CQ069.fa.gz",
+  "gff3": "CQ069.sorted.gff3.gz"
+}

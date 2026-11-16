@@ -1,0 +1,6 @@
+{
+  "id": "gs175",
+  "label": "GS175 (เกษตรดอ)",
+  "fasta": "GS175.fa.gz",
+  "gff3": "GS175.sorted.gff3.gz"
+}

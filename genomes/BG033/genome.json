@@ -1,0 +1,6 @@
+{
+  "id": "bg033",
+  "label": "BG033 (ข้าวชวัท)",
+  "fasta": "BG033.fa.gz",
+  "gff3": "BG033.sorted.gff3.gz"
+}

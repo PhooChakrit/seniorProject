@@ -1,0 +1,6 @@
+{
+  "id": "cr070",
+  "label": "CR070 (ขาวตาแห้ง)",
+  "fasta": "CR070.fa.gz",
+  "gff3": "CR070.sorted.gff3.gz"
+}

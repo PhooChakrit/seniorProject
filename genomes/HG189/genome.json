@@ -1,0 +1,6 @@
+{
+  "id": "hg189",
+  "label": "HG189 (ปะกาอัมปึล)",
+  "fasta": "HG189.fa.gz",
+  "gff3": "HG189.sorted.gff3.gz"
+}

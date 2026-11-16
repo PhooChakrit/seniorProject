@@ -1,0 +1,6 @@
+{
+  "id": "dz104",
+  "label": "DZ104 (ยายแกร่ง)",
+  "fasta": "DZ104.fa.gz",
+  "gff3": "DZ104.sorted.gff3.gz"
+}

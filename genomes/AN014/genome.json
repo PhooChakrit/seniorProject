@@ -1,0 +1,6 @@
+{
+  "id": "an014",
+  "label": "AN014 (เหลืองตาเอี่ยม)",
+  "fasta": "AN014.fa.gz",
+  "gff3": "AN014.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "db080",
+  "label": "DB080 (ขาวแก้ว)",
+  "fasta": "DB080.fa.gz",
+  "gff3": "DB080.sorted.gff3.gz"
+}

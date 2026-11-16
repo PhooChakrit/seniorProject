@@ -1,0 +1,6 @@
+{
+  "id": "eh112",
+  "label": "EH112 (ขาวตาเจือ)",
+  "fasta": "EH112.fa.gz",
+  "gff3": "EH112.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "bz052",
+  "label": "BZ052 (OIC5 III)",
+  "fasta": "BZ052.fa.gz",
+  "gff3": "BZ052.sorted.gff3.gz"
+}

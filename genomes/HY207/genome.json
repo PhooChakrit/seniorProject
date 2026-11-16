@@ -1,0 +1,6 @@
+{
+  "id": "hy207",
+  "label": "HY207 (หอมแดง (ไม่ไวต่อช่วงแสง))",
+  "fasta": "HY207.fa.gz",
+  "gff3": "HY207.sorted.gff3.gz"
+}

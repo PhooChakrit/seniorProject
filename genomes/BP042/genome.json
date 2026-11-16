@@ -1,0 +1,6 @@
+{
+  "id": "bp042",
+  "label": "BP042 (ขาวกอเดียว)",
+  "fasta": "BP042.fa.gz",
+  "gff3": "BP042.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "fp146",
+  "label": "FP146 (พวงเงิน)",
+  "fasta": "FP146.fa.gz",
+  "gff3": "FP146.sorted.gff3.gz"
+}

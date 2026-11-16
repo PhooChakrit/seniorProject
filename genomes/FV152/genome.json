@@ -1,0 +1,6 @@
+{
+  "id": "fv152",
+  "label": "FV152 (สันป่าตองหลวง)",
+  "fasta": "FV152.fa.gz",
+  "gff3": "FV152.sorted.gff3.gz"
+}

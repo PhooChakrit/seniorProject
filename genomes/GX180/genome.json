@@ -1,0 +1,6 @@
+{
+  "id": "gx180",
+  "label": "GX180 (เกล็ดเต่า)",
+  "fasta": "GX180.fa.gz",
+  "gff3": "GX180.sorted.gff3.gz"
+}

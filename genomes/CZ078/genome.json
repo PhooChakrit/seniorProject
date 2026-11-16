@@ -1,0 +1,6 @@
+{
+  "id": "cz078",
+  "label": "CZ078 (ขาวตาแห้ง)",
+  "fasta": "CZ078.fa.gz",
+  "gff3": "CZ078.sorted.gff3.gz"
+}

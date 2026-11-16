@@ -1,0 +1,6 @@
+{
+  "id": "gp172",
+  "label": "GP172 (บางแตน)",
+  "fasta": "GP172.fa.gz",
+  "gff3": "GP172.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "ap016",
+  "label": "AP016 (โตนด)",
+  "fasta": "AP016.fa.gz",
+  "gff3": "AP016.sorted.gff3.gz"
+}

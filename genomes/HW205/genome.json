@@ -1,0 +1,6 @@
+{
+  "id": "hw205",
+  "label": "HW205 (Rathu)",
+  "fasta": "HW205.fa.gz",
+  "gff3": "HW205.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "fm143",
+  "label": "FM143 (มหาวงษ์)",
+  "fasta": "FM143.fa.gz",
+  "gff3": "FM143.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "ac003",
+  "label": "AC003 (ตาหมัก 102-10-5)",
+  "fasta": "AC003.fa.gz",
+  "gff3": "AC003.sorted.gff3.gz"
+}

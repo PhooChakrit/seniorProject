@@ -1,0 +1,6 @@
+{
+  "id": "ib210",
+  "label": "IB210 (นกคุ้ม)",
+  "fasta": "IB210.fa.gz",
+  "gff3": "IB210.sorted.gff3.gz"
+}

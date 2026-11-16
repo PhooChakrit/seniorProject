@@ -1,0 +1,6 @@
+{
+  "id": "em117",
+  "label": "EM117 (เหลืองร้อยเอ็ด (1))",
+  "fasta": "EM117.fa.gz",
+  "gff3": "EM117.sorted.gff3.gz"
+}

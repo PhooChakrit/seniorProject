@@ -1,0 +1,6 @@
+{
+  "id": "bd030",
+  "label": "BD030 (แก้ว)",
+  "fasta": "BD030.fa.gz",
+  "gff3": "BD030.sorted.gff3.gz"
+}

@@ -134,14 +134,9 @@ function buildCultivarGenomeConfig(params: {
 }
 
 async function main() {
-  // Remove legacy demo and Oryza (Rice) configs per updated scope
-  await prisma.genomeConfig.deleteMany({
-    where: {
-      key: {
-        in: ['human', 'oryza'],
-      },
-    },
-  });
+  // Reset GenomeConfig table so insertion order strictly matches:
+  // 1. KDML105, 2. IRGSP-1.0, 3. AA001..IY233 (233 varieties in order)
+  await prisma.genomeConfig.deleteMany({});
 
   // 1. KDML105 (ขาวดอกมะลิ 105) — folder: genomes/KDML, files: KDML105.fa.gz & KDML105.sorted.gff3.gz
   const kdml105Tracks = [

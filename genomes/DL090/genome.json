@@ -1,0 +1,6 @@
+{
+  "id": "dl090",
+  "label": "DL090 (เจ็ดรวง)",
+  "fasta": "DL090.fa.gz",
+  "gff3": "DL090.sorted.gff3.gz"
+}

@@ -1,0 +1,6 @@
+{
+  "id": "az026",
+  "label": "AZ026 (ใบสี)",
+  "fasta": "AZ026.fa.gz",
+  "gff3": "AZ026.sorted.gff3.gz"
+}

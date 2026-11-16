@@ -1,0 +1,6 @@
+{
+  "id": "gm169",
+  "label": "GM169 (ก่ำเชียงใหม่ ต้นเขียว)",
+  "fasta": "GM169.fa.gz",
+  "gff3": "GM169.sorted.gff3.gz"
+}

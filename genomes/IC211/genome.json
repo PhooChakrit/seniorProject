@@ -1,0 +1,6 @@
+{
+  "id": "ic211",
+  "label": "IC211 (แม่พญาทองดำ)",
+  "fasta": "IC211.fa.gz",
+  "gff3": "IC211.sorted.gff3.gz"
+}

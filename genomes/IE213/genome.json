@@ -1,0 +1,6 @@
+{
+  "id": "ie213",
+  "label": "IE213 (ก่ำน้อย)",
+  "fasta": "IE213.fa.gz",
+  "gff3": "IE213.sorted.gff3.gz"
+}
