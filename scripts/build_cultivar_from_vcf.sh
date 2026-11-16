@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # ==============================================================================
-# Build Cultivar FASTA & GFF3 from 233 Rice Varieties SNP + Indel VCFs
+# Build Cultivar Compressed FASTA (.fa.gz) & GFF3 (.sorted.gff3.gz) from VCFs
 # Uses standard bioinformatics tools: bcftools, CrossMap, samtools, bgzip, tabix
 #
 # Usage:
@@ -23,8 +23,14 @@ if [[ -z "$SAMPLE_NO" || -z "$CODE" ]]; then
 fi
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-REF_FA="$REPO_ROOT/genomes/IRGSP/IRGSP.fa"
-REF_GFF="$REPO_ROOT/genomes/IRGSP/IRGSP.gff3"
+REF_FA="$REPO_ROOT/genomes/IRGSP/IRGSP.fa.gz"
+if [[ ! -f "$REF_FA" ]]; then
+  REF_FA="$REPO_ROOT/genomes/IRGSP/IRGSP.fa"
+fi
+REF_GFF="$REPO_ROOT/genomes/IRGSP/IRGSP.sorted.gff3.gz"
+if [[ ! -f "$REF_GFF" ]]; then
+  REF_GFF="$REPO_ROOT/genomes/IRGSP/IRGSP.gff3"
+fi
 SNP_VCF="$REPO_ROOT/download_233/233access.snp.clean.vcf.gz"
 INDEL_VCF="$REPO_ROOT/download_233/233access.indel.clean.vcf.gz"
 
@@ -34,7 +40,7 @@ mkdir -p "$OUT_DIR"
 ID_LOWER="$(echo "$CODE" | tr '[:upper:]' '[:lower:]')"
 
 echo "=================================================================="
-echo " Building Cultivar: $LABEL (Sample=$SAMPLE_NO, Code=$CODE)"
+echo " Building Cultivar (Compressed .gz): $LABEL (Sample=$SAMPLE_NO, Code=$CODE)"
 echo "=================================================================="
 
 # 1. Extract sample SNPs and Indels in parallel
@@ -53,7 +59,7 @@ wait "$PID_INDEL"
 bcftools index -f "$OUT_DIR/${CODE}.snp.vcf.gz"
 bcftools index -f "$OUT_DIR/${CODE}.indel.vcf.gz"
 
-# 2. Merge (concat + sort + normalize against IRGSP.fa)
+# 2. Merge (concat + sort + normalize against IRGSP reference)
 echo "[2/5] Merging and normalizing SNP + Indel VCFs -> ${CODE}.vcf.gz..."
 bcftools concat -a "$OUT_DIR/${CODE}.snp.vcf.gz" "$OUT_DIR/${CODE}.indel.vcf.gz" \
   | bcftools sort \
@@ -61,45 +67,45 @@ bcftools concat -a "$OUT_DIR/${CODE}.snp.vcf.gz" "$OUT_DIR/${CODE}.indel.vcf.gz"
 bcftools index -f "$OUT_DIR/${CODE}.vcf.gz"
 rm -f "$OUT_DIR/${CODE}.snp.vcf.gz"* "$OUT_DIR/${CODE}.indel.vcf.gz"*
 
-# 3. Generate Consensus FASTA + Chain file via bcftools consensus
-echo "[3/5] Generating ${CODE}.fa and ${CODE}.chain via bcftools consensus..."
+# 3. Generate Consensus FASTA + Chain file via bcftools consensus, then bgzip + samtools faidx
+echo "[3/5] Generating ${CODE}.fa.gz and ${CODE}.chain via bcftools consensus + bgzip..."
 bcftools consensus \
   -f "$REF_FA" \
   -c "$OUT_DIR/${CODE}.chain" \
   -s "$SAMPLE_NO" \
   -H A \
-  -o "$OUT_DIR/${CODE}.fa" \
-  "$OUT_DIR/${CODE}.vcf.gz"
+  "$OUT_DIR/${CODE}.vcf.gz" \
+  | bgzip -@ 4 -c > "$OUT_DIR/${CODE}.fa.gz"
 
-samtools faidx "$OUT_DIR/${CODE}.fa"
+samtools faidx "$OUT_DIR/${CODE}.fa.gz"
 
-# 4. Lift over GFF3 coordinates via CrossMap
-echo "[4/5] Lifting over GFF3 via CrossMap -> ${CODE}.gff3..."
+# 4. Lift over GFF3 coordinates via CrossMap -> .sorted.gff3.gz + .tbi
+echo "[4/5] Lifting over GFF3 via CrossMap -> ${CODE}.sorted.gff3.gz..."
 CrossMap gff "$OUT_DIR/${CODE}.chain" "$REF_GFF" "$OUT_DIR/${CODE}.raw.gff3"
 
-# Prepend clean GFF3 header and sort + bgzip + tabix for JBrowse 2
-echo "##gff-version 3" > "$OUT_DIR/${CODE}.gff3"
-awk -F'\t' '{ printf "##sequence-region   %s 1 %s\n", $1, $2 }' "$OUT_DIR/${CODE}.fa.fai" >> "$OUT_DIR/${CODE}.gff3"
-grep -v "^#" "$OUT_DIR/${CODE}.raw.gff3" >> "$OUT_DIR/${CODE}.gff3"
-rm -f "$OUT_DIR/${CODE}.raw.gff3" "$OUT_DIR/${CODE}.raw.gff3.unmap"
+{
+  echo "##gff-version 3"
+  awk -F'\t' '{ printf "##sequence-region   %s 1 %s\n", $1, $2 }' "$OUT_DIR/${CODE}.fa.gz.fai"
+  grep -v "^#" "$OUT_DIR/${CODE}.raw.gff3" | LC_ALL=C sort -t$'\t' -k1,1 -k4,4n
+} | bgzip -@ 4 -c > "$OUT_DIR/${CODE}.sorted.gff3.gz"
 
-grep "^#" "$OUT_DIR/${CODE}.gff3" > "$OUT_DIR/${CODE}.sorted.gff3"
-grep -v "^#" "$OUT_DIR/${CODE}.gff3" | LC_ALL=C sort -t$'\t' -k1,1 -k4,4n >> "$OUT_DIR/${CODE}.sorted.gff3"
-bgzip -f "$OUT_DIR/${CODE}.sorted.gff3"
 tabix -p gff "$OUT_DIR/${CODE}.sorted.gff3.gz"
 
-# 5. Write genome.json
+# Clean up temporary intermediate files to save disk space
+rm -f "$OUT_DIR/${CODE}.raw.gff3"* "$OUT_DIR/${CODE}.vcf.gz"* "$OUT_DIR/${CODE}.chain"
+
+# 5. Write genome.json pointing directly to .fa.gz and .sorted.gff3.gz
 echo "[5/5] Writing genome.json..."
 cat > "$OUT_DIR/genome.json" <<EOF
 {
   "id": "${ID_LOWER}",
   "label": "${LABEL}",
-  "fasta": "${CODE}.fa",
-  "gff3": "${CODE}.gff3"
+  "fasta": "${CODE}.fa.gz",
+  "gff3": "${CODE}.sorted.gff3.gz"
 }
 EOF
 
 echo "=================================================================="
-echo " Done! Files generated in $OUT_DIR:"
-ls -lh "$OUT_DIR/${CODE}.fa" "$OUT_DIR/${CODE}.fa.fai" "$OUT_DIR/${CODE}.gff3" "$OUT_DIR/${CODE}.sorted.gff3.gz" "$OUT_DIR/${CODE}.sorted.gff3.gz.tbi"
+echo " Done! Compressed files generated in $OUT_DIR:"
+ls -lh "$OUT_DIR/${CODE}.fa.gz"* "$OUT_DIR/${CODE}.sorted.gff3.gz"*
 echo "=================================================================="

@@ -3,6 +3,7 @@
 import pika
 import os
 import json
+import gzip
 import subprocess
 import time
 import sys
@@ -70,10 +71,10 @@ VARIETY_CONFIG = load_variety_config(GENOMES_DIR)
 if not VARIETY_CONFIG:
     VARIETY_CONFIG = {
         'kdml105': {
-            'genome_file': 'KDML/KDML105.fa',
+            'genome_file': 'KDML/KDML105.fa.gz',
             'name': 'KDML105 (ขาวดอกมะลิ 105)',
             'folder': 'KDML',
-            'gff3': 'KDML105.gff3',
+            'gff3': 'KDML105.sorted.gff3.gz',
         }
     }
 
@@ -227,8 +228,12 @@ def resolve_gene_locus(gff_path, gene_id):
     if not query:
         return None
     try:
-        with open(gff_path, 'r') as fh:
+        open_fn = gzip.open if gff_path.endswith('.gz') else open
+        fh = open_fn(gff_path, 'r')
+        try:
             for line in fh:
+                if not isinstance(line, str):
+                    line = line.decode('utf-8', 'replace')
                 line = line.strip()
                 if not line or line.startswith('#'):
                     continue
@@ -243,6 +248,8 @@ def resolve_gene_locus(gff_path, gene_id):
                 except ValueError:
                     continue
                 return (fields[0], start, end)
+        finally:
+            fh.close()
     except IOError as e:
         print(" [!] Could not read GFF %s: %s" % (gff_path, e))
         return None

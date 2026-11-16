@@ -147,7 +147,9 @@ dist
 #genomes — ignore large binary files but track metadata per cultivar
 genomes/**/*.fasta
 genomes/**/*.fa
+genomes/**/*.fa.gz
 genomes/**/*.fai
+genomes/**/*.gzi
 genomes/**/*.gff
 genomes/**/*.gff3
 genomes/**/*.gff3.gz

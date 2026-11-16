@@ -1,6 +1,6 @@
 {
   "id": "irgsp1",
   "label": "IRGSP-1.0 (Nipponbare)",
-  "fasta": "IRGSP.fa",
-  "gff3": "IRGSP.gff3"
+  "fasta": "IRGSP.fa.gz",
+  "gff3": "IRGSP.sorted.gff3.gz"
 }

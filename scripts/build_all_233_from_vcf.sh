@@ -30,7 +30,7 @@ while IFS=$'\t' read -r SAMPLE_NO CODE LABEL TH_NAME EN_NAME GS_NO; do
   [[ -z "$SAMPLE_NO" || "$SAMPLE_NO" == "sample_no" ]] && continue
   COUNT=$((COUNT + 1))
 
-  if [[ -f "$REPO_ROOT/genomes/$CODE/${CODE}.sorted.gff3.gz.tbi" && -f "$REPO_ROOT/genomes/$CODE/${CODE}.fa.fai" ]]; then
+  if [[ -f "$REPO_ROOT/genomes/$CODE/${CODE}.sorted.gff3.gz.tbi" && -f "$REPO_ROOT/genomes/$CODE/${CODE}.fa.gz.fai" ]]; then
     echo "[$COUNT/$TOTAL] Skipping $LABEL ($CODE) — already built."
   else
     echo "[$COUNT/$TOTAL] Building $LABEL ($CODE, sample=$SAMPLE_NO)..."

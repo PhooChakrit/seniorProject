@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 from pathlib import Path
 
 from Bio import SeqIO
@@ -51,10 +52,16 @@ def main() -> None:
 
     print("Loading genome from %s..." % input_file)
     target_record = None
-    for rec in SeqIO.parse(str(input_file), "fasta"):
-        if rec.id == args.contig:
-            target_record = rec
-            break
+    open_fn = (
+        (lambda p: gzip.open(p, "rt", encoding="utf-8"))
+        if str(input_file).endswith(".gz")
+        else (lambda p: open(p, "r", encoding="utf-8"))
+    )
+    with open_fn(str(input_file)) as handle:
+        for rec in SeqIO.parse(handle, "fasta"):
+            if rec.id == args.contig:
+                target_record = rec
+                break
 
     if target_record is None:
         raise SystemExit("Contig %r not found in %s" % (args.contig, input_file))

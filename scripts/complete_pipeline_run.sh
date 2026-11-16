@@ -58,7 +58,11 @@ if [ -n "$START_POS" ] && [ -n "$END_POS" ]; then
         --output REGION.fna
     ln -sf REGION.fna GENOME.fna
 else
-    ln -sf "$(basename "$INPUT_FILE")" GENOME.fna
+    if [[ "$INPUT_FILE" == *.gz ]]; then
+        gzip -dc "$INPUT_FILE" > GENOME.fna
+    else
+        ln -sf "$(basename "$INPUT_FILE")" GENOME.fna
+    fi
 fi
 
 # =================================================================
@@ -150,7 +154,11 @@ fi
 if [ ! -f "$ANNOTATION_FILE" ]; then
     case "$SPECIES" in
         kdml105)
-            ANNOTATION_FILE="/data/genomes/KDML/KDML105.gff3"
+            if [ -f "/data/genomes/KDML/KDML105.sorted.gff3.gz" ]; then
+                ANNOTATION_FILE="/data/genomes/KDML/KDML105.sorted.gff3.gz"
+            else
+                ANNOTATION_FILE="/data/genomes/KDML/KDML105.gff3"
+            fi
             ;;
     esac
 fi

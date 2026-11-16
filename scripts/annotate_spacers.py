@@ -16,6 +16,7 @@ Output:
 """
 
 import sys
+import gzip
 import argparse
 from collections import defaultdict
 from typing import Dict, List, Tuple, Optional
@@ -34,7 +35,12 @@ def parse_gff3(gff_file: str) -> Dict[str, List[FeatureInfo]]:
     raw_exons: Dict[str, List[Tuple[int, int, str]]] = defaultdict(list)  # chr -> [(start, end, parent)]
     mrna_to_gene: Dict[str, str] = {}
     
-    with open(gff_file) as f:
+    open_fn = (
+        (lambda p: gzip.open(p, 'rt', encoding='utf-8'))
+        if str(gff_file).endswith('.gz')
+        else (lambda p: open(p, 'r', encoding='utf-8'))
+    )
+    with open_fn(gff_file) as f:
         for line in f:
             if line.startswith('#'):
                 continue

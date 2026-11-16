@@ -1,6 +1,6 @@
 {
   "id": "kdml105",
   "label": "KDML105 (ขาวดอกมะลิ 105)",
-  "fasta": "KDML105.fa",
-  "gff3": "KDML105.gff3"
+  "fasta": "KDML105.fa.gz",
+  "gff3": "KDML105.sorted.gff3.gz"
 }

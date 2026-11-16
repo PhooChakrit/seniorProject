@@ -1,6 +1,6 @@
 {
   "id": "dv100",
   "label": "DV100 (ขาวเมล็ดเล็ก)",
-  "fasta": "DV100.fa",
-  "gff3": "DV100.gff3"
+  "fasta": "DV100.fa.gz",
+  "gff3": "DV100.sorted.gff3.gz"
 }

@@ -47,13 +47,17 @@ function buildCultivarGenomeConfig(params: {
       type: 'ReferenceSequenceTrack',
       trackId: refTrackId,
       adapter: {
-        type: 'IndexedFastaAdapter',
+        type: 'BgzipFastaAdapter',
         fastaLocation: {
-          uri: `/genomes/${code}/${code}.fa`,
+          uri: `/genomes/${code}/${code}.fa.gz`,
           locationType: 'UriLocation',
         },
         faiLocation: {
-          uri: `/genomes/${code}/${code}.fa.fai`,
+          uri: `/genomes/${code}/${code}.fa.gz.fai`,
+          locationType: 'UriLocation',
+        },
+        gziLocation: {
+          uri: `/genomes/${code}/${code}.fa.gz.gzi`,
           locationType: 'UriLocation',
         },
       },
@@ -123,7 +127,7 @@ function buildCultivarGenomeConfig(params: {
     defaultLocation,
     assemblyName,
     cultivarType,
-    tracksLoaded: 'Reference Sequence + Gene Annotations (GFF3 Tabix)',
+    tracksLoaded: 'Reference Sequence (Bgzip FASTA) + Gene Annotations (GFF3 Tabix)',
     defaultRegion,
     specialFeatures,
   };
@@ -139,7 +143,7 @@ async function main() {
     },
   });
 
-  // 1. KDML105 (ขาวดอกมะลิ 105) — folder: genomes/KDML, files: KDML105.fa & KDML105.gff3
+  // 1. KDML105 (ขาวดอกมะลิ 105) — folder: genomes/KDML, files: KDML105.fa.gz & KDML105.sorted.gff3.gz
   const kdml105Tracks = [
     {
       type: 'FeatureTrack',
@@ -201,13 +205,17 @@ async function main() {
       type: 'ReferenceSequenceTrack',
       trackId: 'KDML105-ReferenceSequenceTrack',
       adapter: {
-        type: 'IndexedFastaAdapter',
+        type: 'BgzipFastaAdapter',
         fastaLocation: {
-          uri: '/genomes/KDML/KDML105.fa',
+          uri: '/genomes/KDML/KDML105.fa.gz',
           locationType: 'UriLocation',
         },
         faiLocation: {
-          uri: '/genomes/KDML/KDML105.fa.fai',
+          uri: '/genomes/KDML/KDML105.fa.gz.fai',
+          locationType: 'UriLocation',
+        },
+        gziLocation: {
+          uri: '/genomes/KDML/KDML105.fa.gz.gzi',
           locationType: 'UriLocation',
         },
       },
@@ -225,7 +233,7 @@ async function main() {
       defaultLocation: 'ptg000001l:12500-20000',
       assemblyName: 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)',
       cultivarType: 'Jasmine Rice (Premium Aromatic)',
-      tracksLoaded: 'Reference Sequence + Gene Annotations (GFF3 Tabix)',
+      tracksLoaded: 'Reference Sequence (Bgzip FASTA) + Gene Annotations (GFF3 Tabix)',
       defaultRegion: 'ptg000001l: ~12,500–20,000 bp (KDML_ptg000001l_000100)',
       specialFeatures: 'Aroma genes, Amylose content markers',
       tracks: kdml105Tracks,
@@ -242,13 +250,13 @@ async function main() {
       defaultLocation: 'ptg000001l:12500-20000',
       assemblyName: 'ขาวดอกมะลิ 105 (Khao Dawk Mali 105)',
       cultivarType: 'Jasmine Rice (Premium Aromatic)',
-      tracksLoaded: 'Reference Sequence + Gene Annotations (GFF3 Tabix)',
+      tracksLoaded: 'Reference Sequence (Bgzip FASTA) + Gene Annotations (GFF3 Tabix)',
       defaultRegion: 'ptg000001l: ~12,500–20,000 bp (KDML_ptg000001l_000100)',
       specialFeatures: 'Aroma genes, Amylose content markers',
     },
   });
 
-  // 2. IRGSP-1.0 (Nipponbare) — folder: genomes/IRGSP, files: IRGSP.fa & IRGSP.gff3
+  // 2. IRGSP-1.0 (Nipponbare) — folder: genomes/IRGSP, files: IRGSP.fa.gz & IRGSP.sorted.gff3.gz
   const irgspConfig = buildCultivarGenomeConfig({
     key: 'irgsp1',
     code: 'IRGSP',
@@ -294,7 +302,7 @@ async function main() {
         cultivarType: `Thai Rice Accession (G.S. No. ${v.gsNumber})`,
         defaultLocation: '1:2500-15000',
         defaultRegion: 'Chromosome 1: 2,500–15,000 bp (Os01g0100100)',
-        specialFeatures: 'Consensus FASTA (bcftools) + Indel-shifted GFF3 (CrossMap)',
+        specialFeatures: 'Bgzip FASTA (bcftools) + Indel-shifted GFF3 Tabix (CrossMap)',
       });
 
       await prisma.genomeConfig.upsert({
