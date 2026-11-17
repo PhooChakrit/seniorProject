@@ -1,6 +1,6 @@
 {
   "id": "aj010",
-  "label": "AJ010 (BKN57-8-332)",
+  "label": "AJ010 BKN57-8-332",
   "fasta": "AJ010.fa.gz",
   "gff3": "AJ010.sorted.gff3.gz"
 }

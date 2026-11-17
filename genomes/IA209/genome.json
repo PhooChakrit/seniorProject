@@ -1,6 +1,6 @@
 {
   "id": "ia209",
-  "label": "IA209 (หอมมะลิแดง)",
+  "label": "IA209 หอมมะลิแดง",
   "fasta": "IA209.fa.gz",
   "gff3": "IA209.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "ay025",
-  "label": "AY025 (ข้าวแพร่)",
+  "label": "AY025 ข้าวแพร่",
   "fasta": "AY025.fa.gz",
   "gff3": "AY025.sorted.gff3.gz"
 }

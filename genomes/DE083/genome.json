@@ -1,6 +1,6 @@
 {
   "id": "de083",
-  "label": "DE083 (รอดหนี้)",
+  "label": "DE083 รอดหนี้",
   "fasta": "DE083.fa.gz",
   "gff3": "DE083.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "fh138",
-  "label": "FH138 (ปิ่นแก้ว 56)",
+  "label": "FH138 ปิ่นแก้ว",
   "fasta": "FH138.fa.gz",
   "gff3": "FH138.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "gf162",
-  "label": "GF162 (ข้าวเหนียวดำหมอ)",
+  "label": "GF162 ข้าวเหนียวดำหมอ",
   "fasta": "GF162.fa.gz",
   "gff3": "GF162.sorted.gff3.gz"
 }

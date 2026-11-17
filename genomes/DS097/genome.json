@@ -1,6 +1,6 @@
 {
   "id": "ds097",
-  "label": "DS097 (ขาวตาแห้ง)",
+  "label": "DS097 ขาวตาแห้ง",
   "fasta": "DS097.fa.gz",
   "gff3": "DS097.sorted.gff3.gz"
 }

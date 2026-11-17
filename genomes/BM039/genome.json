@@ -1,6 +1,6 @@
 {
   "id": "bm039",
-  "label": "BM039 (ที่หนึ่ง)",
+  "label": "BM039 ที่หนึ่ง",
   "fasta": "BM039.fa.gz",
   "gff3": "BM039.sorted.gff3.gz"
 }

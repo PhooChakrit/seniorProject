@@ -1,6 +1,6 @@
 {
   "id": "ep120",
-  "label": "EP120 (เมล็ดเล็กเบา)",
+  "label": "EP120 เมล็ดเล็กเบา",
   "fasta": "EP120.fa.gz",
   "gff3": "EP120.sorted.gff3.gz"
 }

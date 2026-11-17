@@ -1,6 +1,6 @@
 {
   "id": "ez130",
-  "label": "EZ130 (ขาวมะลิ)",
+  "label": "EZ130 ขาวมะลิ",
   "fasta": "EZ130.fa.gz",
   "gff3": "EZ130.sorted.gff3.gz"
 }

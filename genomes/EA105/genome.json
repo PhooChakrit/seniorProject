@@ -1,6 +1,6 @@
 {
   "id": "ea105",
-  "label": "EA105 (เศรษฐีนอก)",
+  "label": "EA105 เศรษฐีนอก",
   "fasta": "EA105.fa.gz",
   "gff3": "EA105.sorted.gff3.gz"
 }

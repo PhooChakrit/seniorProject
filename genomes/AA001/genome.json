@@ -1,6 +1,6 @@
 {
   "id": "aa001",
-  "label": "AA001 (NIC39)",
+  "label": "AA001 NIC39",
   "fasta": "AA001.fa.gz",
   "gff3": "AA001.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "fo145",
-  "label": "FO145 (เล็บนก)",
+  "label": "FO145 เล็บนก",
   "fasta": "FO145.fa.gz",
   "gff3": "FO145.sorted.gff3.gz"
 }

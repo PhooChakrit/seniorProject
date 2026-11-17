@@ -1,6 +1,6 @@
 {
   "id": "bx050",
-  "label": "BX050 (เม็ดมะเขือ)",
+  "label": "BX050 เม็ดมะเขือ",
   "fasta": "BX050.fa.gz",
   "gff3": "BX050.sorted.gff3.gz"
 }

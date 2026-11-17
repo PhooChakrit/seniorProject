@@ -1,6 +1,6 @@
 {
   "id": "ip224",
-  "label": "IP224 (ทับทิมชุมแพ (กข 69))",
+  "label": "IP224 ทับทิมชุมแพ (กข 69)",
   "fasta": "IP224.fa.gz",
   "gff3": "IP224.sorted.gff3.gz"
 }

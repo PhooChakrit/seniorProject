@@ -1,6 +1,6 @@
 {
   "id": "gy181",
-  "label": "GY181 (ขี้ตมหลวง)",
+  "label": "GY181 ขี้ตมหลวง",
   "fasta": "GY181.fa.gz",
   "gff3": "GY181.sorted.gff3.gz"
 }

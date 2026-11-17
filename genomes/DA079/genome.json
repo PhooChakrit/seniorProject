@@ -1,6 +1,6 @@
 {
   "id": "da079",
-  "label": "DA079 (ขาวแก้ว)",
+  "label": "DA079 ขาวแก้ว",
   "fasta": "DA079.fa.gz",
   "gff3": "DA079.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "eb106",
-  "label": "EB106 (ขาวตามล)",
+  "label": "EB106 ขาวตามล",
   "fasta": "EB106.fa.gz",
   "gff3": "EB106.sorted.gff3.gz"
 }

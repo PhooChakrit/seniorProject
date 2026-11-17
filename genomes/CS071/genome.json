@@ -1,6 +1,6 @@
 {
   "id": "cs071",
-  "label": "CS071 (เศรษฐี)",
+  "label": "CS071 เศรษฐี",
   "fasta": "CS071.fa.gz",
   "gff3": "CS071.sorted.gff3.gz"
 }

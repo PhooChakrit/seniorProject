@@ -1,6 +1,6 @@
 {
   "id": "dc081",
-  "label": "DC081 (ขาวเกษตร)",
+  "label": "DC081 ขาวเกษตร",
   "fasta": "DC081.fa.gz",
   "gff3": "DC081.sorted.gff3.gz"
 }

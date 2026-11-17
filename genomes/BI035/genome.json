@@ -1,6 +1,6 @@
 {
   "id": "bi035",
-  "label": "BI035 (ทองมาเอง)",
+  "label": "BI035 ทองมาเอง",
   "fasta": "BI035.fa.gz",
   "gff3": "BI035.sorted.gff3.gz"
 }

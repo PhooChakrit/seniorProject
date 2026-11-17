@@ -1,6 +1,6 @@
 {
   "id": "ao015",
-  "label": "AO015 (เหลืองไร่ละเกวียน)",
+  "label": "AO015 เหลืองไร่ละเกวียน",
   "fasta": "AO015.fa.gz",
   "gff3": "AO015.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "in222",
-  "label": "IN222 (เหนียวดำหลาย)",
+  "label": "IN222 เหนียวดำหลาย",
   "fasta": "IN222.fa.gz",
   "gff3": "IN222.sorted.gff3.gz"
 }

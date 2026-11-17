@@ -1,6 +1,6 @@
 {
   "id": "dx102",
-  "label": "DX102 (ขาวตามล)",
+  "label": "DX102 ขาวตามล",
   "fasta": "DX102.fa.gz",
   "gff3": "DX102.sorted.gff3.gz"
 }

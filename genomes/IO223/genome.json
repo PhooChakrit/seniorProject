@@ -1,6 +1,6 @@
 {
   "id": "io223",
-  "label": "IO223 (ข้าวก่ำ)",
+  "label": "IO223 ข้าวก่ำ",
   "fasta": "IO223.fa.gz",
   "gff3": "IO223.sorted.gff3.gz"
 }

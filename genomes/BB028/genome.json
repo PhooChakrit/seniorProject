@@ -1,6 +1,6 @@
 {
   "id": "bb028",
-  "label": "BB028 (ขาวพวง)",
+  "label": "BB028 ขาวพวง",
   "fasta": "BB028.fa.gz",
   "gff3": "BB028.sorted.gff3.gz"
 }

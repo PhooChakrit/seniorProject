@@ -1,6 +1,6 @@
 {
   "id": "eu125",
-  "label": "EU125 (ขาวกอเดียว)",
+  "label": "EU125 ขาวกอเดียว",
   "fasta": "EU125.fa.gz",
   "gff3": "EU125.sorted.gff3.gz"
 }

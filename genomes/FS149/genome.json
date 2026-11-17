@@ -1,6 +1,6 @@
 {
   "id": "fs149",
-  "label": "FS149 (เจ็ดรวง)",
+  "label": "FS149 เจ็ดรวง",
   "fasta": "FS149.fa.gz",
   "gff3": "FS149.sorted.gff3.gz"
 }

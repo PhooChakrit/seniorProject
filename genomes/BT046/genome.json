@@ -1,6 +1,6 @@
 {
   "id": "bt046",
-  "label": "BT046 (สุพรรณบุรี 1)",
+  "label": "BT046 สุพรรณบุรี",
   "fasta": "BT046.fa.gz",
   "gff3": "BT046.sorted.gff3.gz"
 }

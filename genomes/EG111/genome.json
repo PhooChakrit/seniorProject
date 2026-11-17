@@ -1,6 +1,6 @@
 {
   "id": "eg111",
-  "label": "EG111 (เจ๊กเชย)",
+  "label": "EG111 เจ๊กเชย",
   "fasta": "EG111.fa.gz",
   "gff3": "EG111.sorted.gff3.gz"
 }

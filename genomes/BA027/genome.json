@@ -1,6 +1,6 @@
 {
   "id": "ba027",
-  "label": "BA027 (ขาวประจวบ)",
+  "label": "BA027 ขาวประจวบ",
   "fasta": "BA027.fa.gz",
   "gff3": "BA027.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "fa131",
-  "label": "FA131 (ขาวทดลอง)",
+  "label": "FA131 ขาวทดลอง",
   "fasta": "FA131.fa.gz",
   "gff3": "FA131.sorted.gff3.gz"
 }

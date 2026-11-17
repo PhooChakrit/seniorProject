@@ -1,6 +1,6 @@
 {
   "id": "el116",
-  "label": "EL116 (ขาวตาเจือ)",
+  "label": "EL116 ขาวตาเจือ",
   "fasta": "EL116.fa.gz",
   "gff3": "EL116.sorted.gff3.gz"
 }

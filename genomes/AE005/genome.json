@@ -1,6 +1,6 @@
 {
   "id": "ae005",
-  "label": "AE005 (ขาวนาปรัง 126-18E-160)",
+  "label": "AE005 ขาวนาปรัง",
   "fasta": "AE005.fa.gz",
   "gff3": "AE005.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "ct072",
-  "label": "CT072 (หลวงประทาน)",
+  "label": "CT072 หลวงประทาน",
   "fasta": "CT072.fa.gz",
   "gff3": "CT072.sorted.gff3.gz"
 }

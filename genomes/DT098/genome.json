@@ -1,6 +1,6 @@
 {
   "id": "dt098",
-  "label": "DT098 (ขาวประกวด)",
+  "label": "DT098 ขาวประกวด",
   "fasta": "DT098.fa.gz",
   "gff3": "DT098.sorted.gff3.gz"
 }

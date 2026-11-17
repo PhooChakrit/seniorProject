@@ -1,6 +1,6 @@
 {
   "id": "am013",
-  "label": "AM013 (ขาวเมล็ดเล็ก)",
+  "label": "AM013 ขาวเมล็ดเล็ก",
   "fasta": "AM013.fa.gz",
   "gff3": "AM013.sorted.gff3.gz"
 }

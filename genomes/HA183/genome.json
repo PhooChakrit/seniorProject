@@ -1,6 +1,6 @@
 {
   "id": "ha183",
-  "label": "HA183 (ลอดเกวียน)",
+  "label": "HA183 ลอดเกวียน",
   "fasta": "HA183.fa.gz",
   "gff3": "HA183.sorted.gff3.gz"
 }

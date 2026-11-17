@@ -1,6 +1,6 @@
 {
   "id": "bs045",
-  "label": "BS045 (ขาวห้าร้อย)",
+  "label": "BS045 ขาวห้าร้อย",
   "fasta": "BS045.fa.gz",
   "gff3": "BS045.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "av022",
-  "label": "AV022 (หัวคันนา)",
+  "label": "AV022 หัวคันนา",
   "fasta": "AV022.fa.gz",
   "gff3": "AV022.sorted.gff3.gz"
 }

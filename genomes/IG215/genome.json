@@ -1,6 +1,6 @@
 {
   "id": "ig215",
-  "label": "IG215 (ไรซ์เบอรี่)",
+  "label": "IG215 ไรซ์เบอรี่",
   "fasta": "IG215.fa.gz",
   "gff3": "IG215.sorted.gff3.gz"
 }

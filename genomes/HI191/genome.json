@@ -1,6 +1,6 @@
 {
   "id": "hi191",
-  "label": "HI191 (มะลิแดงสั้นหนัก)",
+  "label": "HI191 มะลิแดงสั้นหนัก",
   "fasta": "HI191.fa.gz",
   "gff3": "HI191.sorted.gff3.gz"
 }

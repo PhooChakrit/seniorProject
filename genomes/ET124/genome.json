@@ -1,6 +1,6 @@
 {
   "id": "et124",
-  "label": "ET124 (ขาวเม็ดเล็ก)",
+  "label": "ET124 ขาวเม็ดเล็ก",
   "fasta": "ET124.fa.gz",
   "gff3": "ET124.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "en118",
-  "label": "EN118 (เหลืองอ่อนเบา)",
+  "label": "EN118 เหลืองอ่อนเบา",
   "fasta": "EN118.fa.gz",
   "gff3": "EN118.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "iy233",
-  "label": "IY233 (CNT1)",
+  "label": "IY233 CNT1",
   "fasta": "IY233.fa.gz",
   "gff3": "IY233.sorted.gff3.gz"
 }

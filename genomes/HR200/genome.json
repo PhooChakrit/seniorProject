@@ -1,6 +1,6 @@
 {
   "id": "hr200",
-  "label": "HR200 (ขาวนางมล)",
+  "label": "HR200 ขาวนางมล",
   "fasta": "HR200.fa.gz",
   "gff3": "HR200.sorted.gff3.gz"
 }

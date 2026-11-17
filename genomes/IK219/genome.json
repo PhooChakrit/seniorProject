@@ -1,6 +1,6 @@
 {
   "id": "ik219",
-  "label": "IK219 (ลายหมาก)",
+  "label": "IK219 ลายหมาก",
   "fasta": "IK219.fa.gz",
   "gff3": "IK219.sorted.gff3.gz"
 }

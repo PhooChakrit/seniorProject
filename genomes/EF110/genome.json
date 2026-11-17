@@ -1,6 +1,6 @@
 {
   "id": "ef110",
-  "label": "EF110 (ปิ่นทอง)",
+  "label": "EF110 ปิ่นทอง",
   "fasta": "EF110.fa.gz",
   "gff3": "EF110.sorted.gff3.gz"
 }

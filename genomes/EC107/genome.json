@@ -1,6 +1,6 @@
 {
   "id": "ec107",
-  "label": "EC107 (พญาชม)",
+  "label": "EC107 พญาชม",
   "fasta": "EC107.fa.gz",
   "gff3": "EC107.sorted.gff3.gz"
 }

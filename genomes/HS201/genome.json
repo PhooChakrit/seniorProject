@@ -1,6 +1,6 @@
 {
   "id": "hs201",
-  "label": "HS201 (PTT1)",
+  "label": "HS201 PTT1",
   "fasta": "HS201.fa.gz",
   "gff3": "HS201.sorted.gff3.gz"
 }

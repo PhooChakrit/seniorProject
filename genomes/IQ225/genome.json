@@ -1,6 +1,6 @@
 {
   "id": "iq225",
-  "label": "IQ225 (ข้าวหอมใต้หวัน)",
+  "label": "IQ225 ข้าวหอมใต้หวัน",
   "fasta": "IQ225.fa.gz",
   "gff3": "IQ225.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "fq147",
-  "label": "FQ147 (ลายแม่โจ้)",
+  "label": "FQ147 ลายแม่โจ้",
   "fasta": "FQ147.fa.gz",
   "gff3": "FQ147.sorted.gff3.gz"
 }

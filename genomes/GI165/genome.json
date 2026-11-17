@@ -1,6 +1,6 @@
 {
   "id": "gi165",
-  "label": "GI165 (ข้าวเหนียวดำ 4)",
+  "label": "GI165 ข้าวเหนียวดำ",
   "fasta": "GI165.fa.gz",
   "gff3": "GI165.sorted.gff3.gz"
 }

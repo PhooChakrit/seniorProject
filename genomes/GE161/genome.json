@@ -1,6 +1,6 @@
 {
   "id": "ge161",
-  "label": "GE161 (อีเขียวนอนทุ่ง)",
+  "label": "GE161 อีเขียวนอนทุ่ง",
   "fasta": "GE161.fa.gz",
   "gff3": "GE161.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "gl168",
-  "label": "GL168 (ก่ำเมืองน่าน)",
+  "label": "GL168 ก่ำเมืองน่าน",
   "fasta": "GL168.fa.gz",
   "gff3": "GL168.sorted.gff3.gz"
 }

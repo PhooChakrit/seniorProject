@@ -6,70 +6,70 @@
     "gsNumber": "1000",
     "thaiName": "NIC39",
     "englishName": "NIC39",
-    "label": "AA001 (NIC39)"
+    "label": "AA001 NIC39"
   },
   {
     "sampleNo": 2,
     "nCode": "N2",
     "code": "AB002",
     "gsNumber": "1066",
-    "thaiName": "เหลืองนวล 807",
-    "englishName": "Leuang Nuan 807",
-    "label": "AB002 (เหลืองนวล 807)"
+    "thaiName": "เหลืองนวล",
+    "englishName": "Leuang Nuan",
+    "label": "AB002 เหลืองนวล"
   },
   {
     "sampleNo": 3,
     "nCode": "N3",
     "code": "AC003",
     "gsNumber": "1110",
-    "thaiName": "ตาหมัก 102-10-5",
-    "englishName": "Tah Mahk 102-10-5",
-    "label": "AC003 (ตาหมัก 102-10-5)"
+    "thaiName": "ตาหมัก",
+    "englishName": "Tah Mahk",
+    "label": "AC003 ตาหมัก"
   },
   {
     "sampleNo": 4,
     "nCode": "N4",
     "code": "AD004",
     "gsNumber": "1118",
-    "thaiName": "บางพระ 166",
-    "englishName": "Bahng Pra 166",
-    "label": "AD004 (บางพระ 166)"
+    "thaiName": "บางพระ",
+    "englishName": "Bahng Pra",
+    "label": "AD004 บางพระ"
   },
   {
     "sampleNo": 5,
     "nCode": "N5",
     "code": "AE005",
     "gsNumber": "1237",
-    "thaiName": "ขาวนาปรัง 126-18E-160",
-    "englishName": "Khao Nah Prang 126-18E-160",
-    "label": "AE005 (ขาวนาปรัง 126-18E-160)"
+    "thaiName": "ขาวนาปรัง",
+    "englishName": "Khao Nah Prang",
+    "label": "AE005 ขาวนาปรัง"
   },
   {
     "sampleNo": 6,
     "nCode": "N6",
     "code": "AF006",
     "gsNumber": "1273",
-    "thaiName": "ผักเสี้ยน 199-33-30",
-    "englishName": "Pak Sian 199-33-30",
-    "label": "AF006 (ผักเสี้ยน 199-33-30)"
+    "thaiName": "ผักเสี้ยน",
+    "englishName": "Pak Sian",
+    "label": "AF006 ผักเสี้ยน"
   },
   {
     "sampleNo": 7,
     "nCode": "N7",
     "code": "AG007",
     "gsNumber": "1326",
-    "thaiName": "เหลือง 1-6",
-    "englishName": "Leuang 1-6",
-    "label": "AG007 (เหลือง 1-6)"
+    "thaiName": "เหลือง",
+    "englishName": "Leuang",
+    "label": "AG007 เหลือง"
   },
   {
     "sampleNo": 8,
     "nCode": "N8",
     "code": "AH008",
     "gsNumber": "1340",
-    "thaiName": "สายบัว 59-106-2",
-    "englishName": "Sai Bua 59-106-2",
-    "label": "AH008 (สายบัว 59-106-2)"
+    "thaiName": "สายบัว",
+    "englishName": "Sai Bua",
+    "label": "AH008 สายบัว"
   },
   {
     "sampleNo": 9,
@@ -78,7 +78,7 @@
     "gsNumber": "1516",
     "thaiName": "BKN55-11-108",
     "englishName": "BKN55-11-108",
-    "label": "AI009 (BKN55-11-108)"
+    "label": "AI009 BKN55-11-108"
   },
   {
     "sampleNo": 10,
@@ -87,16 +87,16 @@
     "gsNumber": "1520",
     "thaiName": "BKN57-8-332",
     "englishName": "BKN57-8-332",
-    "label": "AJ010 (BKN57-8-332)"
+    "label": "AJ010 BKN57-8-332"
   },
   {
     "sampleNo": 11,
     "nCode": "N11",
     "code": "AK011",
     "gsNumber": "1547",
-    "thaiName": "ขาวงาช้าง 107-16-111",
-    "englishName": "Khao Ngah Chahng 107-16-111",
-    "label": "AK011 (ขาวงาช้าง 107-16-111)"
+    "thaiName": "ขาวงาช้าง",
+    "englishName": "Khao Ngah Chahng",
+    "label": "AK011 ขาวงาช้าง"
   },
   {
     "sampleNo": 12,
@@ -105,7 +105,7 @@
     "gsNumber": "1756",
     "thaiName": "ไม่ทราบชื่อ",
     "englishName": "Unknown",
-    "label": "AL012 (ไม่ทราบชื่อ)"
+    "label": "AL012 ไม่ทราบชื่อ"
   },
   {
     "sampleNo": 13,
@@ -114,7 +114,7 @@
     "gsNumber": "2519",
     "thaiName": "ขาวเมล็ดเล็ก",
     "englishName": "Khao Maled Lek",
-    "label": "AM013 (ขาวเมล็ดเล็ก)"
+    "label": "AM013 ขาวเมล็ดเล็ก"
   },
   {
     "sampleNo": 14,
@@ -123,7 +123,7 @@
     "gsNumber": "3034",
     "thaiName": "เหลืองตาเอี่ยม",
     "englishName": "Leuang Tah Aiam",
-    "label": "AN014 (เหลืองตาเอี่ยม)"
+    "label": "AN014 เหลืองตาเอี่ยม"
   },
   {
     "sampleNo": 15,
@@ -132,7 +132,7 @@
     "gsNumber": "3038",
     "thaiName": "เหลืองไร่ละเกวียน",
     "englishName": "Leuang Rai La Gwian",
-    "label": "AO015 (เหลืองไร่ละเกวียน)"
+    "label": "AO015 เหลืองไร่ละเกวียน"
   },
   {
     "sampleNo": 16,
@@ -141,7 +141,7 @@
     "gsNumber": "3408",
     "thaiName": "โตนด",
     "englishName": "Ta Nod",
-    "label": "AP016 (โตนด)"
+    "label": "AP016 โตนด"
   },
   {
     "sampleNo": 17,
@@ -150,7 +150,7 @@
     "gsNumber": "3416",
     "thaiName": "ตาขุย",
     "englishName": "Tah Khui",
-    "label": "AQ017 (ตาขุย)"
+    "label": "AQ017 ตาขุย"
   },
   {
     "sampleNo": 18,
@@ -159,7 +159,7 @@
     "gsNumber": "3452",
     "thaiName": "ทองคำ",
     "englishName": "Tawng Kam",
-    "label": "AR018 (ทองคำ)"
+    "label": "AR018 ทองคำ"
   },
   {
     "sampleNo": 19,
@@ -168,7 +168,7 @@
     "gsNumber": "3460",
     "thaiName": "จำปาซ้อน",
     "englishName": "Jampah Sawn",
-    "label": "AS019 (จำปาซ้อน)"
+    "label": "AS019 จำปาซ้อน"
   },
   {
     "sampleNo": 20,
@@ -177,7 +177,7 @@
     "gsNumber": "3512",
     "thaiName": "เหลืองใบมัน",
     "englishName": "Leuang Bai Man",
-    "label": "AT020 (เหลืองใบมัน)"
+    "label": "AT020 เหลืองใบมัน"
   },
   {
     "sampleNo": 21,
@@ -186,7 +186,7 @@
     "gsNumber": "3513",
     "thaiName": "ข้าวคัด",
     "englishName": "Khao' Kad",
-    "label": "AU021 (ข้าวคัด)"
+    "label": "AU021 ข้าวคัด"
   },
   {
     "sampleNo": 22,
@@ -195,7 +195,7 @@
     "gsNumber": "3515",
     "thaiName": "หัวคันนา",
     "englishName": "Hua Kan-nah",
-    "label": "AV022 (หัวคันนา)"
+    "label": "AV022 หัวคันนา"
   },
   {
     "sampleNo": 23,
@@ -204,7 +204,7 @@
     "gsNumber": "3517",
     "thaiName": "วัดจันทร์",
     "englishName": "Wad Jan",
-    "label": "AW023 (วัดจันทร์)"
+    "label": "AW023 วัดจันทร์"
   },
   {
     "sampleNo": 24,
@@ -213,7 +213,7 @@
     "gsNumber": "3519",
     "thaiName": "กระเป๋า",
     "englishName": "Gra Pow",
-    "label": "AX024 (กระเป๋า)"
+    "label": "AX024 กระเป๋า"
   },
   {
     "sampleNo": 25,
@@ -222,7 +222,7 @@
     "gsNumber": "3520",
     "thaiName": "ข้าวแพร่",
     "englishName": "Khao' Prae",
-    "label": "AY025 (ข้าวแพร่)"
+    "label": "AY025 ข้าวแพร่"
   },
   {
     "sampleNo": 26,
@@ -231,7 +231,7 @@
     "gsNumber": "3548",
     "thaiName": "ใบสี",
     "englishName": "Bai Si",
-    "label": "AZ026 (ใบสี)"
+    "label": "AZ026 ใบสี"
   },
   {
     "sampleNo": 27,
@@ -240,7 +240,7 @@
     "gsNumber": "3551",
     "thaiName": "ขาวประจวบ",
     "englishName": "Khao Prajuab",
-    "label": "BA027 (ขาวประจวบ)"
+    "label": "BA027 ขาวประจวบ"
   },
   {
     "sampleNo": 28,
@@ -249,7 +249,7 @@
     "gsNumber": "3675",
     "thaiName": "ขาวพวง",
     "englishName": "Khao Puang",
-    "label": "BB028 (ขาวพวง)"
+    "label": "BB028 ขาวพวง"
   },
   {
     "sampleNo": 29,
@@ -258,7 +258,7 @@
     "gsNumber": "3701",
     "thaiName": "ขาวหลวง",
     "englishName": "Khao Luang",
-    "label": "BC029 (ขาวหลวง)"
+    "label": "BC029 ขาวหลวง"
   },
   {
     "sampleNo": 30,
@@ -267,7 +267,7 @@
     "gsNumber": "3702",
     "thaiName": "แก้ว",
     "englishName": "Gaew",
-    "label": "BD030 (แก้ว)"
+    "label": "BD030 แก้ว"
   },
   {
     "sampleNo": 31,
@@ -276,7 +276,7 @@
     "gsNumber": "3703",
     "thaiName": "สองรวง",
     "englishName": "Sawng Ruang",
-    "label": "BE031 (สองรวง)"
+    "label": "BE031 สองรวง"
   },
   {
     "sampleNo": 32,
@@ -285,7 +285,7 @@
     "gsNumber": "3718",
     "thaiName": "ข้าวหลวงแจก",
     "englishName": "Khao' Luang Jaek",
-    "label": "BF032 (ข้าวหลวงแจก)"
+    "label": "BF032 ข้าวหลวงแจก"
   },
   {
     "sampleNo": 33,
@@ -294,7 +294,7 @@
     "gsNumber": "3721",
     "thaiName": "ข้าวชวัท",
     "englishName": "Khao' Chawad",
-    "label": "BG033 (ข้าวชวัท)"
+    "label": "BG033 ข้าวชวัท"
   },
   {
     "sampleNo": 34,
@@ -303,7 +303,7 @@
     "gsNumber": "3802",
     "thaiName": "เขียวใหญ่",
     "englishName": "Khiaw Yai",
-    "label": "BH034 (เขียวใหญ่)"
+    "label": "BH034 เขียวใหญ่"
   },
   {
     "sampleNo": 35,
@@ -312,7 +312,7 @@
     "gsNumber": "5366",
     "thaiName": "ทองมาเอง",
     "englishName": "Tawng Mah Eng",
-    "label": "BI035 (ทองมาเอง)"
+    "label": "BI035 ทองมาเอง"
   },
   {
     "sampleNo": 36,
@@ -321,7 +321,7 @@
     "gsNumber": "5410",
     "thaiName": "เหลืองต้นแข็ง",
     "englishName": "Leuang Ton Khaeng",
-    "label": "BJ036 (เหลืองต้นแข็ง)"
+    "label": "BJ036 เหลืองต้นแข็ง"
   },
   {
     "sampleNo": 37,
@@ -330,7 +330,7 @@
     "gsNumber": "5558",
     "thaiName": "เหลืองหวล",
     "englishName": "Leuang Huan",
-    "label": "BK037 (เหลืองหวล)"
+    "label": "BK037 เหลืองหวล"
   },
   {
     "sampleNo": 38,
@@ -339,7 +339,7 @@
     "gsNumber": "6169",
     "thaiName": "เหลืองหางม้า",
     "englishName": "Leuang Hahng Mah",
-    "label": "BL038 (เหลืองหางม้า)"
+    "label": "BL038 เหลืองหางม้า"
   },
   {
     "sampleNo": 39,
@@ -348,7 +348,7 @@
     "gsNumber": "6851",
     "thaiName": "ที่หนึ่ง",
     "englishName": "Ti Nueng",
-    "label": "BM039 (ที่หนึ่ง)"
+    "label": "BM039 ที่หนึ่ง"
   },
   {
     "sampleNo": 40,
@@ -357,7 +357,7 @@
     "gsNumber": "6866",
     "thaiName": "พวงนาค",
     "englishName": "Puang Nahk",
-    "label": "BN040 (พวงนาค)"
+    "label": "BN040 พวงนาค"
   },
   {
     "sampleNo": 41,
@@ -366,7 +366,7 @@
     "gsNumber": "6868",
     "thaiName": "เจ๊กเชย",
     "englishName": "Jek Chuey",
-    "label": "BO041 (เจ๊กเชย)"
+    "label": "BO041 เจ๊กเชย"
   },
   {
     "sampleNo": 42,
@@ -375,7 +375,7 @@
     "gsNumber": "9583",
     "thaiName": "ขาวกอเดียว",
     "englishName": "Khao Gaw Diaw",
-    "label": "BP042 (ขาวกอเดียว)"
+    "label": "BP042 ขาวกอเดียว"
   },
   {
     "sampleNo": 43,
@@ -384,7 +384,7 @@
     "gsNumber": "10651",
     "thaiName": "ขาวตาเอ็ก",
     "englishName": "Khao Tah Ex",
-    "label": "BQ043 (ขาวตาเอ็ก)"
+    "label": "BQ043 ขาวตาเอ็ก"
   },
   {
     "sampleNo": 44,
@@ -393,7 +393,7 @@
     "gsNumber": "10661",
     "thaiName": "หอมสุรินทร์",
     "englishName": "Hawm Surin",
-    "label": "BR044 (หอมสุรินทร์)"
+    "label": "BR044 หอมสุรินทร์"
   },
   {
     "sampleNo": 45,
@@ -402,16 +402,16 @@
     "gsNumber": "12936",
     "thaiName": "ขาวห้าร้อย",
     "englishName": "Khao Hah Roi",
-    "label": "BS045 (ขาวห้าร้อย)"
+    "label": "BS045 ขาวห้าร้อย"
   },
   {
     "sampleNo": 46,
     "nCode": "N46",
     "code": "BT046",
     "gsNumber": "13745",
-    "thaiName": "สุพรรณบุรี 1",
-    "englishName": "Supanburi 1",
-    "label": "BT046 (สุพรรณบุรี 1)"
+    "thaiName": "สุพรรณบุรี",
+    "englishName": "Supanburi",
+    "label": "BT046 สุพรรณบุรี"
   },
   {
     "sampleNo": 47,
@@ -420,7 +420,7 @@
     "gsNumber": "14148",
     "thaiName": "ปิ่นแก้ว",
     "englishName": "Pin Gaew",
-    "label": "BU047 (ปิ่นแก้ว)"
+    "label": "BU047 ปิ่นแก้ว"
   },
   {
     "sampleNo": 48,
@@ -429,7 +429,7 @@
     "gsNumber": "21191",
     "thaiName": "รอดหนี้",
     "englishName": "Rawd Ni",
-    "label": "BV048 (รอดหนี้)"
+    "label": "BV048 รอดหนี้"
   },
   {
     "sampleNo": 49,
@@ -438,7 +438,7 @@
     "gsNumber": "21332",
     "thaiName": "นกเขา",
     "englishName": "Nok Kao",
-    "label": "BW049 (นกเขา)"
+    "label": "BW049 นกเขา"
   },
   {
     "sampleNo": 50,
@@ -447,16 +447,16 @@
     "gsNumber": "21334",
     "thaiName": "เม็ดมะเขือ",
     "englishName": "Med Ma Kheua",
-    "label": "BX050 (เม็ดมะเขือ)"
+    "label": "BX050 เม็ดมะเขือ"
   },
   {
     "sampleNo": 51,
     "nCode": "N51",
     "code": "BY051",
     "gsNumber": "467",
-    "thaiName": "ปิ่นแก้วเบา 17-4-27",
-    "englishName": "Pin Gaew Bow 17-4-27",
-    "label": "BY051 (ปิ่นแก้วเบา 17-4-27)"
+    "thaiName": "ปิ่นแก้วเบา",
+    "englishName": "Pin Gaew Bow",
+    "label": "BY051 ปิ่นแก้วเบา"
   },
   {
     "sampleNo": 52,
@@ -465,61 +465,61 @@
     "gsNumber": "1007",
     "thaiName": "OIC5 III",
     "englishName": "OIC5 III",
-    "label": "BZ052 (OIC5 III)"
+    "label": "BZ052 OIC5 III"
   },
   {
     "sampleNo": 53,
     "nCode": "N53",
     "code": "CA053",
     "gsNumber": "1090",
-    "thaiName": "เหลืองอ่อน 151",
-    "englishName": "Leuang Awn 151",
-    "label": "CA053 (เหลืองอ่อน 151)"
+    "thaiName": "เหลืองอ่อน",
+    "englishName": "Leuang Awn",
+    "label": "CA053 เหลืองอ่อน"
   },
   {
     "sampleNo": 54,
     "nCode": "N54",
     "code": "CB054",
     "gsNumber": "1131",
-    "thaiName": "ก้นจุด 8-4-118",
-    "englishName": "Gon Jud 8-4-118",
-    "label": "CB054 (ก้นจุด 8-4-118)"
+    "thaiName": "ก้นจุด",
+    "englishName": "Gon Jud",
+    "label": "CB054 ก้นจุด"
   },
   {
     "sampleNo": 55,
     "nCode": "N55",
     "code": "CC055",
     "gsNumber": "1191",
-    "thaiName": "งาช้าง 372",
-    "englishName": "Ngah Chahng 372",
-    "label": "CC055 (งาช้าง 372)"
+    "thaiName": "งาช้าง",
+    "englishName": "Ngah Chahng",
+    "label": "CC055 งาช้าง"
   },
   {
     "sampleNo": 56,
     "nCode": "N56",
     "code": "CD056",
     "gsNumber": "1255",
-    "thaiName": "คล้า 199-12-15",
-    "englishName": "Klah 199-12-15",
-    "label": "CD056 (คล้า 199-12-15)"
+    "thaiName": "คล้า",
+    "englishName": "Klah",
+    "label": "CD056 คล้า"
   },
   {
     "sampleNo": 57,
     "nCode": "N57",
     "code": "CE057",
     "gsNumber": "1274",
-    "thaiName": "รีหอม 110-26-77",
-    "englishName": "Re Hawm 110-26-77",
-    "label": "CE057 (รีหอม 110-26-77)"
+    "thaiName": "รีหอม",
+    "englishName": "Re Hawm",
+    "label": "CE057 รีหอม"
   },
   {
     "sampleNo": 58,
     "nCode": "N58",
     "code": "CF058",
     "gsNumber": "1507",
-    "thaiName": "ขาวเบา 466-2-279",
-    "englishName": "Khao Bow 466-2-279",
-    "label": "CF058 (ขาวเบา 466-2-279)"
+    "thaiName": "ขาวเบา",
+    "englishName": "Khao Bow",
+    "label": "CF058 ขาวเบา"
   },
   {
     "sampleNo": 59,
@@ -528,7 +528,7 @@
     "gsNumber": "1514",
     "thaiName": "BKN55-8-501",
     "englishName": "BKN55-8-501",
-    "label": "CG059 (BKN55-8-501)"
+    "label": "CG059 BKN55-8-501"
   },
   {
     "sampleNo": 60,
@@ -537,7 +537,7 @@
     "gsNumber": "1731",
     "thaiName": "ขาวเกษตร",
     "englishName": "Khao Kaset",
-    "label": "CH060 (ขาวเกษตร)"
+    "label": "CH060 ขาวเกษตร"
   },
   {
     "sampleNo": 61,
@@ -546,7 +546,7 @@
     "gsNumber": "3089",
     "thaiName": "ขั้วเหนียว",
     "englishName": "Khua Niaw",
-    "label": "CI061 (ขั้วเหนียว)"
+    "label": "CI061 ขั้วเหนียว"
   },
   {
     "sampleNo": 62,
@@ -555,7 +555,7 @@
     "gsNumber": "3742",
     "thaiName": "จำปา",
     "englishName": "Jampah",
-    "label": "CJ062 (จำปา)"
+    "label": "CJ062 จำปา"
   },
   {
     "sampleNo": 63,
@@ -564,7 +564,7 @@
     "gsNumber": "3743",
     "thaiName": "สับปะรด",
     "englishName": "Sabparod",
-    "label": "CK063 (สับปะรด)"
+    "label": "CK063 สับปะรด"
   },
   {
     "sampleNo": 64,
@@ -573,7 +573,7 @@
     "gsNumber": "5335",
     "thaiName": "ทูลฉลอง",
     "englishName": "Toon Chalawng",
-    "label": "CL064 (ทูลฉลอง)"
+    "label": "CL064 ทูลฉลอง"
   },
   {
     "sampleNo": 65,
@@ -582,7 +582,7 @@
     "gsNumber": "5399",
     "thaiName": "นางบุญมี",
     "englishName": "Nahng Bun Mee",
-    "label": "CM065 (นางบุญมี)"
+    "label": "CM065 นางบุญมี"
   },
   {
     "sampleNo": 66,
@@ -591,7 +591,7 @@
     "gsNumber": "5407",
     "thaiName": "รวงเดียว",
     "englishName": "Ruang Diaw",
-    "label": "CN066 (รวงเดียว)"
+    "label": "CN066 รวงเดียว"
   },
   {
     "sampleNo": 67,
@@ -600,7 +600,7 @@
     "gsNumber": "5433",
     "thaiName": "แก่นจันทร์",
     "englishName": "Gaen Jan",
-    "label": "CO067 (แก่นจันทร์)"
+    "label": "CO067 แก่นจันทร์"
   },
   {
     "sampleNo": 68,
@@ -609,7 +609,7 @@
     "gsNumber": "5545",
     "thaiName": "ตาเจือ",
     "englishName": "Tah Jeua",
-    "label": "CP068 (ตาเจือ)"
+    "label": "CP068 ตาเจือ"
   },
   {
     "sampleNo": 69,
@@ -618,7 +618,7 @@
     "gsNumber": "5679",
     "thaiName": "ขาวตาแห้ง",
     "englishName": "Khao Tah Haeng",
-    "label": "CQ069 (ขาวตาแห้ง)"
+    "label": "CQ069 ขาวตาแห้ง"
   },
   {
     "sampleNo": 70,
@@ -627,7 +627,7 @@
     "gsNumber": "5680",
     "thaiName": "ขาวตาแห้ง",
     "englishName": "Khao Tah Haeng",
-    "label": "CR070 (ขาวตาแห้ง)"
+    "label": "CR070 ขาวตาแห้ง"
   },
   {
     "sampleNo": 71,
@@ -636,7 +636,7 @@
     "gsNumber": "5682",
     "thaiName": "เศรษฐี",
     "englishName": "Setti",
-    "label": "CS071 (เศรษฐี)"
+    "label": "CS071 เศรษฐี"
   },
   {
     "sampleNo": 72,
@@ -645,7 +645,7 @@
     "gsNumber": "5684",
     "thaiName": "หลวงประทาน",
     "englishName": "Luang Pratahn",
-    "label": "CT072 (หลวงประทาน)"
+    "label": "CT072 หลวงประทาน"
   },
   {
     "sampleNo": 73,
@@ -654,7 +654,7 @@
     "gsNumber": "5691",
     "thaiName": "ขาวสุพรรณ",
     "englishName": "Khao Supan",
-    "label": "CU073 (ขาวสุพรรณ)"
+    "label": "CU073 ขาวสุพรรณ"
   },
   {
     "sampleNo": 74,
@@ -663,7 +663,7 @@
     "gsNumber": "5694",
     "thaiName": "เจ็ดรวง",
     "englishName": "Jed Ruang",
-    "label": "CV074 (เจ็ดรวง)"
+    "label": "CV074 เจ็ดรวง"
   },
   {
     "sampleNo": 75,
@@ -672,16 +672,16 @@
     "gsNumber": "5698",
     "thaiName": "เจ็ดรวง",
     "englishName": "Jed Ruang",
-    "label": "CW075 (เจ็ดรวง)"
+    "label": "CW075 เจ็ดรวง"
   },
   {
     "sampleNo": 76,
     "nCode": "N76",
     "code": "CX076",
     "gsNumber": "6146",
-    "thaiName": "ขาวตาแห้ง 17",
-    "englishName": "Khao Tah Haeng 17",
-    "label": "CX076 (ขาวตาแห้ง 17)"
+    "thaiName": "ขาวตาแห้ง",
+    "englishName": "Khao Tah Haeng",
+    "label": "CX076 ขาวตาแห้ง"
   },
   {
     "sampleNo": 77,
@@ -690,7 +690,7 @@
     "gsNumber": "6147",
     "thaiName": "ขาวแก้ว",
     "englishName": "Khao Gaew",
-    "label": "CY077 (ขาวแก้ว)"
+    "label": "CY077 ขาวแก้ว"
   },
   {
     "sampleNo": 78,
@@ -699,7 +699,7 @@
     "gsNumber": "6155",
     "thaiName": "ขาวตาแห้ง",
     "englishName": "Khao Tah Haeng",
-    "label": "CZ078 (ขาวตาแห้ง)"
+    "label": "CZ078 ขาวตาแห้ง"
   },
   {
     "sampleNo": 79,
@@ -708,7 +708,7 @@
     "gsNumber": "6161",
     "thaiName": "ขาวแก้ว",
     "englishName": "Khao Gaew",
-    "label": "DA079 (ขาวแก้ว)"
+    "label": "DA079 ขาวแก้ว"
   },
   {
     "sampleNo": 80,
@@ -717,7 +717,7 @@
     "gsNumber": "6162",
     "thaiName": "ขาวแก้ว",
     "englishName": "Khao Gaew",
-    "label": "DB080 (ขาวแก้ว)"
+    "label": "DB080 ขาวแก้ว"
   },
   {
     "sampleNo": 81,
@@ -726,7 +726,7 @@
     "gsNumber": "14489",
     "thaiName": "ขาวเกษตร",
     "englishName": "Khao Kaset",
-    "label": "DC081 (ขาวเกษตร)"
+    "label": "DC081 ขาวเกษตร"
   },
   {
     "sampleNo": 82,
@@ -735,7 +735,7 @@
     "gsNumber": "21111",
     "thaiName": "วัดโบสถ์",
     "englishName": "Wad Boat",
-    "label": "DD082 (วัดโบสถ์)"
+    "label": "DD082 วัดโบสถ์"
   },
   {
     "sampleNo": 83,
@@ -744,7 +744,7 @@
     "gsNumber": "21112",
     "thaiName": "รอดหนี้",
     "englishName": "Rawd Ni",
-    "label": "DE083 (รอดหนี้)"
+    "label": "DE083 รอดหนี้"
   },
   {
     "sampleNo": 84,
@@ -753,7 +753,7 @@
     "gsNumber": "21140",
     "thaiName": "อีขอด",
     "englishName": "E-Khawd",
-    "label": "DF084 (อีขอด)"
+    "label": "DF084 อีขอด"
   },
   {
     "sampleNo": 85,
@@ -762,7 +762,7 @@
     "gsNumber": "21158",
     "thaiName": "เหลืองหนองคาย",
     "englishName": "Leuang Nawng Kai",
-    "label": "DG085 (เหลืองหนองคาย)"
+    "label": "DG085 เหลืองหนองคาย"
   },
   {
     "sampleNo": 86,
@@ -771,7 +771,7 @@
     "gsNumber": "21181",
     "thaiName": "ก้านมะยม",
     "englishName": "Gahn Mayom",
-    "label": "DH086 (ก้านมะยม)"
+    "label": "DH086 ก้านมะยม"
   },
   {
     "sampleNo": 87,
@@ -780,7 +780,7 @@
     "gsNumber": "21213",
     "thaiName": "ขาวมานะ",
     "englishName": "Khao Mana",
-    "label": "DI087 (ขาวมานะ)"
+    "label": "DI087 ขาวมานะ"
   },
   {
     "sampleNo": 88,
@@ -789,7 +789,7 @@
     "gsNumber": "6429",
     "thaiName": "เหลืองสูง",
     "englishName": "Leuang Sung",
-    "label": "DJ088 (เหลืองสูง)"
+    "label": "DJ088 เหลืองสูง"
   },
   {
     "sampleNo": 89,
@@ -798,7 +798,7 @@
     "gsNumber": "6436",
     "thaiName": "เศรษฐี",
     "englishName": "Setti",
-    "label": "DK089 (เศรษฐี)"
+    "label": "DK089 เศรษฐี"
   },
   {
     "sampleNo": 90,
@@ -807,7 +807,7 @@
     "gsNumber": "6437",
     "thaiName": "เจ็ดรวง",
     "englishName": "Jed Ruang",
-    "label": "DL090 (เจ็ดรวง)"
+    "label": "DL090 เจ็ดรวง"
   },
   {
     "sampleNo": 91,
@@ -816,7 +816,7 @@
     "gsNumber": "6439",
     "thaiName": "เจ็ดรวง",
     "englishName": "Jed Ruang",
-    "label": "DM091 (เจ็ดรวง)"
+    "label": "DM091 เจ็ดรวง"
   },
   {
     "sampleNo": 92,
@@ -825,7 +825,7 @@
     "gsNumber": "6445",
     "thaiName": "ขาวหลวง",
     "englishName": "Khao Luang",
-    "label": "DN092 (ขาวหลวง)"
+    "label": "DN092 ขาวหลวง"
   },
   {
     "sampleNo": 93,
@@ -834,7 +834,7 @@
     "gsNumber": "6447",
     "thaiName": "เจ็ดรวง",
     "englishName": "Jed Ruang",
-    "label": "DO093 (เจ็ดรวง)"
+    "label": "DO093 เจ็ดรวง"
   },
   {
     "sampleNo": 94,
@@ -843,7 +843,7 @@
     "gsNumber": "6451",
     "thaiName": "ไม่ทราบชื่อ",
     "englishName": "Unknown",
-    "label": "DP094 (ไม่ทราบชื่อ)"
+    "label": "DP094 ไม่ทราบชื่อ"
   },
   {
     "sampleNo": 95,
@@ -852,7 +852,7 @@
     "gsNumber": "6853",
     "thaiName": "พญาชม",
     "englishName": "Payah Chom",
-    "label": "DQ095 (พญาชม)"
+    "label": "DQ095 พญาชม"
   },
   {
     "sampleNo": 96,
@@ -861,7 +861,7 @@
     "gsNumber": "6883",
     "thaiName": "ขาวตาแห้ง",
     "englishName": "Khao Tah Haeng",
-    "label": "DR096 (ขาวตาแห้ง)"
+    "label": "DR096 ขาวตาแห้ง"
   },
   {
     "sampleNo": 97,
@@ -870,7 +870,7 @@
     "gsNumber": "6884",
     "thaiName": "ขาวตาแห้ง",
     "englishName": "Khao Tah Haeng",
-    "label": "DS097 (ขาวตาแห้ง)"
+    "label": "DS097 ขาวตาแห้ง"
   },
   {
     "sampleNo": 98,
@@ -879,7 +879,7 @@
     "gsNumber": "6906",
     "thaiName": "ขาวประกวด",
     "englishName": "Khao Praguad",
-    "label": "DT098 (ขาวประกวด)"
+    "label": "DT098 ขาวประกวด"
   },
   {
     "sampleNo": 99,
@@ -888,7 +888,7 @@
     "gsNumber": "7125",
     "thaiName": "กข27",
     "englishName": "RD27",
-    "label": "DU099 (กข27)"
+    "label": "DU099 กข27"
   },
   {
     "sampleNo": 100,
@@ -897,7 +897,7 @@
     "gsNumber": "7131",
     "thaiName": "ขาวเมล็ดเล็ก",
     "englishName": "Khao Maled Lek",
-    "label": "DV100 (ขาวเมล็ดเล็ก)"
+    "label": "DV100 ขาวเมล็ดเล็ก"
   },
   {
     "sampleNo": 101,
@@ -906,7 +906,7 @@
     "gsNumber": "7132",
     "thaiName": "เหลืองอ่อน",
     "englishName": "Leuang Awn",
-    "label": "DW101 (เหลืองอ่อน)"
+    "label": "DW101 เหลืองอ่อน"
   },
   {
     "sampleNo": 102,
@@ -915,7 +915,7 @@
     "gsNumber": "7136",
     "thaiName": "ขาวตามล",
     "englishName": "Khao Tah Mon",
-    "label": "DX102 (ขาวตามล)"
+    "label": "DX102 ขาวตามล"
   },
   {
     "sampleNo": 103,
@@ -924,7 +924,7 @@
     "gsNumber": "7140",
     "thaiName": "ปลุกเสก",
     "englishName": "Pluk Sek",
-    "label": "DY103 (ปลุกเสก)"
+    "label": "DY103 ปลุกเสก"
   },
   {
     "sampleNo": 104,
@@ -933,7 +933,7 @@
     "gsNumber": "7252",
     "thaiName": "ยายแกร่ง",
     "englishName": "Yai Graeng",
-    "label": "DZ104 (ยายแกร่ง)"
+    "label": "DZ104 ยายแกร่ง"
   },
   {
     "sampleNo": 105,
@@ -942,7 +942,7 @@
     "gsNumber": "8025",
     "thaiName": "เศรษฐีนอก",
     "englishName": "Setti Nawk",
-    "label": "EA105 (เศรษฐีนอก)"
+    "label": "EA105 เศรษฐีนอก"
   },
   {
     "sampleNo": 106,
@@ -951,7 +951,7 @@
     "gsNumber": "9369",
     "thaiName": "ขาวตามล",
     "englishName": "Khao Tah Mon",
-    "label": "EB106 (ขาวตามล)"
+    "label": "EB106 ขาวตามล"
   },
   {
     "sampleNo": 107,
@@ -960,7 +960,7 @@
     "gsNumber": "9582",
     "thaiName": "พญาชม",
     "englishName": "Payah Chom",
-    "label": "EC107 (พญาชม)"
+    "label": "EC107 พญาชม"
   },
   {
     "sampleNo": 108,
@@ -969,7 +969,7 @@
     "gsNumber": "10653",
     "thaiName": "เหลืองล้า",
     "englishName": "Leuang Lah",
-    "label": "ED108 (เหลืองล้า)"
+    "label": "ED108 เหลืองล้า"
   },
   {
     "sampleNo": 109,
@@ -978,7 +978,7 @@
     "gsNumber": "12271",
     "thaiName": "เหลืองอ่อน",
     "englishName": "Leuang Awn",
-    "label": "EE109 (เหลืองอ่อน)"
+    "label": "EE109 เหลืองอ่อน"
   },
   {
     "sampleNo": 110,
@@ -987,7 +987,7 @@
     "gsNumber": "12278",
     "thaiName": "ปิ่นทอง",
     "englishName": "Pin Tawng",
-    "label": "EF110 (ปิ่นทอง)"
+    "label": "EF110 ปิ่นทอง"
   },
   {
     "sampleNo": 111,
@@ -996,7 +996,7 @@
     "gsNumber": "12340",
     "thaiName": "เจ๊กเชย",
     "englishName": "Jek Chuey",
-    "label": "EG111 (เจ๊กเชย)"
+    "label": "EG111 เจ๊กเชย"
   },
   {
     "sampleNo": 112,
@@ -1005,7 +1005,7 @@
     "gsNumber": "12391",
     "thaiName": "ขาวตาเจือ",
     "englishName": "Khao Tah Jeua",
-    "label": "EH112 (ขาวตาเจือ)"
+    "label": "EH112 ขาวตาเจือ"
   },
   {
     "sampleNo": 113,
@@ -1014,7 +1014,7 @@
     "gsNumber": "12392",
     "thaiName": "เหลืองร้อยเอ็ด",
     "englishName": "Leuang Roi-et",
-    "label": "EI113 (เหลืองร้อยเอ็ด)"
+    "label": "EI113 เหลืองร้อยเอ็ด"
   },
   {
     "sampleNo": 114,
@@ -1023,7 +1023,7 @@
     "gsNumber": "12932",
     "thaiName": "ขาวชูชาติ",
     "englishName": "Khao Choo Chahd",
-    "label": "EJ114 (ขาวชูชาติ)"
+    "label": "EJ114 ขาวชูชาติ"
   },
   {
     "sampleNo": 115,
@@ -1032,7 +1032,7 @@
     "gsNumber": "12933",
     "thaiName": "ขวัญชัย",
     "englishName": "Khwan Chai",
-    "label": "EK115 (ขวัญชัย)"
+    "label": "EK115 ขวัญชัย"
   },
   {
     "sampleNo": 116,
@@ -1041,16 +1041,16 @@
     "gsNumber": "12937",
     "thaiName": "ขาวตาเจือ",
     "englishName": "Khao Tah Jeua",
-    "label": "EL116 (ขาวตาเจือ)"
+    "label": "EL116 ขาวตาเจือ"
   },
   {
     "sampleNo": 117,
     "nCode": "N117",
     "code": "EM117",
     "gsNumber": "12940",
-    "thaiName": "เหลืองร้อยเอ็ด (1)",
-    "englishName": "Leuang Roi-et (1)",
-    "label": "EM117 (เหลืองร้อยเอ็ด (1))"
+    "thaiName": "เหลืองร้อยเอ็ด",
+    "englishName": "Leuang Roi-et",
+    "label": "EM117 เหลืองร้อยเอ็ด"
   },
   {
     "sampleNo": 118,
@@ -1059,7 +1059,7 @@
     "gsNumber": "3554",
     "thaiName": "เหลืองอ่อนเบา",
     "englishName": "Leuang Awn Bow",
-    "label": "EN118 (เหลืองอ่อนเบา)"
+    "label": "EN118 เหลืองอ่อนเบา"
   },
   {
     "sampleNo": 119,
@@ -1068,7 +1068,7 @@
     "gsNumber": "3812",
     "thaiName": "หอมมะลิ",
     "englishName": "Hawm Mali",
-    "label": "EO119 (หอมมะลิ)"
+    "label": "EO119 หอมมะลิ"
   },
   {
     "sampleNo": 120,
@@ -1077,7 +1077,7 @@
     "gsNumber": "3820",
     "thaiName": "เมล็ดเล็กเบา",
     "englishName": "Maled Lek Bow",
-    "label": "EP120 (เมล็ดเล็กเบา)"
+    "label": "EP120 เมล็ดเล็กเบา"
   },
   {
     "sampleNo": 121,
@@ -1086,7 +1086,7 @@
     "gsNumber": "3875",
     "thaiName": "ขาวปากกระบอก",
     "englishName": "Khao Pahk Grabawk",
-    "label": "EQ121 (ขาวปากกระบอก)"
+    "label": "EQ121 ขาวปากกระบอก"
   },
   {
     "sampleNo": 122,
@@ -1095,7 +1095,7 @@
     "gsNumber": "6426",
     "thaiName": "หอมมะลิ",
     "englishName": "Hawm Mali",
-    "label": "ER122 (หอมมะลิ)"
+    "label": "ER122 หอมมะลิ"
   },
   {
     "sampleNo": 123,
@@ -1104,7 +1104,7 @@
     "gsNumber": "7145",
     "thaiName": "หอมมะลิ",
     "englishName": "Hawm Mali",
-    "label": "ES123 (หอมมะลิ)"
+    "label": "ES123 หอมมะลิ"
   },
   {
     "sampleNo": 124,
@@ -1113,7 +1113,7 @@
     "gsNumber": "12347",
     "thaiName": "ขาวเม็ดเล็ก",
     "englishName": "Khao Med Lek",
-    "label": "ET124 (ขาวเม็ดเล็ก)"
+    "label": "ET124 ขาวเม็ดเล็ก"
   },
   {
     "sampleNo": 125,
@@ -1122,7 +1122,7 @@
     "gsNumber": "12382",
     "thaiName": "ขาวกอเดียว",
     "englishName": "Khao Gaw Diaw",
-    "label": "EU125 (ขาวกอเดียว)"
+    "label": "EU125 ขาวกอเดียว"
   },
   {
     "sampleNo": 126,
@@ -1131,7 +1131,7 @@
     "gsNumber": "12399",
     "thaiName": "เหนียวบายสี",
     "englishName": "Niaw Bai Si",
-    "label": "EV126 (เหนียวบายสี)"
+    "label": "EV126 เหนียวบายสี"
   },
   {
     "sampleNo": 127,
@@ -1140,7 +1140,7 @@
     "gsNumber": "14230",
     "thaiName": "ขาวมะลิ",
     "englishName": "Khao Mali",
-    "label": "EW127 (ขาวมะลิ)"
+    "label": "EW127 ขาวมะลิ"
   },
   {
     "sampleNo": 128,
@@ -1149,7 +1149,7 @@
     "gsNumber": "18431",
     "thaiName": "ขาวดอกมะลิ 105",
     "englishName": "Khao Dawk Mali 105",
-    "label": "EX128 (ขาวดอกมะลิ 105)"
+    "label": "EX128 ขาวดอกมะลิ 105"
   },
   {
     "sampleNo": 129,
@@ -1158,7 +1158,7 @@
     "gsNumber": "20547",
     "thaiName": "ขาวมะลิ",
     "englishName": "Khao Mali",
-    "label": "EY129 (ขาวมะลิ)"
+    "label": "EY129 ขาวมะลิ"
   },
   {
     "sampleNo": 130,
@@ -1167,7 +1167,7 @@
     "gsNumber": "21094",
     "thaiName": "ขาวมะลิ",
     "englishName": "Khao Mali",
-    "label": "EZ130 (ขาวมะลิ)"
+    "label": "EZ130 ขาวมะลิ"
   },
   {
     "sampleNo": 131,
@@ -1176,7 +1176,7 @@
     "gsNumber": "255",
     "thaiName": "ขาวทดลอง",
     "englishName": "Khao Tod Lawng",
-    "label": "FA131 (ขาวทดลอง)"
+    "label": "FA131 ขาวทดลอง"
   },
   {
     "sampleNo": 132,
@@ -1185,7 +1185,7 @@
     "gsNumber": "536",
     "thaiName": "เก้ารวง",
     "englishName": "Gow Ruang 17-2-106",
-    "label": "FB132 (เก้ารวง)"
+    "label": "FB132 เก้ารวง"
   },
   {
     "sampleNo": 133,
@@ -1194,7 +1194,7 @@
     "gsNumber": "774",
     "thaiName": "ปิ่นแก้ว",
     "englishName": "Pin Gaew 13-24-13",
-    "label": "FC133 (ปิ่นแก้ว)"
+    "label": "FC133 ปิ่นแก้ว"
   },
   {
     "sampleNo": 134,
@@ -1203,16 +1203,16 @@
     "gsNumber": "851",
     "thaiName": "บางพระ",
     "englishName": "Bahng Pra",
-    "label": "FD134 (บางพระ)"
+    "label": "FD134 บางพระ"
   },
   {
     "sampleNo": 135,
     "nCode": "N135",
     "code": "FE135",
     "gsNumber": "1026",
-    "thaiName": "พวงนาค 16",
-    "englishName": "Puang Nahk 16",
-    "label": "FE135 (พวงนาค 16)"
+    "thaiName": "พวงนาค",
+    "englishName": "Puang Nahk",
+    "label": "FE135 พวงนาค"
   },
   {
     "sampleNo": 136,
@@ -1221,7 +1221,7 @@
     "gsNumber": "1094",
     "thaiName": "ขาวจำปี",
     "englishName": "Khao Jampi 54-8-60",
-    "label": "FF136 (ขาวจำปี)"
+    "label": "FF136 ขาวจำปี"
   },
   {
     "sampleNo": 137,
@@ -1230,25 +1230,25 @@
     "gsNumber": "1164",
     "thaiName": "น้ำดอกไม้",
     "englishName": "Nam Dawk Mai 595",
-    "label": "FG137 (น้ำดอกไม้)"
+    "label": "FG137 น้ำดอกไม้"
   },
   {
     "sampleNo": 138,
     "nCode": "N138",
     "code": "FH138",
     "gsNumber": "1198",
-    "thaiName": "ปิ่นแก้ว 56",
-    "englishName": "Pin Gaew 56",
-    "label": "FH138 (ปิ่นแก้ว 56)"
+    "thaiName": "ปิ่นแก้ว",
+    "englishName": "Pin Gaew",
+    "label": "FH138 ปิ่นแก้ว"
   },
   {
     "sampleNo": 139,
     "nCode": "N139",
     "code": "FI139",
     "gsNumber": "1210",
-    "thaiName": "นางมล S-4",
-    "englishName": "Nahng Mon S-4",
-    "label": "FI139 (นางมล S-4)"
+    "thaiName": "นางมล",
+    "englishName": "Nahng Mon",
+    "label": "FI139 นางมล"
   },
   {
     "sampleNo": 140,
@@ -1257,7 +1257,7 @@
     "gsNumber": "2023",
     "thaiName": "นางฉลอง",
     "englishName": "Nahng Chalawng",
-    "label": "FJ140 (นางฉลอง)"
+    "label": "FJ140 นางฉลอง"
   },
   {
     "sampleNo": 141,
@@ -1266,7 +1266,7 @@
     "gsNumber": "2044",
     "thaiName": "ช่อมะกอกกลาง",
     "englishName": "Chaw Ma Gawk Klahng",
-    "label": "FK141 (ช่อมะกอกกลาง)"
+    "label": "FK141 ช่อมะกอกกลาง"
   },
   {
     "sampleNo": 142,
@@ -1275,7 +1275,7 @@
     "gsNumber": "2731",
     "thaiName": "ขาวกอเดียว",
     "englishName": "Khao Gaw Diaw",
-    "label": "FL142 (ขาวกอเดียว)"
+    "label": "FL142 ขาวกอเดียว"
   },
   {
     "sampleNo": 143,
@@ -1284,7 +1284,7 @@
     "gsNumber": "3173",
     "thaiName": "มหาวงษ์",
     "englishName": "Ma Hah Wong",
-    "label": "FM143 (มหาวงษ์)"
+    "label": "FM143 มหาวงษ์"
   },
   {
     "sampleNo": 144,
@@ -1293,7 +1293,7 @@
     "gsNumber": "3504",
     "thaiName": "เหนียวเขี้ยวงู",
     "englishName": "Niaw Khiaw Ngoo",
-    "label": "FN144 (เหนียวเขี้ยวงู)"
+    "label": "FN144 เหนียวเขี้ยวงู"
   },
   {
     "sampleNo": 145,
@@ -1302,7 +1302,7 @@
     "gsNumber": "4659",
     "thaiName": "เล็บนก",
     "englishName": "Leb Nok",
-    "label": "FO145 (เล็บนก)"
+    "label": "FO145 เล็บนก"
   },
   {
     "sampleNo": 146,
@@ -1311,7 +1311,7 @@
     "gsNumber": "5369",
     "thaiName": "พวงเงิน",
     "englishName": "Puang Ngern",
-    "label": "FP146 (พวงเงิน)"
+    "label": "FP146 พวงเงิน"
   },
   {
     "sampleNo": 147,
@@ -1320,16 +1320,16 @@
     "gsNumber": "6015",
     "thaiName": "ลายแม่โจ้",
     "englishName": "Lai Maejo",
-    "label": "FQ147 (ลายแม่โจ้)"
+    "label": "FQ147 ลายแม่โจ้"
   },
   {
     "sampleNo": 148,
     "nCode": "N148",
     "code": "FR148",
     "gsNumber": "6146",
-    "thaiName": "ขาวตาแห้ง 17",
-    "englishName": "Khao Tah Haeng 17",
-    "label": "FR148 (ขาวตาแห้ง 17)"
+    "thaiName": "ขาวตาแห้ง",
+    "englishName": "Khao Tah Haeng",
+    "label": "FR148 ขาวตาแห้ง"
   },
   {
     "sampleNo": 149,
@@ -1338,7 +1338,7 @@
     "gsNumber": "9264",
     "thaiName": "เจ็ดรวง",
     "englishName": "Jed Ruang",
-    "label": "FS149 (เจ็ดรวง)"
+    "label": "FS149 เจ็ดรวง"
   },
   {
     "sampleNo": 150,
@@ -1347,7 +1347,7 @@
     "gsNumber": "10049",
     "thaiName": "เอวมดแดง",
     "englishName": "Aew Mod Daeng",
-    "label": "FT150 (เอวมดแดง)"
+    "label": "FT150 เอวมดแดง"
   },
   {
     "sampleNo": 151,
@@ -1356,7 +1356,7 @@
     "gsNumber": "10720",
     "thaiName": "ประดู่แดง",
     "englishName": "Pradoo Daeng",
-    "label": "FU151 (ประดู่แดง)"
+    "label": "FU151 ประดู่แดง"
   },
   {
     "sampleNo": 152,
@@ -1365,7 +1365,7 @@
     "gsNumber": "18998",
     "thaiName": "สันป่าตองหลวง",
     "englishName": "San-Pah-Tawng Luang",
-    "label": "FV152 (สันป่าตองหลวง)"
+    "label": "FV152 สันป่าตองหลวง"
   },
   {
     "sampleNo": 153,
@@ -1374,7 +1374,7 @@
     "gsNumber": "19742",
     "thaiName": "เลย",
     "englishName": "Loei",
-    "label": "FW153 (เลย)"
+    "label": "FW153 เลย"
   },
   {
     "sampleNo": 154,
@@ -1383,7 +1383,7 @@
     "gsNumber": "19772",
     "thaiName": "ข้าวกล่ำ",
     "englishName": "Khao' Glam",
-    "label": "FX154 (ข้าวกล่ำ)"
+    "label": "FX154 ข้าวกล่ำ"
   },
   {
     "sampleNo": 155,
@@ -1392,7 +1392,7 @@
     "gsNumber": "21268",
     "thaiName": "เจ๊กเชย",
     "englishName": "Jek Chuey",
-    "label": "FY155 (เจ๊กเชย)"
+    "label": "FY155 เจ๊กเชย"
   },
   {
     "sampleNo": 156,
@@ -1401,7 +1401,7 @@
     "gsNumber": "24545",
     "thaiName": "อัลฮำ",
     "englishName": "Alham",
-    "label": "FZ156 (อัลฮำ)"
+    "label": "FZ156 อัลฮำ"
   },
   {
     "sampleNo": 157,
@@ -1410,7 +1410,7 @@
     "gsNumber": "24554",
     "thaiName": "งวงช้าง",
     "englishName": "Nguang Chahng",
-    "label": "GA157 (งวงช้าง)"
+    "label": "GA157 งวงช้าง"
   },
   {
     "sampleNo": 158,
@@ -1419,7 +1419,7 @@
     "gsNumber": "24556",
     "thaiName": "มะลิแดง",
     "englishName": "Mai Daeng",
-    "label": "GB158 (มะลิแดง)"
+    "label": "GB158 มะลิแดง"
   },
   {
     "sampleNo": 159,
@@ -1428,7 +1428,7 @@
     "gsNumber": "24558",
     "thaiName": "มะลิดำ",
     "englishName": "Mali Dam",
-    "label": "GC159 (มะลิดำ)"
+    "label": "GC159 มะลิดำ"
   },
   {
     "sampleNo": 160,
@@ -1437,7 +1437,7 @@
     "gsNumber": "24561",
     "thaiName": "มะลิ",
     "englishName": "Mali",
-    "label": "GD160 (มะลิ)"
+    "label": "GD160 มะลิ"
   },
   {
     "sampleNo": 161,
@@ -1446,7 +1446,7 @@
     "gsNumber": "24811",
     "thaiName": "อีเขียวนอนทุ่ง",
     "englishName": "E-Khiaw Nawn Tung",
-    "label": "GE161 (อีเขียวนอนทุ่ง)"
+    "label": "GE161 อีเขียวนอนทุ่ง"
   },
   {
     "sampleNo": 162,
@@ -1455,7 +1455,7 @@
     "gsNumber": "24823",
     "thaiName": "ข้าวเหนียวดำหมอ",
     "englishName": "Khao' Niaw Dam Maw",
-    "label": "GF162 (ข้าวเหนียวดำหมอ)"
+    "label": "GF162 ข้าวเหนียวดำหมอ"
   },
   {
     "sampleNo": 163,
@@ -1464,7 +1464,7 @@
     "gsNumber": "24824",
     "thaiName": "ข้าวเหนียวดำช่อไม้ไผ่",
     "englishName": "Khao' Niaw Dam Chaw Mai Pai",
-    "label": "GG163 (ข้าวเหนียวดำช่อไม้ไผ่)"
+    "label": "GG163 ข้าวเหนียวดำช่อไม้ไผ่"
   },
   {
     "sampleNo": 164,
@@ -1473,16 +1473,16 @@
     "gsNumber": "24825",
     "thaiName": "ข้าวเหนียวแดงกรามแรด",
     "englishName": "Khao' Niaw Daeng Grahm Raed",
-    "label": "GH164 (ข้าวเหนียวแดงกรามแรด)"
+    "label": "GH164 ข้าวเหนียวแดงกรามแรด"
   },
   {
     "sampleNo": 165,
     "nCode": "N165",
     "code": "GI165",
     "gsNumber": "24827",
-    "thaiName": "ข้าวเหนียวดำ 4",
-    "englishName": "Khao' Niaw Dam 4",
-    "label": "GI165 (ข้าวเหนียวดำ 4)"
+    "thaiName": "ข้าวเหนียวดำ",
+    "englishName": "Khao' Niaw Dam",
+    "label": "GI165 ข้าวเหนียวดำ"
   },
   {
     "sampleNo": 166,
@@ -1491,7 +1491,7 @@
     "gsNumber": "24832",
     "thaiName": "หอมนางนวล",
     "englishName": "Hawm Nahng Nuan",
-    "label": "GJ166 (หอมนางนวล)"
+    "label": "GJ166 หอมนางนวล"
   },
   {
     "sampleNo": 167,
@@ -1500,7 +1500,7 @@
     "gsNumber": "24833",
     "thaiName": "ก่ำนายพร้อม",
     "englishName": "Gam Nai Prom",
-    "label": "GK167 (ก่ำนายพร้อม)"
+    "label": "GK167 ก่ำนายพร้อม"
   },
   {
     "sampleNo": 168,
@@ -1509,7 +1509,7 @@
     "gsNumber": "24834",
     "thaiName": "ก่ำเมืองน่าน",
     "englishName": "Meuang Nan",
-    "label": "GL168 (ก่ำเมืองน่าน)"
+    "label": "GL168 ก่ำเมืองน่าน"
   },
   {
     "sampleNo": 169,
@@ -1518,7 +1518,7 @@
     "gsNumber": "24835",
     "thaiName": "ก่ำเชียงใหม่ ต้นเขียว",
     "englishName": "Gam Chiang Mai Ton Khiaw",
-    "label": "GM169 (ก่ำเชียงใหม่ ต้นเขียว)"
+    "label": "GM169 ก่ำเชียงใหม่ ต้นเขียว"
   },
   {
     "sampleNo": 170,
@@ -1527,7 +1527,7 @@
     "gsNumber": "24840",
     "thaiName": "เหนียวดำหอมภูเขียว",
     "englishName": "Niaw Dam Hawm Poo Khiaw",
-    "label": "GN170 (เหนียวดำหอมภูเขียว)"
+    "label": "GN170 เหนียวดำหอมภูเขียว"
   },
   {
     "sampleNo": 171,
@@ -1536,7 +1536,7 @@
     "gsNumber": "24565",
     "thaiName": "แดงหอมกุหลาบ",
     "englishName": "Daeng Hawm Gulahb",
-    "label": "GO171 (แดงหอมกุหลาบ)"
+    "label": "GO171 แดงหอมกุหลาบ"
   },
   {
     "sampleNo": 172,
@@ -1545,7 +1545,7 @@
     "gsNumber": "24596",
     "thaiName": "บางแตน",
     "englishName": "Bahng Taen",
-    "label": "GP172 (บางแตน)"
+    "label": "GP172 บางแตน"
   },
   {
     "sampleNo": 173,
@@ -1554,7 +1554,7 @@
     "gsNumber": "24633",
     "thaiName": "ดอแดง",
     "englishName": "Daw Daeng",
-    "label": "GQ173 (ดอแดง)"
+    "label": "GQ173 ดอแดง"
   },
   {
     "sampleNo": 174,
@@ -1563,7 +1563,7 @@
     "gsNumber": "24642",
     "thaiName": "พระอินทร์",
     "englishName": "Pra In",
-    "label": "GR174 (พระอินทร์)"
+    "label": "GR174 พระอินทร์"
   },
   {
     "sampleNo": 175,
@@ -1572,7 +1572,7 @@
     "gsNumber": "24644",
     "thaiName": "เกษตรดอ",
     "englishName": "Kaset Daw",
-    "label": "GS175 (เกษตรดอ)"
+    "label": "GS175 เกษตรดอ"
   },
   {
     "sampleNo": 176,
@@ -1581,7 +1581,7 @@
     "gsNumber": "24645",
     "thaiName": "นางเกิด",
     "englishName": "Nahng Gerd",
-    "label": "GT176 (นางเกิด)"
+    "label": "GT176 นางเกิด"
   },
   {
     "sampleNo": 177,
@@ -1590,7 +1590,7 @@
     "gsNumber": "24646",
     "thaiName": "ดอยวน",
     "englishName": "Daw Yuan",
-    "label": "GU177 (ดอยวน)"
+    "label": "GU177 ดอยวน"
   },
   {
     "sampleNo": 178,
@@ -1599,7 +1599,7 @@
     "gsNumber": "24647",
     "thaiName": "คำผาย",
     "englishName": "Kam Pai",
-    "label": "GV178 (คำผาย)"
+    "label": "GV178 คำผาย"
   },
   {
     "sampleNo": 179,
@@ -1608,7 +1608,7 @@
     "gsNumber": "24648",
     "thaiName": "ล้นเล้า",
     "englishName": "Lon Lao",
-    "label": "GW179 (ล้นเล้า)"
+    "label": "GW179 ล้นเล้า"
   },
   {
     "sampleNo": 180,
@@ -1617,7 +1617,7 @@
     "gsNumber": "24649",
     "thaiName": "เกล็ดเต่า",
     "englishName": "Gled Tow",
-    "label": "GX180 (เกล็ดเต่า)"
+    "label": "GX180 เกล็ดเต่า"
   },
   {
     "sampleNo": 181,
@@ -1626,7 +1626,7 @@
     "gsNumber": "24652",
     "thaiName": "ขี้ตมหลวง",
     "englishName": "Khitom Luang",
-    "label": "GY181 (ขี้ตมหลวง)"
+    "label": "GY181 ขี้ตมหลวง"
   },
   {
     "sampleNo": 182,
@@ -1635,7 +1635,7 @@
     "gsNumber": "24653",
     "thaiName": "ปลาเข็ง",
     "englishName": "Plah Kheng",
-    "label": "GZ182 (ปลาเข็ง)"
+    "label": "GZ182 ปลาเข็ง"
   },
   {
     "sampleNo": 183,
@@ -1644,7 +1644,7 @@
     "gsNumber": "24657",
     "thaiName": "ลอดเกวียน",
     "englishName": "Lawd Gwian",
-    "label": "HA183 (ลอดเกวียน)"
+    "label": "HA183 ลอดเกวียน"
   },
   {
     "sampleNo": 184,
@@ -1653,7 +1653,7 @@
     "gsNumber": "24658",
     "thaiName": "อีมืด",
     "englishName": "E-Meud",
-    "label": "HB184 (อีมืด)"
+    "label": "HB184 อีมืด"
   },
   {
     "sampleNo": 185,
@@ -1662,7 +1662,7 @@
     "gsNumber": "24659",
     "thaiName": "บัวหลวง",
     "englishName": "Bua Luang",
-    "label": "HC185 (บัวหลวง)"
+    "label": "HC185 บัวหลวง"
   },
   {
     "sampleNo": 186,
@@ -1671,7 +1671,7 @@
     "gsNumber": "24660",
     "thaiName": "อิฐขาว",
     "englishName": "It Khao",
-    "label": "HD186 (อิฐขาว)"
+    "label": "HD186 อิฐขาว"
   },
   {
     "sampleNo": 187,
@@ -1680,7 +1680,7 @@
     "gsNumber": "24662",
     "thaiName": "ข้าวพัน",
     "englishName": "Khao' Pan",
-    "label": "HE187 (ข้าวพัน)"
+    "label": "HE187 ข้าวพัน"
   },
   {
     "sampleNo": 188,
@@ -1689,7 +1689,7 @@
     "gsNumber": "24664",
     "thaiName": "มะไฟดำ",
     "englishName": "Ma Fai Dam",
-    "label": "HF188 (มะไฟดำ)"
+    "label": "HF188 มะไฟดำ"
   },
   {
     "sampleNo": 189,
@@ -1698,7 +1698,7 @@
     "gsNumber": "24709",
     "thaiName": "ปะกาอัมปึล",
     "englishName": "Pa-gah Am-puen",
-    "label": "HG189 (ปะกาอัมปึล)"
+    "label": "HG189 ปะกาอัมปึล"
   },
   {
     "sampleNo": 190,
@@ -1707,7 +1707,7 @@
     "gsNumber": "24711",
     "thaiName": "มะลิแดงเบา",
     "englishName": "Mali Daeng Bow",
-    "label": "HH190 (มะลิแดงเบา)"
+    "label": "HH190 มะลิแดงเบา"
   },
   {
     "sampleNo": 191,
@@ -1716,7 +1716,7 @@
     "gsNumber": "24713",
     "thaiName": "มะลิแดงสั้นหนัก",
     "englishName": "Mali Daeng San Nak",
-    "label": "HI191 (มะลิแดงสั้นหนัก)"
+    "label": "HI191 มะลิแดงสั้นหนัก"
   },
   {
     "sampleNo": 192,
@@ -1725,7 +1725,7 @@
     "gsNumber": "24718",
     "thaiName": "มะลิแดงยาว (หนัก)",
     "englishName": "Mali Daeng Yao Nak",
-    "label": "HJ192 (มะลิแดงยาว (หนัก))"
+    "label": "HJ192 มะลิแดงยาว (หนัก)"
   },
   {
     "sampleNo": 193,
@@ -1734,7 +1734,7 @@
     "gsNumber": "24729",
     "thaiName": "นางดำ",
     "englishName": "Nahng Dam",
-    "label": "HK193 (นางดำ)"
+    "label": "HK193 นางดำ"
   },
   {
     "sampleNo": 194,
@@ -1743,7 +1743,7 @@
     "gsNumber": "24750",
     "thaiName": "สามสี",
     "englishName": "Sahm Si",
-    "label": "HL194 (สามสี)"
+    "label": "HL194 สามสี"
   },
   {
     "sampleNo": 195,
@@ -1752,7 +1752,7 @@
     "gsNumber": "24762",
     "thaiName": "หอมมะลิแดง",
     "englishName": "Hawm Mali Daeng",
-    "label": "HM195 (หอมมะลิแดง)"
+    "label": "HM195 หอมมะลิแดง"
   },
   {
     "sampleNo": 196,
@@ -1761,7 +1761,7 @@
     "gsNumber": "24772",
     "thaiName": "ข้าวก่ำ",
     "englishName": "Khao' Gam",
-    "label": "HN196 (ข้าวก่ำ)"
+    "label": "HN196 ข้าวก่ำ"
   },
   {
     "sampleNo": 197,
@@ -1770,7 +1770,7 @@
     "gsNumber": "24783",
     "thaiName": "เหลืองบ้านสร้าง",
     "englishName": "Leuang Bahn Sang",
-    "label": "HO197 (เหลืองบ้านสร้าง)"
+    "label": "HO197 เหลืองบ้านสร้าง"
   },
   {
     "sampleNo": 198,
@@ -1779,7 +1779,7 @@
     "gsNumber": "24788",
     "thaiName": "ดอกไม้จัน",
     "englishName": "Dawk Mai Jan",
-    "label": "HP198 (ดอกไม้จัน)"
+    "label": "HP198 ดอกไม้จัน"
   },
   {
     "sampleNo": 199,
@@ -1788,7 +1788,7 @@
     "gsNumber": "24789",
     "thaiName": "เหลืองอ่อน",
     "englishName": "Leuang Awn",
-    "label": "HQ199 (เหลืองอ่อน)"
+    "label": "HQ199 เหลืองอ่อน"
   },
   {
     "sampleNo": 200,
@@ -1797,7 +1797,7 @@
     "gsNumber": "24799",
     "thaiName": "ขาวนางมล",
     "englishName": "Khao Nahng Mon",
-    "label": "HR200 (ขาวนางมล)"
+    "label": "HR200 ขาวนางมล"
   },
   {
     "sampleNo": 201,
@@ -1806,7 +1806,7 @@
     "gsNumber": "?",
     "thaiName": "PTT1",
     "englishName": "Pathumthani 1",
-    "label": "HS201 (PTT1)"
+    "label": "HS201 PTT1"
   },
   {
     "sampleNo": 202,
@@ -1815,7 +1815,7 @@
     "gsNumber": "?",
     "thaiName": "เหนียวซิวแดง",
     "englishName": "Niaw Sew Daeng",
-    "label": "HT202 (เหนียวซิวแดง)"
+    "label": "HT202 เหนียวซิวแดง"
   },
   {
     "sampleNo": 203,
@@ -1824,7 +1824,7 @@
     "gsNumber": "?",
     "thaiName": "หอมกระดังงา",
     "englishName": "Hawm Gra-dang-ngah",
-    "label": "HU203 (หอมกระดังงา)"
+    "label": "HU203 หอมกระดังงา"
   },
   {
     "sampleNo": 204,
@@ -1833,7 +1833,7 @@
     "gsNumber": "?",
     "thaiName": "ก่ำนางพญา",
     "englishName": "Gam Nahng Pa-yah",
-    "label": "HV204 (ก่ำนางพญา)"
+    "label": "HV204 ก่ำนางพญา"
   },
   {
     "sampleNo": 205,
@@ -1842,7 +1842,7 @@
     "gsNumber": "?",
     "thaiName": "Rathu",
     "englishName": "Rathu Heenati",
-    "label": "HW205 (Rathu)"
+    "label": "HW205 Rathu"
   },
   {
     "sampleNo": 206,
@@ -1851,7 +1851,7 @@
     "gsNumber": "?",
     "thaiName": "หอมกุหลาบแดง",
     "englishName": "Hawm Gulahb Daeng",
-    "label": "HX206 (หอมกุหลาบแดง)"
+    "label": "HX206 หอมกุหลาบแดง"
   },
   {
     "sampleNo": 207,
@@ -1860,7 +1860,7 @@
     "gsNumber": "?",
     "thaiName": "หอมแดง (ไม่ไวต่อช่วงแสง)",
     "englishName": "Hawm Daeng (Photoperiod insensitive)",
-    "label": "HY207 (หอมแดง (ไม่ไวต่อช่วงแสง))"
+    "label": "HY207 หอมแดง (ไม่ไวต่อช่วงแสง)"
   },
   {
     "sampleNo": 208,
@@ -1869,7 +1869,7 @@
     "gsNumber": "?",
     "thaiName": "สังข์หยด",
     "englishName": "Sang Yod",
-    "label": "HZ208 (สังข์หยด)"
+    "label": "HZ208 สังข์หยด"
   },
   {
     "sampleNo": 209,
@@ -1878,7 +1878,7 @@
     "gsNumber": "?",
     "thaiName": "หอมมะลิแดง",
     "englishName": "Hawm Mali Daeng",
-    "label": "IA209 (หอมมะลิแดง)"
+    "label": "IA209 หอมมะลิแดง"
   },
   {
     "sampleNo": 210,
@@ -1887,7 +1887,7 @@
     "gsNumber": "?",
     "thaiName": "นกคุ้ม",
     "englishName": "Nok Kum",
-    "label": "IB210 (นกคุ้ม)"
+    "label": "IB210 นกคุ้ม"
   },
   {
     "sampleNo": 211,
@@ -1896,7 +1896,7 @@
     "gsNumber": "?",
     "thaiName": "แม่พญาทองดำ",
     "englishName": "Mae Pa-yah Tawng Dam",
-    "label": "IC211 (แม่พญาทองดำ)"
+    "label": "IC211 แม่พญาทองดำ"
   },
   {
     "sampleNo": 212,
@@ -1905,7 +1905,7 @@
     "gsNumber": "?",
     "thaiName": "หอมนิล",
     "englishName": "Hawm Nin",
-    "label": "ID212 (หอมนิล)"
+    "label": "ID212 หอมนิล"
   },
   {
     "sampleNo": 213,
@@ -1914,7 +1914,7 @@
     "gsNumber": "?",
     "thaiName": "ก่ำน้อย",
     "englishName": "Gam Noi",
-    "label": "IE213 (ก่ำน้อย)"
+    "label": "IE213 ก่ำน้อย"
   },
   {
     "sampleNo": 214,
@@ -1923,7 +1923,7 @@
     "gsNumber": "?",
     "thaiName": "มะลิดำ",
     "englishName": "Mali Dam",
-    "label": "IF214 (มะลิดำ)"
+    "label": "IF214 มะลิดำ"
   },
   {
     "sampleNo": 215,
@@ -1932,7 +1932,7 @@
     "gsNumber": "?",
     "thaiName": "ไรซ์เบอรี่",
     "englishName": "Riceberry",
-    "label": "IG215 (ไรซ์เบอรี่)"
+    "label": "IG215 ไรซ์เบอรี่"
   },
   {
     "sampleNo": 216,
@@ -1941,7 +1941,7 @@
     "gsNumber": "?",
     "thaiName": "ดำด่าง",
     "englishName": "Dam Dahng",
-    "label": "IH216 (ดำด่าง)"
+    "label": "IH216 ดำด่าง"
   },
   {
     "sampleNo": 217,
@@ -1950,7 +1950,7 @@
     "gsNumber": "3321",
     "thaiName": "ก่ำเลี้ยว",
     "englishName": "Gam Liaw",
-    "label": "II217 (ก่ำเลี้ยว)"
+    "label": "II217 ก่ำเลี้ยว"
   },
   {
     "sampleNo": 218,
@@ -1959,7 +1959,7 @@
     "gsNumber": "4490",
     "thaiName": "ก่ำเฟือง",
     "englishName": "Gam Feuang",
-    "label": "IJ218 (ก่ำเฟือง)"
+    "label": "IJ218 ก่ำเฟือง"
   },
   {
     "sampleNo": 219,
@@ -1968,7 +1968,7 @@
     "gsNumber": "7025",
     "thaiName": "ลายหมาก",
     "englishName": "Lai Mahk",
-    "label": "IK219 (ลายหมาก)"
+    "label": "IK219 ลายหมาก"
   },
   {
     "sampleNo": 220,
@@ -1977,7 +1977,7 @@
     "gsNumber": "6230",
     "thaiName": "ลอยห้ารวง",
     "englishName": "Loi Hah Ruang",
-    "label": "IL220 (ลอยห้ารวง)"
+    "label": "IL220 ลอยห้ารวง"
   },
   {
     "sampleNo": 221,
@@ -1986,7 +1986,7 @@
     "gsNumber": "9742",
     "thaiName": "ช่อปลีขาว",
     "englishName": "Chaw Pli Khao",
-    "label": "IM221 (ช่อปลีขาว)"
+    "label": "IM221 ช่อปลีขาว"
   },
   {
     "sampleNo": 222,
@@ -1995,7 +1995,7 @@
     "gsNumber": "21240",
     "thaiName": "เหนียวดำหลาย",
     "englishName": "Niaw Dam Rai",
-    "label": "IN222 (เหนียวดำหลาย)"
+    "label": "IN222 เหนียวดำหลาย"
   },
   {
     "sampleNo": 223,
@@ -2004,7 +2004,7 @@
     "gsNumber": "23113",
     "thaiName": "ข้าวก่ำ",
     "englishName": "Khao' Gam",
-    "label": "IO223 (ข้าวก่ำ)"
+    "label": "IO223 ข้าวก่ำ"
   },
   {
     "sampleNo": 224,
@@ -2013,7 +2013,7 @@
     "gsNumber": "?",
     "thaiName": "ทับทิมชุมแพ (กข 69)",
     "englishName": "Tab Tim Chumpae (RD69)",
-    "label": "IP224 (ทับทิมชุมแพ (กข 69))"
+    "label": "IP224 ทับทิมชุมแพ (กข 69)"
   },
   {
     "sampleNo": 225,
@@ -2022,7 +2022,7 @@
     "gsNumber": "?",
     "thaiName": "ข้าวหอมใต้หวัน",
     "englishName": "Khao' Hawm Tai Wan",
-    "label": "IQ225 (ข้าวหอมใต้หวัน)"
+    "label": "IQ225 ข้าวหอมใต้หวัน"
   },
   {
     "sampleNo": 226,
@@ -2031,7 +2031,7 @@
     "gsNumber": "?",
     "thaiName": "กข41",
     "englishName": "RR41",
-    "label": "IR226 (กข41)"
+    "label": "IR226 กข41"
   },
   {
     "sampleNo": 227,
@@ -2040,7 +2040,7 @@
     "gsNumber": "?",
     "thaiName": "แสงลีซอ",
     "englishName": "Saeng Lisaw",
-    "label": "IS227 (แสงลีซอ)"
+    "label": "IS227 แสงลีซอ"
   },
   {
     "sampleNo": 228,
@@ -2049,7 +2049,7 @@
     "gsNumber": "?",
     "thaiName": "เบล้ละ",
     "englishName": "Ble La",
-    "label": "IT228 (เบล้ละ)"
+    "label": "IT228 เบล้ละ"
   },
   {
     "sampleNo": 229,
@@ -2058,7 +2058,7 @@
     "gsNumber": "?",
     "thaiName": "หอมสุพรรณ",
     "englishName": "Hawm Supan",
-    "label": "IU229 (หอมสุพรรณ)"
+    "label": "IU229 หอมสุพรรณ"
   },
   {
     "sampleNo": 230,
@@ -2067,7 +2067,7 @@
     "gsNumber": "?",
     "thaiName": "กข43",
     "englishName": "RD43",
-    "label": "IV230 (กข43)"
+    "label": "IV230 กข43"
   },
   {
     "sampleNo": 231,
@@ -2076,7 +2076,7 @@
     "gsNumber": "?",
     "thaiName": "CH1",
     "englishName": "?",
-    "label": "IW231 (CH1)"
+    "label": "IW231 CH1"
   },
   {
     "sampleNo": 232,
@@ -2085,7 +2085,7 @@
     "gsNumber": "?",
     "thaiName": "CH4",
     "englishName": "?",
-    "label": "IX232 (CH4)"
+    "label": "IX232 CH4"
   },
   {
     "sampleNo": 233,
@@ -2094,6 +2094,6 @@
     "gsNumber": "?",
     "thaiName": "CNT1",
     "englishName": "Chai Nat 1",
-    "label": "IY233 (CNT1)"
+    "label": "IY233 CNT1"
   }
 ]

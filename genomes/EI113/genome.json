@@ -1,6 +1,6 @@
 {
   "id": "ei113",
-  "label": "EI113 (เหลืองร้อยเอ็ด)",
+  "label": "EI113 เหลืองร้อยเอ็ด",
   "fasta": "EI113.fa.gz",
   "gff3": "EI113.sorted.gff3.gz"
 }

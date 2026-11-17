@@ -1,6 +1,6 @@
 {
   "id": "cu073",
-  "label": "CU073 (ขาวสุพรรณ)",
+  "label": "CU073 ขาวสุพรรณ",
   "fasta": "CU073.fa.gz",
   "gff3": "CU073.sorted.gff3.gz"
 }

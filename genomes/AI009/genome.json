@@ -1,6 +1,6 @@
 {
   "id": "ai009",
-  "label": "AI009 (BKN55-11-108)",
+  "label": "AI009 BKN55-11-108",
   "fasta": "AI009.fa.gz",
   "gff3": "AI009.sorted.gff3.gz"
 }

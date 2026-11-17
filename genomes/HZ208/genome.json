@@ -1,6 +1,6 @@
 {
   "id": "hz208",
-  "label": "HZ208 (สังข์หยด)",
+  "label": "HZ208 สังข์หยด",
   "fasta": "HZ208.fa.gz",
   "gff3": "HZ208.sorted.gff3.gz"
 }

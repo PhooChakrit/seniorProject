@@ -1,6 +1,6 @@
 {
   "id": "ir226",
-  "label": "IR226 (กข41)",
+  "label": "IR226 กข41",
   "fasta": "IR226.fa.gz",
   "gff3": "IR226.sorted.gff3.gz"
 }

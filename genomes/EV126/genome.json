@@ -1,6 +1,6 @@
 {
   "id": "ev126",
-  "label": "EV126 (เหนียวบายสี)",
+  "label": "EV126 เหนียวบายสี",
   "fasta": "EV126.fa.gz",
   "gff3": "EV126.sorted.gff3.gz"
 }

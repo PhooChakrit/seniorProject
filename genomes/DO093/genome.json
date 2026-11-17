@@ -1,6 +1,6 @@
 {
   "id": "do093",
-  "label": "DO093 (เจ็ดรวง)",
+  "label": "DO093 เจ็ดรวง",
   "fasta": "DO093.fa.gz",
   "gff3": "DO093.sorted.gff3.gz"
 }

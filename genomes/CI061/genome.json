@@ -1,6 +1,6 @@
 {
   "id": "ci061",
-  "label": "CI061 (ขั้วเหนียว)",
+  "label": "CI061 ขั้วเหนียว",
   "fasta": "CI061.fa.gz",
   "gff3": "CI061.sorted.gff3.gz"
 }

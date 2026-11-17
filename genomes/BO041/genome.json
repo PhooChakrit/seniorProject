@@ -1,6 +1,6 @@
 {
   "id": "bo041",
-  "label": "BO041 (เจ๊กเชย)",
+  "label": "BO041 เจ๊กเชย",
   "fasta": "BO041.fa.gz",
   "gff3": "BO041.sorted.gff3.gz"
 }

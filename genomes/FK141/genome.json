@@ -1,6 +1,6 @@
 {
   "id": "fk141",
-  "label": "FK141 (ช่อมะกอกกลาง)",
+  "label": "FK141 ช่อมะกอกกลาง",
   "fasta": "FK141.fa.gz",
   "gff3": "FK141.sorted.gff3.gz"
 }

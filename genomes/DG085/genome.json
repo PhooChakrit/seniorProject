@@ -1,6 +1,6 @@
 {
   "id": "dg085",
-  "label": "DG085 (เหลืองหนองคาย)",
+  "label": "DG085 เหลืองหนองคาย",
   "fasta": "DG085.fa.gz",
   "gff3": "DG085.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "bu047",
-  "label": "BU047 (ปิ่นแก้ว)",
+  "label": "BU047 ปิ่นแก้ว",
   "fasta": "BU047.fa.gz",
   "gff3": "BU047.sorted.gff3.gz"
 }

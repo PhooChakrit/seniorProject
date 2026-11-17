@@ -1,6 +1,6 @@
 {
   "id": "dw101",
-  "label": "DW101 (เหลืองอ่อน)",
+  "label": "DW101 เหลืองอ่อน",
   "fasta": "DW101.fa.gz",
   "gff3": "DW101.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "as019",
-  "label": "AS019 (จำปาซ้อน)",
+  "label": "AS019 จำปาซ้อน",
   "fasta": "AS019.fa.gz",
   "gff3": "AS019.sorted.gff3.gz"
 }

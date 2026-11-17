@@ -1,6 +1,6 @@
 {
   "id": "eq121",
-  "label": "EQ121 (ขาวปากกระบอก)",
+  "label": "EQ121 ขาวปากกระบอก",
   "fasta": "EQ121.fa.gz",
   "gff3": "EQ121.sorted.gff3.gz"
 }

@@ -1,6 +1,6 @@
 {
   "id": "il220",
-  "label": "IL220 (ลอยห้ารวง)",
+  "label": "IL220 ลอยห้ารวง",
   "fasta": "IL220.fa.gz",
   "gff3": "IL220.sorted.gff3.gz"
 }

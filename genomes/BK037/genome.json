@@ -1,6 +1,6 @@
 {
   "id": "bk037",
-  "label": "BK037 (เหลืองหวล)",
+  "label": "BK037 เหลืองหวล",
   "fasta": "BK037.fa.gz",
   "gff3": "BK037.sorted.gff3.gz"
 }

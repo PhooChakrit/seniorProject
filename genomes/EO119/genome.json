@@ -1,6 +1,6 @@
 {
   "id": "eo119",
-  "label": "EO119 (หอมมะลิ)",
+  "label": "EO119 หอมมะลิ",
   "fasta": "EO119.fa.gz",
   "gff3": "EO119.sorted.gff3.gz"
 }

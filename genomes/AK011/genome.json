@@ -1,6 +1,6 @@
 {
   "id": "ak011",
-  "label": "AK011 (ขาวงาช้าง 107-16-111)",
+  "label": "AK011 ขาวงาช้าง",
   "fasta": "AK011.fa.gz",
   "gff3": "AK011.sorted.gff3.gz"
 }

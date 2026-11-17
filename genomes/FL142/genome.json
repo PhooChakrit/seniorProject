@@ -1,6 +1,6 @@
 {
   "id": "fl142",
-  "label": "FL142 (ขาวกอเดียว)",
+  "label": "FL142 ขาวกอเดียว",
   "fasta": "FL142.fa.gz",
   "gff3": "FL142.sorted.gff3.gz"
 }

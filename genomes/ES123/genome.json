@@ -1,6 +1,6 @@
 {
   "id": "es123",
-  "label": "ES123 (หอมมะลิ)",
+  "label": "ES123 หอมมะลิ",
   "fasta": "ES123.fa.gz",
   "gff3": "ES123.sorted.gff3.gz"
 }

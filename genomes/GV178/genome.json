@@ -1,6 +1,6 @@
 {
   "id": "gv178",
-  "label": "GV178 (คำผาย)",
+  "label": "GV178 คำผาย",
   "fasta": "GV178.fa.gz",
   "gff3": "GV178.sorted.gff3.gz"
 }

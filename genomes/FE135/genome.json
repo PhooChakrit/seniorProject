@@ -1,6 +1,6 @@
 {
   "id": "fe135",
-  "label": "FE135 (พวงนาค 16)",
+  "label": "FE135 พวงนาค",
   "fasta": "FE135.fa.gz",
   "gff3": "FE135.sorted.gff3.gz"
 }

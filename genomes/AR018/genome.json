@@ -1,6 +1,6 @@
 {
   "id": "ar018",
-  "label": "AR018 (ทองคำ)",
+  "label": "AR018 ทองคำ",
   "fasta": "AR018.fa.gz",
   "gff3": "AR018.sorted.gff3.gz"
 }

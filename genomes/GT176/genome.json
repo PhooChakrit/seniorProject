@@ -1,6 +1,6 @@
 {
   "id": "gt176",
-  "label": "GT176 (นางเกิด)",
+  "label": "GT176 นางเกิด",
   "fasta": "GT176.fa.gz",
   "gff3": "GT176.sorted.gff3.gz"
 }
